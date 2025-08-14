@@ -63,7 +63,6 @@
   .ladder li.active{background:linear-gradient(90deg,rgba(0,245,212,.35),rgba(138,92,255,.35));border-color:var(--accent);color:#e9fcff}
   .opt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
   .opt button{padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-weight:800;cursor:pointer}
-  .opt button:hover{border-color:#3c62a7}
   .opt .right{border-color:var(--good);box-shadow:0 0 18px rgba(46,204,113,.3)}
   .opt .wrong{border-color:var(--bad);box-shadow:0 0 18px rgba(255,77,109,.25)}
 
@@ -83,7 +82,7 @@
   label{font-size:12px;color:#cfdcff}
   select,input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px}
 
-  /* English Driver (road fighter) */
+  /* English Driver (road-fighter) */
   .driver-wrap{display:grid;grid-template-columns:1fr;gap:10px}
   .driver-controls{display:flex;gap:10px;justify-content:center}
   .ctrl{width:120px;height:120px;border-radius:18px;border:2px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-size:22px;font-weight:900;box-shadow:0 6px 22px rgba(0,0,0,.25);touch-action:none}
@@ -192,15 +191,13 @@
       <div class="pill">Round Score: <span id="secScore">0</span></div>
       <div class="row" style="gap:10px;align-items:center">
         <svg id="hourglass" viewBox="0 0 100 160" class="hourglass" aria-label="Timer hourglass">
-          <defs>
-            <clipPath id="clipTop"><polygon points="20,20 80,20 50,80"/></clipPath>
-            <clipPath id="clipBottom"><polygon points="20,140 80,140 50,80"/></clipPath>
-          </defs>
-        <rect id="hgTop" x="20" y="20" width="60" height="60" fill="#fca311" clip-path="url(#clipTop)"/>
-        <rect id="hgBottom" x="20" y="140" width="60" height="0" fill="#fca311" clip-path="url(#clipBottom)"/>
-        <rect id="hgStream" x="48.5" y="78" width="3" height="0" fill="#fca311" visibility="hidden"/>
-        <polygon points="20,20 80,20 50,80 20,140 80,140 50,80" fill="none" stroke="#cfe7ff" stroke-width="4"/>
-        <rect x="15" y="10" width="70" height="8" fill="#cfe7ff"/><rect x="15" y="142" width="70" height="8" fill="#cfe7ff"/>
+          <defs><clipPath id="clipTop"><polygon points="20,20 80,20 50,80"/></clipPath>
+                 <clipPath id="clipBottom"><polygon points="20,140 80,140 50,80"/></clipPath></defs>
+          <rect id="hgTop" x="20" y="20" width="60" height="60" fill="#fca311" clip-path="url(#clipTop)"/>
+          <rect id="hgBottom" x="20" y="140" width="60" height="0" fill="#fca311" clip-path="url(#clipBottom)"/>
+          <rect id="hgStream" x="48.5" y="78" width="3" height="0" fill="#fca311" visibility="hidden"/>
+          <polygon points="20,20 80,20 50,80 20,140 80,140 50,80" fill="none" stroke="#cfe7ff" stroke-width="4"/>
+          <rect x="15" y="10" width="70" height="8" fill="#cfe7ff"/><rect x="15" y="142" width="70" height="8" fill="#cfe7ff"/>
         </svg>
         <span id="secTime" class="sr-only">30</span>
       </div>
@@ -240,7 +237,7 @@
     </div>
   </section>
 
-  <!-- ENGLISH DRIVER (road-fighter) -->
+  <!-- ENGLISH DRIVER -->
   <section id="driver" class="card" style="display:none">
     <div class="driver-wrap">
       <div class="row hud" style="justify-content:space-between">
@@ -335,7 +332,6 @@ function beep(kind="ui"){
               wrong:[200,0.18,"sawtooth",0.2], win:[880,0.25,"triangle",0.22], lose:[120,0.25,"sine",0.22], time:[300,0.18,"sine",0.18] };
   const [f,d,t,g]=map[kind]||map.ui; tone(f,d,t,g);
 }
-/* auto UI click sounds */
 addEventListener("click",e=>{
   const el=e.target;
   if(el.closest("button") || el.closest(".tab-btn") || el.closest(".sub-btn")) beep("ui");
@@ -344,7 +340,7 @@ addEventListener("click",e=>{
 /* ---------- helpers / confetti & toasts ---------- */
 const $=id=>document.getElementById(id);
 const toast=msg=>{const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1200);};
-function confettiBurst(msg="Nice!"){ // simple DOM confetti + toast
+function confettiBurst(msg="Nice!"){
   for(let i=0;i<48;i++){
     const p=document.createElement("div");
     p.className="confetti-piece";
@@ -362,10 +358,9 @@ function confettiBurst(msg="Nice!"){ // simple DOM confetti + toast
   toast("🎉 "+msg); beep("win");
 }
 function thumbsDown(msg="Try again"){toast("👎 "+msg); beep("wrong");}
-
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
 
-/* ---------- VOCAB (Grade 10) ---------- */
+/* ---------- VOCAB ---------- */
 const TERMS=[
   {w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
   {w:"iambic pentameter",d:"A rhythm pattern of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
@@ -435,7 +430,7 @@ const QUESTION_BANK=[
   {q:"Dramatic irony is when…",options:["Audience knows more than characters","Two words sound alike","A character talks to themselves","The setting is ironic"],correct:"Audience knows more than characters"}
 ];
 
-/* ---------- Topic-Test MCQs (used in English Driver only) ---------- */
+/* ---------- Topic-Test MCQs (for English Driver) ---------- */
 const TOPIC_TEST_MCQ = [
   {q:"In Sonnet 18, the beloved is first compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
   {q:"The phrase 'summer’s lease' suggests that summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
@@ -467,13 +462,14 @@ const SHAKESPEARE_QA = [
   ]}
 ];
 
-/* ---------- tabs (with open sound) ---------- */
+/* ---------- tabs ---------- */
 document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   const t=b.dataset.tab;
   document.querySelectorAll("section").forEach(s=>s.style.display="none");
   $(t).style.display="";
+  if(t!=="driver") pauseDriver(); // stop the car when leaving
   beep("open");
 }));
 document.querySelectorAll(".sub-btn").forEach(b=>b.addEventListener("click",()=>{
@@ -491,7 +487,6 @@ function defaultStats(student){return{student,createdAt:Date.now(),merits:0,hang
 function loadStatsFor(student){const id=studentId(student);const raw=localStorage.getItem(`${KEY_PREFIX}:${id}`);return raw?JSON.parse(raw):defaultStats(student);}
 function saveStats(stats){const id=studentId(stats.student);localStorage.setItem(`${KEY_PREFIX}:${id}`,JSON.stringify(stats));localStorage.setItem(`${KEY_PREFIX}:last`,JSON.stringify(stats.student));refreshDashboard();}
 function getLastStudent(){try{return JSON.parse(localStorage.getItem(`${KEY_PREFIX}:last`))}catch{return null}}
-function getAllStats(){const arr=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!k.startsWith(`${KEY_PREFIX}:`)||k.endsWith(":last"))continue;try{arr.push(JSON.parse(localStorage.getItem(k)));}catch{}}return arr;}
 
 let STATS = loadStatsFor(getLastStudent()||{name:"Guest",surname:"",class:""});
 function setStudentUI(s){ $("studentBadge").textContent=(s.name?`${s.name} ${s.surname} · ${s.class||'—'}`:"Guest Mode");
@@ -552,11 +547,24 @@ let milIndex=0,milUsed5050=false,milUsedSkip=false,milActive=false,milQSet=[],mi
 function buildLadder(){const ul=$("milLadder");ul.innerHTML="";ladderValues.forEach((v,i)=>{const li=document.createElement("li");const step=ladderValues.length-i;li.innerHTML=`<span>${step}</span><span>${v}</span>`;ul.appendChild(li);});}
 function highlightLadder(){const items=[...$("milLadder").children];items.forEach(li=>li.classList.remove("active"));const pos=ladderValues.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
 function prepareGame(){milIndex=0;milUsed5050=false;milUsedSkip=false;milActive=false;milHalfMeritGiven=false;milFinishMeritGiven=false;$("milFeedback").textContent="";$("milStep").textContent="1";$("mil5050").disabled=false;$("milSkip").disabled=false;milQSet=shuffle(QUESTION_BANK).slice(0,15);renderQuestion();beep("open");}
-function renderQuestion(){const q=milQSet[milIndex];$("milQ").innerHTML=q.q;const w=$("milOpts");w.innerHTML="";q.options.forEach((opt,i)=>{const b=document.createElement("button");b.dataset.opt=opt;b.innerHTML=`<span style="opacity:.8">${String.fromCharCode(65+i)})</span> ${opt}`;b.onclick=()=>checkAnswer(b,opt);w.appendChild(b);});highlighted=false;highlightLadder();}
-let highlighted=false;
+function renderQuestion(){const q=milQSet[milIndex];$("milQ").innerHTML=q.q;const w=$("milOpts");w.innerHTML="";q.options.forEach((opt,i)=>{const b=document.createElement("button");b.dataset.opt=opt;b.innerHTML=`<span style="opacity:.8">${String.fromCharCode(65+i)})</span> ${opt}`;b.onclick=()=>checkAnswer(b,opt);w.appendChild(b);});highlightLadder();}
 function maybeAwardMerits(){if(milIndex>=8 && !milHalfMeritGiven){STATS.merits+=1;milHalfMeritGiven=true;toast("+1 merit (Halfway!)");}
   if(milIndex>=15 && !milFinishMeritGiven && !milUsedSkip){STATS.merits+=2;milFinishMeritGiven=true;toast("+2 merits (Completed!)");}}
-function checkAnswer(btn, choice){if(!milActive)milActive=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];buttons.forEach(b=>b.disabled=true);STATS.million.totalAnswered++;if(choice.toLowerCase()===q.correct.toLowerCase()){STATS.million.totalCorrect++;btn.classList.add("right");beep("ok");setTimeout(()=>{milIndex++;STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);maybeAwardMerits();saveStats(STATS);if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`🏆 <span class="good">Congratulations!</span> You reached <b>${ladderValues[0]}</b>.`;confettiBurst("Millionaire!");milActive=false;}else{$("milStep").textContent=String(milIndex+1);renderQuestion();buttons.forEach(b=>b.classList.remove("right"));}},380);}else{btn.classList.add("wrong");thumbsDown("Incorrect");const cbtn=buttons.find(b=>b.dataset.opt.toLowerCase()===q.correct.toLowerCase());if(cbtn)cbtn.classList.add("right");$("milFeedback").innerHTML=`Correct: <b>${q.correct}</b>.`;milActive=false;saveStats(STATS);}}
+function checkAnswer(btn, choice){
+  if(!milActive)milActive=true;
+  const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];
+  buttons.forEach(b=>b.disabled=true);STATS.million.totalAnswered++;
+  if(choice.toLowerCase()===q.correct.toLowerCase()){
+    STATS.million.totalCorrect++;btn.classList.add("right");beep("ok");
+    setTimeout(()=>{milIndex++;STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);maybeAwardMerits();saveStats(STATS);
+      if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`🏆 <span class="good">Congratulations!</span> You reached <b>${ladderValues[0]}</b>.`;confettiBurst("Millionaire!");milActive=false;}
+      else{$("milStep").textContent=String(milIndex+1);renderQuestion();}},380);
+  }else{
+    btn.classList.add("wrong");thumbsDown("Incorrect");
+    const cbtn=buttons.find(b=>b.dataset.opt.toLowerCase()===q.correct.toLowerCase());if(cbtn)cbtn.classList.add("right");
+    $("milFeedback").innerHTML=`Correct: <b>${q.correct}</b>.`;milActive=false;saveStats(STATS);
+  }
+}
 $("mil5050").onclick=()=>{if(milUsed5050)return;milUsed5050=true;$("mil5050").disabled=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];shuffle(buttons.filter(b=>b.dataset.opt.toLowerCase()!==q.correct.toLowerCase())).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity=.4;});};
 $("milSkip").onclick=()=>{if(milUsedSkip)return;milUsedSkip=true;$("milSkip").disabled=true;milIndex++;STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);saveStats(STATS);if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`You skipped to the end.`;milActive=false;return}$("milStep").textContent=String(milIndex+1);renderQuestion();};
 $("milQuit").onclick=()=>{milActive=false;$("milFeedback").innerHTML=`Run ended.`;};
@@ -576,7 +584,7 @@ $("lotfFilterChars").onclick=()=>buildLotfList("Characters");
 $("lotfFilterSymbol").onclick=()=>buildLotfList("Symbolism");
 $("lotfPrint").onclick=()=>{window.print();};
 
-/* ---------- Study: Shakespeare Q&A (show/hide) ---------- */
+/* ---------- Study: Shakespeare Q&A ---------- */
 function buildShQA(){
   const wrap=$("shQA"); wrap.innerHTML="";
   SHAKESPEARE_QA.forEach(section=>{
@@ -608,8 +616,7 @@ const drv = {
   lanes: [90, 190, 290],
   player: {lane:1,y:480,width:36,height:56,color:"#00f5d4"},
   lines: [],
-  speed: 50, // meters per second (fixed as requested)
-  pxPerSec: 200, // visual scroll speed (pixels) for feel
+  speed: 50, pxPerSec: 200,
   running:false, last:0, meters:0, nextCheckpoint:500, score:0,
   pickup:null, overlay:$("drvOverlay")
 };
@@ -621,70 +628,49 @@ function drvReset(){
 }
 function drawRoad(){
   const c=drv.ctx; c.fillStyle="#0a0f21"; c.fillRect(0,0,drv.w,drv.h);
-  // road
   c.fillStyle="#0f1837"; c.fillRect(40,0,drv.w-80,drv.h);
-  // lane lines
   c.strokeStyle="#cfe7ff"; c.lineWidth=3; c.setLineDash([18,18]);
   c.beginPath(); c.moveTo(drv.w/2,0); c.lineTo(drv.w/2,drv.h); c.stroke(); c.setLineDash([]);
-  // moving dashes
   c.strokeStyle="#fca311"; c.lineWidth=6;
   drv.lines.forEach((ln)=>{c.beginPath(); c.moveTo(60,ln.y); c.lineTo(drv.w-60,ln.y); c.stroke();});
-  // player
   drawCar(drv.lanes[drv.player.lane]-18, drv.player.y, drv.player.color);
-  // pickup (white car)
   if(drv.pickup){drawCar(drv.lanes[drv.pickup.lane]-18, drv.pickup.y, "#ffffff");}
 }
 function drawCar(x,y,color){
   const c=drv.ctx;
   c.fillStyle=color; c.strokeStyle="#202a55"; c.lineWidth=2;
   roundRect(c,x,y,36,56,8,true,true);
-  c.fillStyle="#061314"; c.fillRect(x+6,y+6,24,12); // windshield
+  c.fillStyle="#061314"; c.fillRect(x+6,y+6,24,12);
 }
-function roundRect(ctx,x,y,w,h,r,fill,stroke){if(r> w/2)r=w/2;if(r>h/2)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();}
+function roundRect(ctx,x,y,w,h,r,fill,stroke){if(r> w/2)r=w/2;if(r>h/2)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y,h);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();}
 
-function drvSpawnPickup(){
-  drv.pickup={lane:Math.floor(Math.random()*3),y:-60};
-}
+function drvSpawnPickup(){drv.pickup={lane:Math.floor(Math.random()*3),y:-60};}
 function drvUpdate(ts){
   if(!drv.running){drv.last=ts; return;}
   const dt=(ts-drv.last)/1000; drv.last=ts;
-  // visual scroll
   drv.lines.forEach(ln=>{ln.y+=drv.pxPerSec*dt; if(ln.y>drv.h)ln.y-=drv.h;});
-  // distance real (meters)
   drv.meters+=drv.speed*dt; if(drv.meters<0)drv.meters=0;
   $("drvDist").textContent=Math.floor(drv.meters);
-  // spawn pickup occasionally
   if(!drv.pickup && Math.random()<0.01){drvSpawnPickup();}
   if(drv.pickup){drv.pickup.y+=drv.pxPerSec*dt*0.9; if(drv.pickup.y>drv.h+60)drv.pickup=null;}
-  // collision with pickup (same lane and near y)
-  if(drv.pickup && drv.pickup.lane===drv.player.lane && Math.abs(drv.pickup.y-drv.player.y)<40){
-    drv.running=false; showDriverQuestion(true); drv.pickup=null;
-  }
-  // checkpoint every 500 m (≈10s at 50 m/s)
+  if(drv.pickup && drv.pickup.lane===drv.player.lane && Math.abs(drv.pickup.y-drv.player.y)<40){drv.running=false; showDriverQuestion(true); drv.pickup=null;}
   if(drv.meters>=drv.nextCheckpoint){drv.running=false; showDriverQuestion(false); drv.nextCheckpoint+=500;}
-  drawRoad();
-  requestAnimationFrame(drvUpdate);
+  drawRoad(); requestAnimationFrame(drvUpdate);
 }
-
 function moveLeft(){drv.player.lane=Math.max(0,drv.player.lane-1);beep("open");drawRoad();}
 function moveRight(){drv.player.lane=Math.min(2,drv.player.lane+1);beep("open");drawRoad();}
 $("drvLeft").addEventListener("touchstart",e=>{e.preventDefault();moveLeft();});
 $("drvRight").addEventListener("touchstart",e=>{e.preventDefault();moveRight();});
 $("drvLeft").addEventListener("click",moveLeft); $("drvRight").addEventListener("click",moveRight);
-// swipe support
 let touchX=null;
 $("drvCanvas").addEventListener("touchstart",e=>{touchX=e.touches[0].clientX;});
-$("drvCanvas").addEventListener("touchend",e=>{
-  if(touchX===null)return; const dx=(e.changedTouches[0].clientX-touchX);
-  if(dx<-20) moveLeft(); else if(dx>20) moveRight(); touchX=null;
-});
+$("drvCanvas").addEventListener("touchend",e=>{if(touchX===null)return; const dx=(e.changedTouches[0].clientX-touchX); if(dx<-20) moveLeft(); else if(dx>20) moveRight(); touchX=null;});
 
 function startDriver(){drvReset(); drv.running=true; drv.last=performance.now(); requestAnimationFrame(drvUpdate);}
 function pauseDriver(){drv.running=false;}
 $("drvStart").onclick=()=>{startDriver();};
 $("drvPause").onclick=()=>{pauseDriver();};
 
-/* driver questions (from topic test only) */
 function showDriverQuestion(isBonus){
   const overlay=$("drvOverlay"); overlay.style.display="flex";
   const pool=shuffle(TOPIC_TEST_MCQ.slice()); const q=pool[0]; $("drvQ").textContent=(isBonus?"Bonus — ":"")+q.q;
@@ -698,18 +684,18 @@ function showDriverQuestion(isBonus){
         drv.score+=add; $("drvScore").textContent=drv.score;
         confettiBurst(isBonus?"+Bonus!":"Correct!");
         drv.running=true; drv.last=performance.now(); requestAnimationFrame(drvUpdate);
-      }else{
-        thumbsDown("Incorrect — try again");
-      }
+        STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(drv.meters)); saveStats(STATS);
+      }else{ thumbsDown("Incorrect — try again"); }
     };
     wrap.appendChild(b);
   });
 }
 
 /* ---------- initialise ---------- */
-function drawKeyboard(){/* already defined above but invoked earlier */}
-document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.tab!=="driver")pauseDriver();}));
-drvReset(); // prepare driver canvas
+$("btnQuickPlay").onclick=()=>document.querySelector('.tab-btn[data-tab="hangman"]').click();
+buildStudyTable(); buildLotfList("All"); buildShQA();
+const studentLast=getLastStudent(); if(studentLast){$("studentBadge").textContent=`${studentLast.name||"Guest"} ${studentLast.surname||""} · ${studentLast.class||"—"}`;}
+drvReset();
 </script>
 </body>
 </html>
