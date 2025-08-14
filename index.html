@@ -118,7 +118,7 @@
 
       <div class="card">
         <div class="muted">Notes</div>
-        <div class="big">Local login keeps scores & leaderboards on this device. For multi-device competition (whole grade/whole school), we can add Supabase later.</div>
+        <div class="big">Local login keeps scores & leaderboards on this device. For multi-device competition, we can add Supabase later.</div>
       </div>
     </div>
 
@@ -229,7 +229,7 @@
     <div class="subtabs">
       <button class="sub-btn active" data-sub="studyVocab">Vocabulary</button>
       <button class="sub-btn" data-sub="lotf">Lord of the Flies</button>
-      <button class="sub-btn" data-sub="test">Topic Test (15 Aug 2025)</button>
+      <button class="sub-btn" data-sub="shakespeare">Shakespeare</button>
     </div>
 
     <!-- Vocabulary -->
@@ -256,17 +256,27 @@
       <div id="lotfList" style="max-height:60vh; overflow:auto; margin-top:8px"></div>
     </div>
 
-    <!-- Topic Test -->
-    <div id="test" style="display:none">
+    <!-- Shakespeare (replaces Topic Test tab) -->
+    <div id="shakespeare" style="display:none">
       <div class="card" style="margin-bottom:10px">
-        <div class="big"><b>English HL — Topic Test</b> · Grade 10 · <b>15 August 2025</b> · <b>Total: 30 marks</b> · Time: 45 minutes</div>
-        <div class="muted">Section A: Poetry (Shakespeare, Sonnet 18) · Section B: Drama (Romeo and Juliet)</div>
+        <div class="big"><b>Shakespeare Study Pack</b> · <b>Sonnet 18</b> (Poetry) & <b>Romeo and Juliet</b> (Drama) · Exam-style Q&A + quick-reference notes.</div>
       </div>
-      <div id="testQA" style="max-height:60vh; overflow:auto;"></div>
+      <!-- Quick resources -->
+      <div class="card" style="margin-bottom:10px">
+        <b>Quick Reference</b>
+        <ul>
+          <li><b>Sonnet 18</b>: form (Shakespearean sonnet), iambic pentameter, key images: <em>summer’s day</em>, <em>eye of heaven</em>, <em>eternal lines</em>.</li>
+          <li><b>Devices</b>: metaphor, personification, rhythm, volta (line 9: “But thy eternal summer…”).</li>
+          <li><b>R&J Balcony Scene</b>: conflict of love vs family; names/identity; impulsiveness; dramatic irony.</li>
+        </ul>
+      </div>
+
+      <!-- Q&A with show/hide -->
+      <div id="shQA" style="max-height:60vh; overflow:auto;"></div>
       <div class="row" style="margin-top:8px">
-        <button id="testExpandAll" class="btn secondary">Expand all answers</button>
-        <button id="testCollapseAll" class="btn secondary">Collapse all</button>
-        <button id="testPrint" class="btn">Print</button>
+        <button id="shExpandAll" class="btn secondary">Expand all answers</button>
+        <button id="shCollapseAll" class="btn secondary">Collapse all</button>
+        <button id="shPrint" class="btn">Print</button>
       </div>
     </div>
   </section>
@@ -346,9 +356,8 @@ const LOTF_NOTES=[
   {type:"Symbolism", text:"Lord of the Flies (pig’s head) — evil within; a symbol of innate human darkness."}
 ];
 
-/* ---------- Millionaire questions (focus: LotF + Shakespeare basics) ---------- */
+/* ---------- Millionaire questions (LotF + Shakespeare basics) ---------- */
 const QUESTION_BANK=[
-  // Lord of the Flies – plot/themes/characters/symbols
   {q:"Who is elected leader at the beginning of Lord of the Flies?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
   {q:"Which object symbolises order and democratic speech?",options:["The conch","The fire","The glasses","The spear"],correct:"The conch"},
   {q:"Jack’s priority soon becomes…",options:["Hunting","Shelters","Keeping the fire","Exploring"],correct:"Hunting"},
@@ -364,7 +373,6 @@ const QUESTION_BANK=[
   {q:"What does Jack primarily use to control his tribe?",options:["Fear and punishment","Fair debate","Shared leadership","Random votes"],correct:"Fear and punishment"},
   {q:"Which pair best contrasts leadership styles?",options:["Ralph vs Jack","Piggy vs Simon","Roger vs Sam","Officer vs Jack"],correct:"Ralph vs Jack"},
   {q:"'Lord of the Flies' (pig’s head) most closely symbolises…",options:["Evil within humanity","Royal authority","Religious salvation","Wealth"],correct:"Evil within humanity"},
-  // Shakespeare / poetry quick checks
   {q:"A 14-line poem with regular meter is called a…",options:["Sonnet","Ode","Elegy","Haiku"],correct:"Sonnet"},
   {q:"'Eye of heaven' in Sonnet 18 is a…",options:["Metaphor for the sun","Simile","Alliteration","Hyperbole"],correct:"Metaphor for the sun"},
   {q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","When will you come?","Who are you?"],correct:"Why are you Romeo?"},
@@ -372,25 +380,21 @@ const QUESTION_BANK=[
   {q:"Dramatic irony is when…",options:["Audience knows more than characters","Two words sound alike","A character talks to themselves","The setting is ironic"],correct:"Audience knows more than characters"}
 ];
 
-/* ---------- Topic Test Q&A (built-in answers) ---------- */
-const TEST_QA = [
-  {section:"SECTION A: POETRY — Sonnet 18", items:[
-    {q:"1.1 To whom is the speaker comparing the subject in line 1?", a:"A summer’s day."},
-    {q:"1.2a Identify the figure of speech in 'the eye of heaven' (line 5).", a:"Metaphor (the sun is compared to an eye); also personification by implication."},
-    {q:"1.2b Explain its effectiveness.", a:"It vividly suggests the sun’s intense heat and illuminates nature’s power, reinforcing that natural conditions vary compared to the beloved’s steadiness."},
-    {q:"1.3 Quote two consecutive words showing summer’s temporary nature.", a:"“summer’s lease”. (A lease ends; it implies limited duration.)"},
-    {q:"1.4 How does the speaker immortalise the subject?", a:"By preserving their beauty in poetry ('eternal lines'); as long as people read, the beloved lives on."},
-    {q:"1.5 Who is the beloved? Briefly explain.", a:"The addressee of the Fair Youth sonnets (an idealised young man/friend). Shakespeare keeps the identity unspecified; the poem elevates the beloved’s beauty and virtue."}
+/* ---------- Shakespeare Q&A (test-aligned) ---------- */
+const SHAKESPEARE_QA = [
+  {section:"POETRY — Sonnet 18", items:[
+    {q:"1. To what is the beloved compared in line 1?", a:"A summer’s day."},
+    {q:"2. Identify the figure of speech in 'the eye of heaven' (line 5).", a:"Metaphor (the sun as an eye); also implies personification."},
+    {q:"3. Quote two consecutive words showing summer’s temporary nature.", a:"“summer’s lease”. It suggests a limited period."},
+    {q:"4. How does the speaker immortalise the beloved?", a:"Through 'eternal lines' of poetry—so long as men can breathe or eyes can see, the poem gives life."},
+    {q:"5. Explain the volta (turn) in line 9.", a:"The poem shifts from summer’s flaws to the beloved’s 'eternal summer' that shall not fade, thanks to verse."}
   ]},
-  {section:"SECTION B: DRAMA — Romeo and Juliet", items:[
-    {q:"2.1 Meaning of 'O Romeo, Romeo! wherefore art thou Romeo?'", a:"She means 'Why are you Romeo (a Montague)?' — questioning the problem of his name/family, not his location."},
-    {q:"2.2 Identify Juliet’s conflict in the balcony scene.", a:"Love vs family loyalty/name; she loves Romeo but his family is her family’s enemy."},
-    {q:"2.3 'I’ll be new baptized' — what does it reveal about Romeo?", a:"He is passionate and impulsive; willing to abandon his name/identity for love."},
-    {q:"2.4 How does this scene develop love vs family loyalty?", a:"They prioritise love over the feud, debating the meaninglessness of names; it sets up secret marriage and later conflict."},
-    {q:"2.5 Why is Friar Laurence surprised by Romeo’s request (Act 2, Sc 3)?", a:"Romeo has just abandoned Rosaline; his sudden switch to Juliet seems rash."},
-    {q:"2.6 What does that reveal about Romeo’s personality?", a:"He is changeable/impulsive and led by intense emotion/appearance."},
-    {q:"2.7 Is the Friar right to agree to marry them? Motivate.", a:"Open: Many argue it’s unwise (enables secrecy → tragedy). Others say he hopes to end the feud. On balance, it was reckless given the danger and their youth."},
-    {q:"2.8 Compare Juliet vs Friar’s attitude to Romeo’s impulsiveness.", a:"Juliet loves him yet often shows caution/maturity (questions the speed). The Friar openly criticises Romeo’s inconstancy ('love lies...in their eyes'), warning him to be prudent."}
+  {section:"DRAMA — Romeo and Juliet (Balcony Scene focus)", items:[
+    {q:"1. Meaning of 'Wherefore art thou Romeo?'", a:"Juliet means 'Why are you Romeo (a Montague)?'—it’s about his name/family, not his location."},
+    {q:"2. Identify Juliet’s central conflict.", a:"Love versus family loyalty/name; her love clashes with the feud."},
+    {q:"3. 'I’ll be new baptized'—what does this reveal about Romeo?", a:"He is impulsive and passionate; willing to abandon his name/identity for love."},
+    {q:"4. How does the scene develop the theme love vs loyalty?", a:"Both question the meaning of names and prioritise love; it drives them to secrecy and quick marriage, escalating conflict."},
+    {q:"5. Friar Laurence’s view of Romeo’s sudden love?", a:"He cautions that Romeo is inconstant (from Rosaline to Juliet) and urges moderation—'they stumble that run fast'."}
   ]}
 ];
 
@@ -406,11 +410,11 @@ document.querySelectorAll(".sub-btn").forEach(b=>b.addEventListener("click",()=>
   document.querySelectorAll(".sub-btn").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   const t=b.dataset.sub;
-  ["studyVocab","lotf","test"].forEach(id=>$(id).style.display=(id===t)?"":"none");
+  ["studyVocab","lotf","shakespeare"].forEach(id=>$(id).style.display=(id===t)?"":"none");
 }));
 
 /* ---------- student & stats (local) ---------- */
-const KEY_PREFIX="g10_vg_neon_v1"; // grade 10 keyspace
+const KEY_PREFIX="g10_vg_neon_v1";
 function studentId(s){return `${s.class||"?"}-${(s.surname||"").trim().toLowerCase()}-${(s.name||"").trim().toLowerCase()}`;}
 function defaultStats(student){return{student,createdAt:Date.now(),merits:0,hangman:{wins:0},seconds:{totalCorrect:0,totalRounds:0,fastestCorrectMs:null},million:{bestStep:0,totalAnswered:0,totalCorrect:0}};}
 function loadStats(student){const id=studentId(student);const raw=localStorage.getItem(`${KEY_PREFIX}:${id}`);return raw?JSON.parse(raw):defaultStats(student);}
@@ -477,7 +481,7 @@ function filterStudy(){const q=$("studySearch").value.trim().toLowerCase();[...$
 $("studySearch").addEventListener("input",filterStudy);$("studyReset").onclick=()=>{$("studySearch").value="";filterStudy();};$("studyPrint").onclick=()=>{window.print();};
 
 /* ---------- Study: LOTF ---------- */
-function buildLotfList(filter="All"){const wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(n=>filter==="All"||n.type===filter).forEach((n,i)=>{const card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML=`<div class="pill" style="margin-bottom:6px">${n.type}</div><div>${n.text}</div>`;wrap.appendChild(card);});}
+function buildLotfList(filter="All"){const wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(n=>filter==="All"||n.type===filter).forEach((n)=>{const card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML=`<div class="pill" style="margin-bottom:6px">${n.type}</div><div>${n.text}</div>`;wrap.appendChild(card);});}
 $("lotfFilterAll").onclick=()=>buildLotfList("All");
 $("lotfFilterPlot").onclick=()=>buildLotfList("Plot");
 $("lotfFilterThemes").onclick=()=>buildLotfList("Themes");
@@ -485,12 +489,12 @@ $("lotfFilterChars").onclick=()=>buildLotfList("Characters");
 $("lotfFilterSymbol").onclick=()=>buildLotfList("Symbolism");
 $("lotfPrint").onclick=()=>{window.print();};
 
-/* ---------- Study: Topic Test with answers ---------- */
-function buildTestQA(){
-  const wrap=$("testQA"); wrap.innerHTML="";
-  TEST_QA.forEach(section=>{
+/* ---------- Study: Shakespeare Q&A (with show/hide) ---------- */
+function buildShQA(){
+  const wrap=$("shQA"); wrap.innerHTML="";
+  SHAKESPEARE_QA.forEach(section=>{
     const h=document.createElement("h3"); h.textContent=section.section; wrap.appendChild(h);
-    section.items.forEach((item,idx)=>{
+    section.items.forEach((item)=>{
       const card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";
       card.innerHTML=`<div><b>${item.q}</b></div><div class="qa-a" style="display:none;margin-top:6px">${item.a}</div><div class="row" style="margin-top:8px"><button class="btn secondary btnShow">Show Answer</button></div>`;
       const btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa-a");
@@ -499,12 +503,12 @@ function buildTestQA(){
     });
   });
 }
-$("testExpandAll").onclick=()=>{[...$("testQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="block");[...$("testQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Hide Answer");}
-$("testCollapseAll").onclick=()=>{[...$("testQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="none");[...$("testQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Show Answer");}
-$("testPrint").onclick=()=>{window.print();};
+$("shExpandAll").onclick=()=>{[...$("shQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="block");[...$("shQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Hide Answer");}
+$("shCollapseAll").onclick=()=>{[...$("shQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="none");[...$("shQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Show Answer");}
+$("shPrint").onclick=()=>{window.print();};
 
 /* ---------- initialise study sections ---------- */
-buildStudyTable(); buildLotfList("All"); buildTestQA();
+buildStudyTable(); buildLotfList("All"); buildShQA();
 </script>
 </body>
 </html>
