@@ -13,6 +13,7 @@
     --text:#e7f2ff; --muted:#a8bfdd;
     --accent:#00f5d4; --accent2:#ff5e57; --accent3:#8a5cff; --accent4:#fca311;
     --good:#2ecc71; --bad:#ff4d6d;
+    --theme:#8a5cff; /* changes per category in Millionaire & overlays */
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% -10%,#102153 0,#0c1736 30%,#070b1a 65%) fixed;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
@@ -55,6 +56,11 @@
   .def-box{font-size:18px;line-height:1.45}.hourglass{width:58px;height:90px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0)}
 
   /* Millionaire */
+  #million{border:1px solid rgba(255,255,255,.08); border-radius:18px; background:linear-gradient(180deg,#0f1836,#0b1230);}
+  #million.theming{box-shadow:0 0 0 3px var(--theme) inset, 0 0 28px rgba(255,255,255,.04);}
+  .mil-cat{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:linear-gradient(180deg,#0f1837,#0b1230)}
+  .mil-dot{width:10px;height:10px;border-radius:50%}
+
   .ladder{list-style:none;padding:0;margin:0;display:flex;flex-direction:column-reverse;gap:6px}
   .ladder li{padding:8px 10px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:linear-gradient(180deg,#0f1836,#0b1230);font-weight:700;display:flex;justify-content:space-between}
   .ladder li.active{background:linear-gradient(90deg,rgba(0,245,212,.35),rgba(138,92,255,.35));border-color:var(--accent);color:#e9fcff}
@@ -68,8 +74,9 @@
   .ctrl:active{transform:scale(.98)} @media (max-width:600px){.ctrl{width:100px;height:100px;font-size:20px}}
   .hud{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .overlayQ{position:absolute;inset:0;background:rgba(7,11,26,.8);display:none;align-items:center;justify-content:center;z-index:50}
-  .overlayCard{max-width:560px;background:linear-gradient(180deg,#0f1837,#0b1230);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:16px}
+  .overlayCard{max-width:560px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px}
   .overlayCard .opt{grid-template-columns:1fr}
+  .gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,0,0,.65);z-index:60;color:#ff1e1e;font-weight:900;font-size:44px;text-shadow:0 0 22px #300}
 
   /* Study */
   .subtabs{display:flex;gap:8px;margin-bottom:10px}
@@ -171,12 +178,13 @@
   </section>
 
   <!-- MILLIONAIRE -->
-  <section id="million" class="card" style="display:none">
+  <section id="million" class="card theming" style="display:none">
     <div class="grid-2">
       <div>
         <div class="row" style="justify-content:space-between;align-items:center">
           <div class="pill">Question <span id="milStep">1</span>/15</div>
           <div class="row">
+            <span class="mil-cat"><span class="mil-dot" id="milDot" style="background:var(--theme)"></span><b id="milCat">—</b></span>
             <button id="mil5050" class="btn secondary">50:50</button>
             <button id="milSkip" class="btn secondary">Skip</button>
             <button id="milQuit" class="btn warn">Quit</button>
@@ -198,6 +206,7 @@
         <span class="pill">Distance: <b id="drvDist">0</b> m</span>
         <span class="pill">Speed: <b id="drvSpeed">50</b> m/s</span>
         <span class="pill">Score: <b id="drvScore">0</b></span>
+        <span class="pill">Lives: <b id="drvLives">3</b></span>
         <button id="drvStart" class="btn">Start Run</button>
         <button id="drvPause" class="btn secondary">Pause</button>
       </div>
@@ -209,6 +218,7 @@
             <div id="drvOpts" class="opt" style="margin-top:10px"></div>
           </div>
         </div>
+        <div id="drvGameOver" class="gameOver">GAME OVER</div>
       </div>
       <div class="driver-controls">
         <button id="drvLeft" class="ctrl">⟵<br/><small>LEFT</small></button>
@@ -250,11 +260,13 @@
 
     <div id="shakespeare" style="display:none">
       <div class="card" style="margin-bottom:10px">
-        <div class="big"><b>Shakespeare Study Pack</b> — <b>Sonnet 18</b> & <b>Romeo and Juliet</b> (renumbered Q&A) + <b>Topic Test Practice (MCQs)</b>.</div>
+        <div class="big"><b>Shakespeare Study Pack</b> — <b>Sonnet 18</b> & <b>Romeo and Juliet</b> (renumbered Q&A), plus <b>MCQ Practice</b> and <b>Short Answer Practice (with model answers)</b>.</div>
       </div>
-      <div id="shQA" style="max-height:30vh; overflow:auto; margin-bottom:10px;"></div>
-      <h3>Topic Test Practice (MCQs)</h3>
-      <div id="shMCQ" style="max-height:28vh; overflow:auto;"></div>
+      <div id="shQA" style="max-height:26vh; overflow:auto; margin-bottom:10px;"></div>
+      <h3>MCQ Practice</h3>
+      <div id="shMCQ" style="max-height:24vh; overflow:auto; margin-bottom:10px;"></div>
+      <h3>Short Answer Practice (with model answers)</h3>
+      <div id="shSA" style="max-height:26vh; overflow:auto;"></div>
       <div class="row" style="margin-top:8px">
         <button id="shExpandAll" class="btn secondary">Expand all</button>
         <button id="shCollapseAll" class="btn secondary">Collapse all</button>
@@ -271,18 +283,31 @@
 window.requestAnimationFrame = window.requestAnimationFrame || function(cb){return setTimeout(function(){cb(Date.now());},16);};
 NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
 
-/* ===== Audio ===== */
+/* ===== Audio (UI + fanfare) ===== */
 var AC;
 function tone(f,d,type,g){try{
   AC=AC||new(window.AudioContext||window.webkitAudioContext)();
   var o=AC.createOscillator(), v=AC.createGain();
   o.type=type; o.frequency.value=f; o.connect(v); v.connect(AC.destination);
   var t=AC.currentTime; v.gain.setValueAtTime(0.0001,t);
-  v.gain.exponentialRampToValueAtTime(g,t+0.01);
-  v.gain.exponentialRampToValueAtTime(0.0001,t+d);
-  o.start(t); o.stop(t+d+0.02);
+  v.gain.exponentialRampToValueAtTime(g||0.18,t+0.01);
+  v.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.2));
+  o.start(t); o.stop(t+(d||0.2)+0.02);
 }catch(e){}}
-function beep(kind){var m={ui:[420,0.09,"sine",0.12],open:[560,0.12,"triangle",0.14],ok:[660,0.18,"triangle",0.2],wrong:[200,0.18,"sawtooth",0.2],win:[880,0.25,"triangle",0.22],time:[300,0.18,"sine",0.18]};var s=m[kind||"ui"];tone(s[0],s[1],s[2],s[3]);}
+function fanfare(){
+  try{
+    AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+    var t=AC.currentTime, seq=[
+      {f:392,d:.16,type:"triangle"},{f:523,d:.16,type:"triangle"},{f:659,d:.16,type:"triangle"},
+      {f:784,d:.28,type:"triangle"},
+      {f:0,d:.08},{f:784,d:.16},{f:659,d:.16},{f:523,d:.16},{f:392,d:.28}
+    ];
+    var at=t;
+    seq.forEach(function(n){ if(n.f>0){var o=AC.createOscillator(), g=AC.createGain();o.type=n.type;o.frequency.value=n.f;o.connect(g);g.connect(AC.destination);g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.22,at+0.01);g.gain.exponentialRampToValueAtTime(0.0001,at+n.d);o.start(at);o.stop(at+n.d+0.02);} at+=n.d;});
+  }catch(e){}
+}
+function beep(kind){var m={ui:[420,0.09,"sine",0.12],open:[560,0.12,"triangle",0.14],ok:[660,0.18,"triangle",0.2],wrong:[200,0.18,"sawtooth",0.2],win:[880,0.25,"triangle",0.22],time:[300,0.18,"sine",0.18]};
+  var s=m[kind||"ui"]; tone(s[0],s[1],s[2],s[3]); }
 addEventListener("click",function(e){var el=e.target;if(el.closest&&(el.closest("button")||el.closest(".tab-btn")||el.closest(".sub-btn"))) beep("ui");});
 
 /* ===== Helpers ===== */
@@ -291,7 +316,15 @@ function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");s
 function confetti(msg){for(var i=0;i<40;i++){var p=document.createElement("div");p.className="confetti-piece";p.style.background=["#00f5d4","#8a5cff","#ff5e57","#fca311","#2ecc71"][Math.floor(Math.random()*5)];p.style.left=(50+Math.random()*40-20)+"%";p.style.top="60%";p.style.transition="transform 1s ease-out, opacity 1.2s";document.body.appendChild(p);(function(p){setTimeout(function(){var dx=(Math.random()*2-1)*200,dy=-(200+Math.random()*300);p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)";p.style.opacity=0;},10);setTimeout(function(){p.remove();},1200);})(p);}toast("🎉 "+msg);beep("win");}
 function thumbsDown(msg){toast("👎 "+(msg||"Try again"));beep("wrong");}
 
-/* ===== Study/Vocab data (trimmed to essentials for brevity) ===== */
+/* ===== Core Data ===== */
+var CAT_COLORS={
+  "Sonnet 18":"#ff4d6d",
+  "Romeo & Juliet – Balcony":"#fca311",
+  "Lord of the Flies":"#2ecc71",
+  "Literary Devices":"#8a5cff",
+  "Parts of Speech":"#4da3ff"
+};
+
 var TERMS=[
  {w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
  {w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
@@ -311,35 +344,63 @@ var LOTF_NOTES=[
  {type:"Symbolism",text:"Conch (order), Signal Fire (hope), Glasses (science), Painted Faces (anonymity), Lord of the Flies (evil within)."}
 ];
 
-var SHAKESPEARE_QA=[
- {section:"POETRY — Sonnet 18",items:[
-   {q:"S1. What scene starts the poem?",a:"A summer’s day compared to the beloved."},
-   {q:"S2. Identify 'the eye of heaven'.",a:"Metaphor/personification for the sun."},
-   {q:"S3. Meaning of 'summer’s lease'?",a:"Summer is temporary; a fixed term that ends."},
-   {q:"S4. What happens at the volta (line 9)?",a:"Turns to the beloved’s 'eternal summer' preserved by verse."},
-   {q:"S5. Explain 'So long lives this…' in your own words.",a:"As long as the poem lasts, it keeps the beloved alive."}
- ]},
- {section:"DRAMA — Romeo & Juliet (Balcony/Theme)",items:[
-   {q:"S6. Paraphrase 'Wherefore art thou Romeo?'",a:"Why must you be Romeo (a Montague) — not 'Where are you?'."},
-   {q:"S7. What conflict drives the scene?",a:"Love versus family identity/feud."},
-   {q:"S8. 'I’ll be new baptised' shows what about Romeo?",a:"Impulsive, willing to change his name for love."},
-   {q:"S9. How does the scene push the plot?",a:"Their decision for secret love speeds the tragedy."}
- ]}
+/* Study: short-answer items (model answers) — renamed (no 'Topic Test' wording) */
+var SHAKESPEARE_SA = [
+  { section: "SECTION A: POETRY — Sonnet 18", items: [
+    {q:"To whom is the speaker comparing the subject in line 1?", a:"A summer’s day."},
+    {q:"Identify and explain 'the eye of heaven'.", a:"Metaphor (and personification) for the sun; it can be too hot, showing summer’s flaws."},
+    {q:"Quote two consecutive words that show summer is temporary.", a:"“short date” (from 'summer’s lease hath all too short a date')."},
+    {q:"How does the poet immortalise the subject?", a:"Through 'eternal lines'; poetry preserves the beloved as long as it is read."}
+  ]},
+  { section: "SECTION B: DRAMA — Romeo & Juliet (Balcony Scene)", items: [
+    {q:"Meaning of 'Wherefore art thou Romeo?'", a:"'Why must you be Romeo (a Montague)?' Not 'Where are you?'."},
+    {q:"What conflict does Juliet face here?", a:"Love versus family name/loyalty."},
+    {q:"'I'll be new baptised' — what does this reveal about Romeo?", a:"Impulsive and willing to change identity for love."}
+  ]},
+  { section: "SECTION B: DRAMA — Romeo & Juliet (Friar Laurence)", items: [
+    {q:"Why is the Friar surprised by Romeo’s request?", a:"Romeo rapidly shifts from Rosaline to Juliet; seems fickle."},
+    {q:"Is the Friar’s decision to help wise? Motivate.", a:"Arguably not; although he hopes to end the feud, the haste contributes to tragedy."}
+  ]}
 ];
 
-/* === Topic Test MCQs (also used in Road Rage checkpoints) === */
-var TOPIC_TEST_MCQ=[
-  {q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
-  {q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
-  {q:"'Eye of heaven' is…",options:["Metaphor","Simile","Onomatopoeia","Pun"],correct:"Metaphor"},
-  {q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
-  {q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
-  {q:"Juliet’s central conflict is with…",options:["Family loyalty","Money","Fame","Travel"],correct:"Family loyalty"},
-  {q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"}
+/* Unified MCQ bank (category-tagged). Used by Millionaire + Road Rage + Study MCQ. */
+var MCQ = [
+  /* Sonnet 18 */
+  {cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
+  {cat:"Sonnet 18",q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
+  {cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
+  {cat:"Sonnet 18",q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
+
+  /* Romeo & Juliet – Balcony */
+  {cat:"Romeo & Juliet – Balcony",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
+  {cat:"Romeo & Juliet – Balcony",q:"Juliet’s central conflict is with…",options:["Family loyalty","Money","Fame","Travel"],correct:"Family loyalty"},
+  {cat:"Romeo & Juliet – Balcony",q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"},
+
+  /* Lord of the Flies */
+  {cat:"Lord of the Flies",q:"What does the conch symbolise?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
+  {cat:"Lord of the Flies",q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
+  {cat:"Lord of the Flies",q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
+  {cat:"Lord of the Flies",q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
+  {cat:"Lord of the Flies",q:"The 'beast' ultimately represents…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
+  {cat:"Lord of the Flies",q:"Why do the boys paint their faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
+  {cat:"Lord of the Flies",q:"Shattering the conch means…",options:["Collapse of order","More equality","Festival","Rescue"],correct:"Collapse of order"},
+  {cat:"Lord of the Flies",q:"What keeps hope of rescue alive?",options:["Signal fire","Hunting","Shelters","Chanting"],correct:"Signal fire"},
+  {cat:"Lord of the Flies",q:"Who represents spiritual goodness?",options:["Simon","Roger","Jack","Samneric"],correct:"Simon"},
+  {cat:"Lord of the Flies",q:"'Lord of the Flies' (pig’s head) symbolises…",options:["Evil within","Royalty","Salvation","Wealth"],correct:"Evil within"},
+
+  /* Literary Devices */
+  {cat:"Literary Devices",q:"A 14-line poem with a set rhyme scheme is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
+  {cat:"Literary Devices",q:"'Eye of heaven' is a…",options:["Metaphor","Simile","Onomatopoeia","Pun"],correct:"Metaphor"},
+  {cat:"Literary Devices",q:"'Brawling love' (R&J) is an example of…",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
+  {cat:"Literary Devices",q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"},
+
+  /* Parts of Speech */
+  {cat:"Parts of Speech",q:"In 'The bright sun smiles', the word 'bright' is a…",options:["Adjective","Adverb","Noun","Verb"],correct:"Adjective"},
+  {cat:"Parts of Speech",q:"In 'She quickly ran', 'quickly' is an…",options:["Adverb","Adjective","Preposition","Interjection"],correct:"Adverb"}
 ];
 
-/* ===== Simple stats ===== */
-var KEY="g10_hub_v6";
+/* ===== Simple Stats ===== */
+var KEY="g10_hub_v7";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
@@ -387,9 +448,7 @@ function hmPart(n){hctx.strokeStyle="#fca311";hctx.lineWidth=4;
   if(n===5){hctx.beginPath();hctx.moveTo(260,182);hctx.lineTo(245,212);hctx.stroke();}
   if(n===6){hctx.beginPath();hctx.moveTo(260,182);hctx.lineTo(275,212);hctx.stroke();}}
 function hmDraw(m){hmGallows();for(var i=1;i<=m&&i<=6;i++)hmPart(i);}
-function hmKeyboard(){var kb=$("keyboard");kb.innerHTML="";"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(ch){
-  var b=document.createElement("button");b.className="key";b.textContent=ch;b.onclick=function(){hmGuess(ch)};kb.appendChild(b);
-});}
+function hmKeyboard(){var kb=$("keyboard");kb.innerHTML="";"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(ch){var b=document.createElement("button");b.className="key";b.textContent=ch;b.onclick=function(){hmGuess(ch)};kb.appendChild(b);});}
 function hmNew(){var pick=TERMS[Math.floor(Math.random()*TERMS.length)];hmWord=pick.w.toUpperCase();hmHint=pick.d;
   hmMask=hmWord.split("").map(function(c){return /[A-Z]/.test(c)?"_":c;}); hmLives=6; hmUsed={};
   $("slots").textContent=hmMask.join(" "); $("lives").textContent=hmLives; $("used").textContent="Used: —";
@@ -426,38 +485,26 @@ $("secInput").addEventListener("keydown",function(e){ if(e.key==="Enter" && secA
   if(g===secCurrent.w.toLowerCase()){secScore++;$("secScore").textContent=secScore; STATS.seconds.total++; var t=Date.now()-secStart; if(!STATS.seconds.fastest||t<STATS.seconds.fastest)STATS.seconds.fastest=t; saveStats(); refreshDash(); confetti("Correct!"); secNext();}
   else{ thumbsDown("Incorrect"); }}}); secReset();
 
-/* ===== Millionaire ===== */
+/* ===== Millionaire (with categories, theming, fanfare) ===== */
 var ladder=["R 1 000 000","R 500 000","R 250 000","R 125 000","R 64 000","R 32 000","R 16 000","R 8 000","R 4 000","R 2 000","R 1 000","R 500","R 300","R 200","R 100"];
 function buildLadder(){var ul=$("milLadder");ul.innerHTML="";for(var i=0;i<ladder.length;i++){var li=document.createElement("li");li.innerHTML="<span>"+(ladder.length-i)+"</span><span>"+ladder[i]+"</span>";ul.appendChild(li);} }
 buildLadder();
-var MILLION_Q=[
- {q:"What does the conch symbolise in Lord of the Flies?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
- {q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
- {q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
- {q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
- {q:"The 'beast' is ultimately…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
- {q:"Why do the boys paint faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
- {q:"The shattering of the conch means…",options:["Collapse of order","More equality","Festival","Rescue"],correct:"Collapse of order"},
- {q:"A 14-line poem is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
- {q:"'Eye of heaven' is a…",options:["Metaphor for the sun","Pun","Alliteration","Euphemism"],correct:"Metaphor for the sun"},
- {q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
- {q:"Which house is Juliet from?",options:["Capulet","Montague","Escalus","Paris"],correct:"Capulet"},
- {q:"Which theme fits mob dances?",options:["Groupthink","Romantic love","Wealth","Pastoral"],correct:"Groupthink"},
- {q:"What keeps hope of rescue alive?",options:["Signal fire","Hunting","Shelters","Chanting"],correct:"Signal fire"},
- {q:"Who represents spiritual goodness?",options:["Simon","Roger","Jack","Samneric"],correct:"Simon"},
- {q:"'Lord of the Flies' (pig’s head) symbolises…",options:["Evil within","Royalty","Salvation","Wealth"],correct:"Evil within"}
-];
-var milIndex=0,milSet=[],milUsed5050=false,milUsedSkip=false,milActive=false;
+var milIndex=0,milSet=[],milUsed5050=false,milUsedSkip=false,milActive=false, milCat="";
 function setLadderActive(){var items=[].slice.call($("milLadder").children);items.forEach(function(li){li.classList.remove("active")});var pos=ladder.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
-function milPrepare(){milIndex=0;milSet=MILLION_Q.slice().sort(function(){return Math.random()-0.5;}).slice(0,15);milUsed5050=false;milUsedSkip=false;milActive=true;$("milStep").textContent="1";$("milFeedback").textContent="";$("mil5050").disabled=false;$("milSkip").disabled=false;milRender();}
-function milRender(){var q=milSet[milIndex];$("milQ").innerHTML=q.q;var w=$("milOpts");w.innerHTML="";q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt,i){var b=document.createElement("button");b.dataset.opt=opt;b.innerHTML="<span style='opacity:.8'>"+String.fromCharCode(65+i)+")</span> "+opt;b.onclick=function(){milCheck(opt,b)};w.appendChild(b);});setLadderActive();}
+function applyTheme(cat){ milCat=cat||"—"; $("milCat").textContent=milCat; var col=CAT_COLORS[milCat]||"#8a5cff"; document.documentElement.style.setProperty("--theme",col); $("milDot").style.background=col; }
+function milPrepare(){milIndex=0;milSet=MCQ.slice().sort(function(){return Math.random()-0.5;}).slice(0,15);milUsed5050=false;milUsedSkip=false;milActive=true;$("milStep").textContent="1";$("milFeedback").textContent="";$("mil5050").disabled=false;$("milSkip").disabled=false;applyTheme(milSet[0].cat);fanfare();milRender();}
+function milRender(){var q=milSet[milIndex]; if(q.cat!==milCat) applyTheme(q.cat);
+  $("milQ").innerHTML=q.q; var w=$("milOpts"); w.innerHTML="";
+  q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt,i){var b=document.createElement("button");b.dataset.opt=opt;b.innerHTML="<span style='opacity:.8'>"+String.fromCharCode(65+i)+")</span> "+opt;b.onclick=function(){milCheck(opt,b)};w.appendChild(b);});
+  setLadderActive();
+}
 function milCheck(choice,btn){var q=milSet[milIndex],buttons=[].slice.call($("milOpts").querySelectorAll("button"));buttons.forEach(function(b){b.disabled=true;});
   STATS.million.answered++; if(choice===q.correct){STATS.million.correct++; btn.style.borderColor= "#2ecc71"; confetti("Correct!");
     milIndex++; STATS.million.best=Math.max(STATS.million.best,milIndex); saveStats(); refreshDash();
     if(milIndex>=milSet.length){$("milFeedback").innerHTML="🏆 <b>Well done!</b>"; milActive=false; return;}
     $("milStep").textContent=String(milIndex+1); setTimeout(milRender,380);
   }else{ btn.style.borderColor="#ff4d6d"; thumbsDown("Incorrect"); var cbtn=buttons.filter(function(b){return b.dataset.opt===q.correct;})[0]; if(cbtn)cbtn.style.borderColor="#2ecc71";
-    $("milFeedback").innerHTML="Correct answer: <b>"+q.correct+"</b>"; milActive=false; saveStats(); refreshDash();
+    $("milFeedback").innerHTML="Category: <b>"+q.cat+"</b> — Answer: <b>"+q.correct+"</b>"; milActive=false; saveStats(); refreshDash();
   }}
 $("milStart").onclick=milPrepare;
 $("mil5050").onclick=function(){if(milUsed5050)return;milUsed5050=true;this.disabled=true;var q=milSet[milIndex],buttons=[].slice.call($("milOpts").querySelectorAll("button"));buttons.filter(function(b){return b.dataset.opt!==q.correct;}).sort(function(){return Math.random()-0.5;}).slice(0,2).forEach(function(b){b.disabled=true;b.style.opacity=.4;});};
@@ -472,21 +519,73 @@ $("studySearch").addEventListener("input",filterStudy); $("studyReset").onclick=
 function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(function(n){return !filter||filter==="All"||n.type===filter;}).forEach(function(n){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
 $("lotfAll").onclick=function(){lotfRender("All")}; $("lotfPlot").onclick=function(){lotfRender("Plot")}; $("lotfThemes").onclick=function(){lotfRender("Themes")}; $("lotfChars").onclick=function(){lotfRender("Characters")}; $("lotfSymbol").onclick=function(){lotfRender("Symbolism")}; $("lotfPrint").onclick=function(){window.print();}; lotfRender("All");
 
-function buildShQA(){var wrap=$("shQA");wrap.innerHTML="";SHAKESPEARE_QA.forEach(function(sec){var h=document.createElement("h3");h.textContent=sec.section;wrap.appendChild(h);sec.items.forEach(function(it){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";var btn=card.querySelector(".btnShow"),ans=card.querySelector(".qa");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});wrap.appendChild(card);});});}
-function buildShMCQ(){var box=$("shMCQ");box.innerHTML="";TOPIC_TEST_MCQ.forEach(function(q,i){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";var opts=q.options.map(function(o,ix){return "<div>"+String.fromCharCode(65+ix)+") "+o+"</div>";}).join("");card.innerHTML="<div><b>Q"+(i+1)+". "+q.q+"</b></div><div style='margin-top:6px'>"+opts+"</div><div class='ans' style='display:none;margin-top:6px'><b>Answer:</b> "+q.correct+"</div><div class='row' style='margin-top:8px'><button class='btn secondary showAns'>Show Answer</button></div>";var btn=card.querySelector(".showAns"),ans=card.querySelector(".ans");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});box.appendChild(card);});}
-$("shExpandAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans")).forEach(function(a){a.style.display="block"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns")).forEach(function(b){b.textContent="Hide Answer"});};
-$("shCollapseAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans")).forEach(function(a){a.style.display="none"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns")).forEach(function(b){b.textContent="Show Answer"});};
-$("shPrint").onclick=function(){window.print();}; buildShQA(); buildShMCQ();
+/* Shakespeare: Study Q&A + MCQ Practice + Short Answer */
+var SHAKESPEARE_QA=[
+ {section:"POETRY — Sonnet 18",items:[
+   {q:"What scene starts the poem?",a:"A summer’s day compared to the beloved."},
+   {q:"Identify 'the eye of heaven'.",a:"Metaphor/personification for the sun."},
+   {q:"Meaning of 'summer’s lease'?",a:"Summer is temporary; a fixed term that ends."},
+   {q:"What happens at the volta (line 9)?",a:"Turns to the beloved’s 'eternal summer' preserved by verse."},
+   {q:"Explain 'So long lives this…' in your own words.",a:"As long as the poem lasts, it keeps the beloved alive."}
+ ]},
+ {section:"DRAMA — Romeo & Juliet (Balcony/Theme)",items:[
+   {q:"Paraphrase 'Wherefore art thou Romeo?'",a:"Why must you be Romeo (a Montague) — not 'Where are you?'."},
+   {q:"What conflict drives the scene?",a:"Love versus family identity/feud."},
+   {q:"'I’ll be new baptised' shows what about Romeo?",a:"Impulsive, willing to change his name for love."},
+   {q:"How does the scene push the plot?",a:"Their decision for secret love speeds the tragedy."}
+ ]}
+];
+function buildShQA(){
+  var wrap=$("shQA");wrap.innerHTML="";
+  SHAKESPEARE_QA.forEach(function(sec){
+    var h=document.createElement("h3");h.textContent=sec.section;wrap.appendChild(h);
+    sec.items.forEach(function(it){
+      var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";
+      card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";
+      var btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa");
+      btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
+      wrap.appendChild(card);
+    });
+  });
+}
+function buildShMCQ(){
+  var box=$("shMCQ");box.innerHTML="";
+  MCQ.forEach(function(q,i){
+    var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";
+    var opts=q.options.map(function(o,ix){return "<div>"+String.fromCharCode(65+ix)+") "+o+"</div>";}).join("");
+    var tag="<div class='pill' style='display:inline-flex;gap:8px;align-items:center;margin-bottom:6px'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>";
+    card.innerHTML= tag+"<div><b>Q"+(i+1)+". "+q.q+"</b></div><div style='margin-top:6px'>"+opts+"</div><div class='ans' style='display:none;margin-top:6px'><b>Answer:</b> "+q.correct+"</div><div class='row' style='margin-top:8px'><button class='btn secondary showAns'>Show Answer</button></div>";
+    var btn=card.querySelector(".showAns"), ans=card.querySelector(".ans");
+    btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
+    box.appendChild(card);
+  });
+}
+function buildShSA(){
+  var box=$("shSA"); box.innerHTML="";
+  SHAKESPEARE_SA.forEach(function(sec){
+    var tag=document.createElement("div"); tag.className="pill"; tag.style.margin="6px 0"; tag.textContent=sec.section; box.appendChild(tag);
+    sec.items.forEach(function(it){
+      var card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";
+      card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";
+      var btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa");
+      btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
+      box.appendChild(card);
+    });
+  });
+}
+$("shExpandAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans, #shSA .qa")).forEach(function(a){a.style.display="block"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns, #shSA .btnShow")).forEach(function(b){b.textContent="Hide Answer"});};
+$("shCollapseAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans, #shSA .qa")).forEach(function(a){a.style.display="none"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns, #shSA .btnShow")).forEach(function(b){b.textContent="Show Answer"});};
+$("shPrint").onclick=function(){window.print();};
+buildShQA(); buildShMCQ(); buildShSA();
 
-/* ===== ROAD RAGE (3 lanes, narrower road, boosts to 250 m/s) ===== */
+/* ===== ROAD RAGE (3 lanes, narrower road, lives & crashes) ===== */
 var RoadRage=(function(){
   var cvs=$("drvCanvas"), ctx=cvs.getContext("2d"), DPR=1, W=360, H=540;
-  var lanes=3;                      // exactly 3 lanes
-  var roadMargin=0.24;              // narrower road (more side margin)
-  var laneX=[], dashes=[], pxBase=220, pxPerSec=220;
+  var lanes=3, roadMargin=0.24, laneX=[], dashes=[], pxBase=220, pxPerSec=220;
   var running=false, last=0, meters=0, speed=50, nextCP=500, score=0;
   var pickup=null, obstacles=[], boosts=[];
-  var player={lane:1,y:0,color:"#00f5d4"};
+  var lives=3, respawn=false, respawnTimer=null;
+  var player={lane:1,y:0,color:"#00f5d4",visible:true};
 
   function dprScale(){
     var cssW=Math.min(520, Math.floor(window.innerWidth*0.94));
@@ -496,12 +595,10 @@ var RoadRage=(function(){
     W = cssW; H = cssH;
     cvs.width=Math.floor(cssW*DPR); cvs.height=Math.floor(cssH*DPR);
     ctx.setTransform(DPR,0,0,DPR,0,0);
-    // lanes
     var left=W*roadMargin, right=W*(1-roadMargin), inner=right-left;
     laneX=[]; for(var i=0;i<lanes;i++){ laneX.push(left+inner*((i+0.5)/lanes)); }
-    // dashes
     dashes=[]; for(var y=0;y<H;y+=60){dashes.push({y:y});}
-    pxBase = H/2.6;                 // base scroll (scaled with speed below)
+    pxBase = H/2.6;
     player.y=Math.floor(H*0.86);
     draw();
   }
@@ -515,57 +612,64 @@ var RoadRage=(function(){
     ctx.fillStyle="#0a0f21";ctx.fillRect(0,0,W,H);
     var left=W*roadMargin,right=W*(1-roadMargin);
     ctx.fillStyle="#0f1837";ctx.fillRect(left,0,right-left,H);
-    // center line
     ctx.strokeStyle="#cfe7ff";ctx.setLineDash([12,12]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo((left+right)/2,0);ctx.lineTo((left+right)/2,H);ctx.stroke();ctx.setLineDash([]);
-    // road bands (speed feel)
     ctx.strokeStyle="#fca311";ctx.lineWidth=6;for(var i=0;i<dashes.length;i++){ctx.beginPath();ctx.moveTo(left+20,dashes[i].y);ctx.lineTo(right-20,dashes[i].y);ctx.stroke();}
-    // collections
     for(i=0;i<obstacles.length;i++){var ob=obstacles[i];if(ob.type==="cone")drawCone(laneX[ob.lane],ob.y);else drawCar(laneX[ob.lane],ob.y,"#ffffff");}
     for(i=0;i<boosts.length;i++){drawBoost(laneX[boosts[i].lane],boosts[i].y);}
     if(pickup){drawCar(laneX[pickup.lane], pickup.y, "#9ad0ff");}
-    // player
-    drawCar(laneX[player.lane],player.y,player.color);
+    if(player.visible) drawCar(laneX[player.lane],player.y,player.color);
   }
 
   function reset(){
-    meters=0;nextCP=500;score=0;pickup=null;obstacles=[];boosts=[];player.lane=1;speed=50;
-    $("drvDist").textContent=0;$("drvScore").textContent=0;$("drvSpeed").textContent=speed;
-    dprScale();draw();
+    meters=0;nextCP=500;score=0;pickup=null;obstacles=[];boosts=[];player.lane=1;speed=50;lives=3;player.visible=true;respawn=false;
+    $("drvDist").textContent=0;$("drvScore").textContent=0;$("drvSpeed").textContent=speed;$("drvLives").textContent=lives;
+    $("drvGameOver").style.display="none"; dprScale();draw();
   }
 
   function update(ts){
     if(!running){last=ts;return;}
     var dt=(ts-last)/1000; last=ts;
 
-    pxPerSec = pxBase * (speed/50);     // visual speed scales with actual speed
-
-    // scroll lines
+    pxPerSec = pxBase * (speed/50);
     for(var i=0;i<dashes.length;i++){dashes[i].y+=pxPerSec*dt; if(dashes[i].y>H)dashes[i].y-=H;}
-
     meters += speed*dt; $("drvDist").textContent=Math.floor(meters); $("drvSpeed").textContent=Math.floor(speed);
 
-    // spawn pickups / boosts / obstacles
     if(!pickup && Math.random()<0.010){pickup={lane:Math.floor(Math.random()*lanes),y:-60};}
     if(Math.random()<0.018){obstacles.push({lane:Math.floor(Math.random()*lanes),y:-30,type:Math.random()<0.6?"cone":"car"});}
     if(Math.random()<0.012){boosts.push({lane:Math.floor(Math.random()*lanes),y:-40});}
 
-    // move
     if(pickup){pickup.y+=pxPerSec*0.9*dt; if(pickup.y>H+60)pickup=null;}
     for(i=obstacles.length-1;i>=0;i--){obstacles[i].y+=pxPerSec*dt; if(obstacles[i].y>H+40)obstacles.splice(i,1);}
     for(i=boosts.length-1;i>=0;i--){boosts[i].y+=pxPerSec*dt; if(boosts[i].y>H+40)boosts.splice(i,1);}
 
-    // collisions
-    if(pickup && pickup.lane===player.lane && Math.abs(pickup.y-player.y)<40){running=false; showQuestion(true); pickup=null;}
-    for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(ob2.lane===player.lane && Math.abs(ob2.y-player.y)<40){obstacles.splice(i,1); score=Math.max(0,score-50); $("drvScore").textContent=score; thumbsDown("Obstacle hit −50"); meters=Math.max(0,meters-50); }}
-    for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(b.lane===player.lane && Math.abs(b.y-player.y)<40){boosts.splice(i,1); speed=Math.min(250, speed+50); $("drvSpeed").textContent=Math.floor(speed); toast("⚡ Speed +50 → "+Math.floor(speed)+" m/s"); beep("ok"); }}
+    if(!respawn){
+      if(pickup && pickup.lane===player.lane && Math.abs(pickup.y-player.y)<40){running=false; showQuestion(true); pickup=null;}
+      for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(ob2.lane===player.lane && Math.abs(ob2.y-player.y)<40){crash(); obstacles.splice(i,1); break;}}
+      for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(b.lane===player.lane && Math.abs(b.y-player.y)<40){boosts.splice(i,1); speed=Math.min(250, speed+50); $("drvSpeed").textContent=Math.floor(speed); toast("⚡ Speed +50 → "+Math.floor(speed)+" m/s"); beep("ok"); }}
+    }
 
     if(meters>=nextCP){running=false;showQuestion(false);nextCP+=500;}
     draw(); requestAnimationFrame(update);
   }
 
+  function crash(){
+    lives--; $("drvLives").textContent=lives; thumbsDown("Crashed! −1 life");
+    player.visible=false; respawn=true; speed=Math.max(50, speed-50);
+    if(lives<=0){ gameOver(); return; }
+    if(respawnTimer) clearTimeout(respawnTimer);
+    respawnTimer=setTimeout(function(){ player.visible=true; respawn=false; }, 1000);
+  }
+
+  function gameOver(){
+    running=false; player.visible=false; $("drvGameOver").style.display="flex";
+    STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash();
+  }
+
   function showQuestion(bonus){
     var overlay=$("drvOverlay"); overlay.style.display="flex";
-    var q=TOPIC_TEST_MCQ[Math.floor(Math.random()*TOPIC_TEST_MCQ.length)]; $("drvQ").textContent=(bonus?"Bonus — ":"")+q.q;
+    var q=MCQ[Math.floor(Math.random()*MCQ.length)];
+    document.documentElement.style.setProperty("--theme", CAT_COLORS[q.cat]||"#8a5cff");
+    $("drvQ").innerHTML="<div class='pill' style='margin-bottom:6px;display:inline-flex;gap:8px;align-items:center'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>"+q.q;
     var box=$("drvOpts"); box.innerHTML="";
     q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt){
       var btn=document.createElement("button"); btn.className="btn secondary"; btn.textContent=opt;
@@ -579,7 +683,7 @@ var RoadRage=(function(){
   }
 
   function left(){player.lane=Math.max(0,player.lane-1);draw();beep("open");}
-  function right(){player.lane=Math.min(2,player.lane+1);draw();beep("open");} // 3 lanes → index 0..2
+  function right(){player.lane=Math.min(2,player.lane+1);draw();beep("open");}
   $("drvLeft").addEventListener("touchstart",function(e){e.preventDefault();left();}); $("drvRight").addEventListener("touchstart",function(e){e.preventDefault();right();});
   $("drvLeft").addEventListener("click",left); $("drvRight").addEventListener("click",right);
   var sx=null; cvs.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;});
