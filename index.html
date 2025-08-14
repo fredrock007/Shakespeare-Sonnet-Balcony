@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-store, max-age=0" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grade 10 Vocabulary Games Hub — Guest Mode</title>
+<title>Grade 10 Vocabulary Games Hub — Neon Edition</title>
 <style>
   :root{
     --bg:#070b1a; --panel:rgba(14,18,36,.72); --glass:rgba(20,26,55,.55);
@@ -13,20 +16,21 @@
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% -10%,#102153 0,#0c1736 30%,#070b1a 65%) fixed;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
   .wrap{max-width:1220px;margin:0 auto;padding:20px}
-  header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  header{position:relative;display:flex;align-items:center;gap:10px;margin-bottom:14px}
   .brand{font-weight:900;font-size:24px;letter-spacing:.5px}
   .neon{background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
   .tabs{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
   .tab-btn{border:1px solid rgba(255,255,255,.08);padding:10px 14px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:var(--text);cursor:pointer}
   .tab-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);font-weight:800;box-shadow:0 0 24px rgba(0,245,212,.25)}
   .badge{background:linear-gradient(90deg,var(--accent3),var(--accent2));padding:6px 10px;border-radius:999px;font-size:12px}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,.2)}
   .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#101a34;border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px}
   .btn{border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);box-shadow:0 6px 22px rgba(138,92,255,.25)}
   .btn.secondary{color:#cfe7ff;background:linear-gradient(180deg,#1b2546 0,#121c3a 100%);border:1px solid rgba(255,255,255,.08)}
   .btn.warn{color:#130a00;background:linear-gradient(180deg,#ffd166 0,var(--accent4) 100%)}
   .btn:disabled{opacity:.6;cursor:not-allowed}
   .card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 10px 40px rgba(0,0,0,.35),0 0 50px rgba(138,92,255,.05);backdrop-filter:blur(8px)}
-  .flex{display:flex;gap:16px;flex-wrap:wrap}.grow{flex:1 1 360px}
+  .flex{display:flex;gap:16px;flex-wrap:wrap}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grow{flex:1 1 360px}
   .muted{color:var(--muted)} .big{font-size:18px}
   .grid-2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
   @media (max-width:980px){.grid-2{grid-template-columns:1fr}}
@@ -71,16 +75,33 @@
   th,td{border:1px solid rgba(255,255,255,.08);padding:8px;vertical-align:top}
   th{background:linear-gradient(180deg,#0f1837,#0b1230)}
 
-  /* Toast */
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.12);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none}
+  /* Toast + Student panel */
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.12);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none;z-index:100}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+  .student-panel{position:absolute;right:8px;top:56px;display:none;width:320px;z-index:20}
+  .field{display:flex;flex-direction:column;gap:6px;flex:1}
+  label{font-size:12px;color:#cfdcff}
+  select,input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="brand">Grade 10 <span class="neon">Vocabulary Games Hub</span></div>
-    <span class="badge">Guest Mode — no login</span>
+    <span id="studentBadge" class="badge">Guest Mode</span>
+    <button id="btnStudent" class="tab-btn ghost">Set Student</button>
+    <div id="studentPanel" class="card student-panel">
+      <div class="muted" style="margin-bottom:6px">Optional — doesn’t block the games.</div>
+      <div class="field"><label>Name</label><input id="stName" type="text" placeholder="e.g., Sizwe"></div>
+      <div class="field"><label>Surname</label><input id="stSurname" type="text" placeholder="e.g., Mokoena"></div>
+      <div class="field"><label>Class</label>
+        <select id="stClass"><option>10A</option><option>10B</option><option>10C</option></select>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button id="stSave" class="btn">Save</button>
+        <button id="stClose" class="btn secondary">Close</button>
+      </div>
+    </div>
     <div class="tabs">
       <button class="tab-btn active" data-tab="dash">Dashboard</button>
       <button class="tab-btn" data-tab="hangman">Hangman</button>
@@ -94,7 +115,7 @@
   <section id="dash" class="card">
     <div class="grid-2">
       <div class="card" style="background:linear-gradient(180deg,#0c1430,#0a1126);">
-        <div class="flex" style="align-items:center">
+        <div class="row">
           <div class="avatar" id="avatar">G</div>
           <div>
             <div class="muted">Student</div>
@@ -102,15 +123,15 @@
             <div id="d_class" class="muted">—</div>
           </div>
         </div>
-        <div class="flex" style="margin-top:10px">
-          <button class="btn secondary" id="btnResetStats">Reset Device Stats</button>
+        <div class="row" style="margin-top:10px">
+          <button class="btn secondary" id="btnResetStats">Reset My Stats</button>
           <button class="btn" id="btnQuickPlay">Jump into Hangman</button>
         </div>
       </div>
 
       <div class="card">
         <div class="muted">Notes</div>
-        <div class="big">Everything runs without login. Scores and leaderboards save on this device only.</div>
+        <div class="big">No login wall. If you set student details, they’re saved to this device and appear on the leaderboard.</div>
       </div>
     </div>
 
@@ -127,9 +148,9 @@
 
     <div class="grid-2" style="margin-top:14px">
       <div class="card">
-        <div class="flex" style="justify-content:space-between;align-items:center">
+        <div class="row" style="justify-content:space-between;align-items:center">
           <h3 style="margin:0">Class Leaderboard (Device)</h3>
-          <span id="lbClassLabel" class="pill">Guest</span>
+          <span id="lbClassLabel" class="pill">—</span>
         </div>
         <ol id="lbClass" class="lb"></ol>
       </div>
@@ -148,13 +169,13 @@
         <canvas id="hmCanvas" width="430" height="280" aria-label="Hangman drawing"></canvas>
       </div>
       <div class="grow">
-        <div class="flex">
+        <div class="row">
           <span class="pill">Lives: <span id="lives" class="lives">6</span></span>
           <span class="pill">Wins: <span id="wins">0</span></span>
         </div>
         <div id="slots" class="slots">_ _ _ _ _</div>
         <div id="used" class="muted">Used: —</div>
-        <div class="flex" style="margin-top:8px">
+        <div class="row" style="margin-top:8px">
           <button id="btnHint" class="btn secondary">Show Hint</button>
           <button id="btnNew" class="btn">New Word</button>
           <button id="btnReveal" class="btn warn">Reveal</button>
@@ -168,22 +189,27 @@
 
   <!-- 30 SECONDS -->
   <section id="seconds" class="card" style="display:none">
-    <div class="flex" style="justify-content:space-between;align-items:center">
+    <div class="row" style="justify-content:space-between;align-items:center">
       <div class="pill">Round Score: <span id="secScore">0</span></div>
-      <div class="flex" style="gap:10px;align-items:center">
+      <div class="row" style="gap:10px;align-items:center">
         <svg id="hourglass" viewBox="0 0 100 160" class="hourglass" aria-label="Timer hourglass">
-          <defs><clipPath id="clipTop"><polygon points="20,20 80,20 50,80"/></clipPath><clipPath id="clipBottom"><polygon points="20,140 80,140 50,80"/></clipPath></defs>
+          <defs>
+            <clipPath id="clipTop"><polygon points="20,20 80,20 50,80"/></clipPath>
+            <clipPath id="clipBottom"><polygon points="20,140 80,140 50,80"/></clipPath>
+          </defs>
           <rect id="hgTop" x="20" y="20" width="60" height="60" fill="#fca311" clip-path="url(#clipTop)"/>
           <rect id="hgBottom" x="20" y="140" width="60" height="0" fill="#fca311" clip-path="url(#clipBottom)"/>
           <rect id="hgStream" x="48.5" y="78" width="3" height="0" fill="#fca311" visibility="hidden"/>
           <polygon points="20,20 80,20 50,80 20,140 80,140 50,80" fill="none" stroke="#cfe7ff" stroke-width="4"/>
-          <rect x="15" y="10" width="70" height="8" fill="#cfe7ff"/><rect x="15" y="142" width="70" height="8" fill="#cfe7ff"/>
-        </svg><span id="secTime" class="sr-only">30</span>
+          <rect x="15" y="10" width="70" height="8" fill="#cfe7ff"/>
+          <rect x="15" y="142" width="70" height="8" fill="#cfe7ff"/>
+        </svg>
+        <span id="secTime" class="sr-only">30</span>
       </div>
     </div>
     <div id="defBox" class="def-box" style="margin:10px 0 8px"></div>
     <input id="secInput" type="text" placeholder="Type the word here…" autocomplete="off" />
-    <div class="flex" style="margin-top:10px">
+    <div class="row" style="margin-top:10px">
       <button id="secStart" class="btn">Start 30-second Round</button>
       <button id="secSkip" class="btn secondary" disabled>Skip</button>
       <button id="secGive" class="btn warn" disabled>Give Answer</button>
@@ -197,9 +223,9 @@
   <section id="million" class="card" style="display:none">
     <div class="grid-2">
       <div>
-        <div class="flex" style="justify-content:space-between;align-items:center">
+        <div class="row" style="justify-content:space-between;align-items:center">
           <div class="pill">Question <span id="milStep">1</span>/15</div>
-          <div class="flex">
+          <div class="row">
             <button id="mil5050" class="btn secondary">50:50</button>
             <button id="milSkip" class="btn secondary">Skip</button>
             <button id="milQuit" class="btn warn">Quit</button>
@@ -208,7 +234,7 @@
         <div id="milQ" class="def-box" style="margin-top:10px;font-weight:700"></div>
         <div class="opt" id="milOpts" style="margin-top:10px"></div>
         <div id="milFeedback" class="big" style="margin-top:10px"></div>
-        <div class="flex" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <button id="milStart" class="btn">Start New Game</button>
         </div>
       </div>
@@ -226,9 +252,11 @@
 
     <!-- Vocabulary -->
     <div id="studyVocab">
-      <div class="flex"><input id="studySearch" type="text" placeholder="Search word/definition/example…" />
+      <div class="row">
+        <input id="studySearch" type="text" placeholder="Search word/definition/example…" />
         <button id="studyReset" class="btn secondary">Clear</button>
-        <button id="studyPrint" class="btn">Print</button></div>
+        <button id="studyPrint" class="btn">Print</button>
+      </div>
       <div style="overflow:auto; max-height:60vh; margin-top:8px">
         <table id="studyTable"><thead><tr><th style="width:18%">Word</th><th style="width:37%">Definition</th><th>Example sentence</th></tr></thead><tbody></tbody></table>
       </div>
@@ -237,7 +265,7 @@
 
     <!-- Lord of the Flies -->
     <div id="lotf" style="display:none">
-      <div class="flex">
+      <div class="row">
         <button id="lotfFilterAll" class="btn secondary">All</button>
         <button id="lotfFilterPlot" class="btn secondary">Plot</button>
         <button id="lotfFilterThemes" class="btn secondary">Themes</button>
@@ -262,7 +290,7 @@
         </ul>
       </div>
       <div id="shQA" style="max-height:60vh; overflow:auto;"></div>
-      <div class="flex" style="margin-top:8px">
+      <div class="row" style="margin-top:8px">
         <button id="shExpandAll" class="btn secondary">Expand all answers</button>
         <button id="shCollapseAll" class="btn secondary">Collapse all</button>
         <button id="shPrint" class="btn">Print</button>
@@ -274,9 +302,31 @@
 <div class="toast" id="toast">Saved</div>
 
 <script>
-/* ---------- utils & audio ---------- */
+/* ---------- audio (OK/WRONG/TIME + UI sounds) ---------- */
 let AC;
-function beep(type="ok"){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);const n=AC.currentTime;const P={ok:660,wrong:200,win:880,lose:120,time:300}[type]||500;o.frequency.setValueAtTime(P,n);g.gain.setValueAtTime(.001,n);g.gain.exponentialRampToValueAtTime(.2,n+.02);g.gain.exponentialRampToValueAtTime(.001,n+.24);o.type=type==="win"?"triangle":"sine";o.start(n);o.stop(n+.26);}catch(e){}}
+function tone(f=500,d=0.12,type="sine",g=0.15){
+  try{
+    AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(), v=AC.createGain();
+    o.type=type; o.frequency.value=f; o.connect(v); v.connect(AC.destination);
+    const t=AC.currentTime; v.gain.setValueAtTime(0.0001,t);
+    v.gain.exponentialRampToValueAtTime(g,t+0.01);
+    v.gain.exponentialRampToValueAtTime(0.0001,t+d);
+    o.start(t); o.stop(t+d+0.02);
+  }catch(e){}
+}
+function beep(kind="ui"){
+  const map={ ui:[420,0.09,"sine",0.12], open:[560,0.12,"triangle",0.14], ok:[660,0.18,"triangle",0.2],
+              wrong:[200,0.18,"sawtooth",0.2], win:[880,0.25,"triangle",0.22], lose:[120,0.25,"sine",0.22], time:[300,0.18,"sine",0.18] };
+  const [f,d,t,g]=map[kind]||map.ui; tone(f,d,t,g);
+}
+/* auto-hook UI click sounds */
+addEventListener("click",e=>{
+  const el=e.target;
+  if(el.closest("button") || el.closest(".tab-btn") || el.closest(".sub-btn")) beep("ui");
+});
+
+/* ---------- helpers ---------- */
 const $=id=>document.getElementById(id);
 const toast=msg=>{const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1200);};
 const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
@@ -313,18 +363,18 @@ const TERMS=[
 /* ---------- LOTF study notes ---------- */
 const LOTF_NOTES=[
   {type:"Plot", text:"A group of British schoolboys is stranded on a deserted island. Ralph, elected leader, prioritises rescue (signal fire). Jack focuses on hunting. The boys descend into fear and savagery, leading to the deaths of Simon and Piggy; a naval officer finally rescues them."},
-  {type:"Themes", text:"Civilisation vs Savagery; Loss of Innocence; Power & Leadership; Fear and the 'Beast'."},
-  {type:"Themes", text:"Groupthink & Mob Mentality: chanting, face paint, ritual hunts suppress individual morality."},
-  {type:"Characters", text:"Ralph — elected leader; values order and rescue; civilisation."},
-  {type:"Characters", text:"Piggy — intelligence/logic; glasses = science; killed by Roger."},
-  {type:"Characters", text:"Jack — authoritarian hunter; uses fear/punishment; savagery."},
-  {type:"Characters", text:"Simon — spiritual insight; realises the 'beast' is within; killed in frenzy."},
-  {type:"Characters", text:"Roger — sadist; kills Piggy with boulder."},
-  {type:"Symbolism", text:"Conch — law & order; shattering = end of democracy."},
-  {type:"Symbolism", text:"Signal Fire — hope of rescue; neglect = moral decline."},
-  {type:"Symbolism", text:"Piggy’s Glasses — knowledge/technology; power shifts when stolen."},
-  {type:"Symbolism", text:"Painted Faces — anonymity → savagery."},
-  {type:"Symbolism", text:"Lord of the Flies — evil within humanity."}
+  {type:"Themes", text:"Civilisation vs Savagery: the struggle between rule-based order and primal instinct; Loss of Innocence; Power & Leadership; Fear and the 'Beast'."},
+  {type:"Themes", text:"Groupthink & Mob Mentality: chanting, face paint, and ritual hunts suppress individual morality."},
+  {type:"Characters", text:"Ralph — elected leader; values order, shelters, and rescue; represents civilisation."},
+  {type:"Characters", text:"Piggy — intelligent, physically vulnerable; glasses = science/logic; killed by Roger."},
+  {type:"Characters", text:"Jack — charismatic hunter; uses fear/punishment; represents authoritarian power and savagery."},
+  {type:"Characters", text:"Simon — spiritual, kind; realises the 'beast' is within; killed in a frenzied ritual."},
+  {type:"Characters", text:"Roger — sadistic; enjoys cruelty; rolls the boulder that kills Piggy."},
+  {type:"Symbolism", text:"Conch — law, order, and equal speech; shatters with Piggy’s death (end of order)."},
+  {type:"Symbolism", text:"Signal Fire — hope of rescue; its neglect shows the boys’ moral decline."},
+  {type:"Symbolism", text:"Piggy’s Glasses — knowledge, science, ability to create fire; power shifts when stolen."},
+  {type:"Symbolism", text:"Painted Faces — anonymity; loss of individual responsibility; unleash savagery."},
+  {type:"Symbolism", text:"Lord of the Flies (pig’s head) — evil within; symbol of innate human darkness."}
 ];
 
 /* ---------- Millionaire questions (LotF + Shakespeare basics) ---------- */
@@ -351,51 +401,62 @@ const QUESTION_BANK=[
   {q:"Dramatic irony is when…",options:["Audience knows more than characters","Two words sound alike","A character talks to themselves","The setting is ironic"],correct:"Audience knows more than characters"}
 ];
 
-/* ---------- Shakespeare Q&A (exam-aligned) ---------- */
+/* ---------- Shakespeare Q&A (Topic-Test aligned: A 1.1–1.5; B 2.1–2.8) ---------- */
 const SHAKESPEARE_QA = [
   {section:"POETRY — Sonnet 18", items:[
-    {q:"1. To what is the beloved compared in line 1?", a:"A summer’s day."},
-    {q:"2. Identify the figure of speech in 'the eye of heaven' (line 5).", a:"Metaphor (the sun as an eye); also implies personification."},
-    {q:"3. Quote two consecutive words showing summer’s temporary nature.", a:"“summer’s lease”. It suggests a limited period."},
-    {q:"4. How does the speaker immortalise the beloved?", a:"Through 'eternal lines' of poetry—so long as men can breathe or eyes can see, the poem gives life."},
-    {q:"5. Explain the volta (turn) in line 9.", a:"Shift from summer’s flaws to the beloved’s 'eternal summer' that does not fade, thanks to verse."}
+    {q:"1.1 To whom is the subject compared in line 1?", a:"A summer’s day."},
+    {q:"1.2(a) Identify the figure of speech in 'the eye of heaven'.", a:"Metaphor (the sun compared to an eye); it also implies personification."},
+    {q:"1.2(b) Explain its effectiveness.", a:"It vividly suggests the sun’s intense 'gaze', making nature feel powerful and human-like; contrasts with the beloved’s steadiness."},
+    {q:"1.3 Quote two consecutive words showing summer’s temporary nature.", a:"“summer’s lease” — a lease ends; summer is brief."},
+    {q:"1.4 How does the speaker immortalise the subject?", a:"Through poetry — the 'eternal lines' ensure the beloved lives as long as people read."},
+    {q:"1.5 Who is the 'beloved' the speaker refers to? Briefly explain.", a:"The addressee the poet praises; identity unstated; represents idealised beauty/virtue preserved by verse."}
   ]},
   {section:"DRAMA — Romeo and Juliet (Balcony Scene focus)", items:[
-    {q:"1. Meaning of 'Wherefore art thou Romeo?'", a:"'Why are you Romeo (a Montague)?'—about his name/family, not his location."},
-    {q:"2. Identify Juliet’s central conflict.", a:"Love vs family loyalty/name; love clashes with the feud."},
-    {q:"3. 'I’ll be new baptized'—what does this reveal about Romeo?", a:"He is impulsive and passionate; willing to abandon his name for love."},
-    {q:"4. How does the scene develop the theme love vs loyalty?", a:"They question the meaning of names and prioritise love; leads to secrecy and haste."},
-    {q:"5. Friar Laurence’s view of Romeo’s sudden love?", a:"He cautions that Romeo is inconstant and urges moderation—'they stumble that run fast'."}
+    {q:"2.1 Meaning of 'Wherefore art thou Romeo?'", a:"Juliet asks WHY he must be Romeo (a Montague) — it’s about his name/family, not his location."},
+    {q:"2.2 Identify Juliet’s conflict here.", a:"Love for Romeo vs loyalty to her family name/feud."},
+    {q:"2.3 'I’ll be new baptized' — what does this reveal about Romeo?", a:"He is impulsive and passionate; willing to abandon his name/identity for love."},
+    {q:"2.4 How does the scene develop love vs family loyalty?", a:"They prioritise love over names, which leads to secrecy and haste, driving later conflict."},
+    {q:"2.5 Why is Friar Laurence surprised by Romeo’s request?", a:"Romeo suddenly switches from Rosaline to Juliet; the rapid change seems rash."},
+    {q:"2.6 What does this reveal about Romeo’s personality/behaviour?", a:"He is changeable and acts quickly on intense feelings."},
+    {q:"2.7 Is the Friar right to agree to help? Motivate your answer.", a:"Arguably unwise: though he hopes to end the feud, agreeing encourages secrecy and speed that contribute to tragedy."},
+    {q:"2.8 Compare Juliet’s and the Friar’s attitudes to Romeo’s impulsiveness.", a:"Juliet accepts the risk for love; the Friar is sceptical and urges moderation ('they stumble that run fast')."}
   ]}
 ];
 
-/* ---------- Tabs ---------- */
+/* ---------- tabs (with open sound) ---------- */
 document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   const t=b.dataset.tab;
   document.querySelectorAll("section").forEach(s=>s.style.display="none");
   $(t).style.display="";
+  beep("open");
 }));
 document.querySelectorAll(".sub-btn").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".sub-btn").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   const t=b.dataset.sub;
   ["studyVocab","lotf","shakespeare"].forEach(id=>$(id).style.display=(id===t)?"":"none");
+  beep("open");
 }));
 
-/* ---------- Guest stats (device only) ---------- */
-const KEY_PREFIX="g10_vg_guest_v1"; // new keyspace (no login)
-const currentStudent={name:"Guest",surname:"",class:""};
+/* ---------- student & stats (optional details; non-blocking) ---------- */
+const KEY_PREFIX="g10_vg_neon_v2"; // multiple students per device
+function studentId(s){return `${(s.class||'').toUpperCase()}-${(s.surname||'').trim().toLowerCase()}-${(s.name||'').trim().toLowerCase()}`||"guest";}
 function defaultStats(student){return{student,createdAt:Date.now(),merits:0,hangman:{wins:0},seconds:{totalCorrect:0,totalRounds:0,fastestCorrectMs:null},million:{bestStep:0,totalAnswered:0,totalCorrect:0}};}
-function loadStats(){const raw=localStorage.getItem(`${KEY_PREFIX}:stats`);return raw?JSON.parse(raw):defaultStats(currentStudent);}
-function saveStats(stats){localStorage.setItem(`${KEY_PREFIX}:stats`,JSON.stringify(stats));refreshDashboard();}
-let STATS=loadStats();
-$("btnResetStats").onclick=()=>{STATS=defaultStats(currentStudent);saveStats(STATS);refreshDashboard();toast("Device stats reset");};
-$("btnQuickPlay").onclick=()=>{document.querySelector('.tab-btn[data-tab="hangman"]').click();};
+function loadStatsFor(student){const id=studentId(student);const raw=localStorage.getItem(`${KEY_PREFIX}:${id}`);return raw?JSON.parse(raw):defaultStats(student);}
+function saveStats(stats){const id=studentId(stats.student);localStorage.setItem(`${KEY_PREFIX}:${id}`,JSON.stringify(stats));localStorage.setItem(`${KEY_PREFIX}:last`,JSON.stringify(stats.student));refreshDashboard();}
+function getLastStudent(){try{return JSON.parse(localStorage.getItem(`${KEY_PREFIX}:last`))}catch{return null}}
+function getAllStats(){const arr=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!k.startsWith(`${KEY_PREFIX}:`)||k.endsWith(":last"))continue;try{arr.push(JSON.parse(localStorage.getItem(k)));}catch{}}return arr;}
 
+let STATS = loadStatsFor(getLastStudent()||{name:"Guest",surname:"",class:""});
+function setStudentUI(s){ $("studentBadge").textContent=(s.name?`${s.name} ${s.surname} · ${s.class||'—'}`:"Guest Mode");
+  $("d_name").textContent=s.name?`${s.name} ${s.surname}`:"Guest"; $("d_class").textContent=s.class||"—";
+  const initials=(s.name?.[0]||"G")+(s.surname?.[0]||""); $("avatar").textContent=(initials||"G").toUpperCase();
+  $("lbClassLabel").textContent=s.class||"—";
+}
 function refreshDashboard(){
-  $("d_name").textContent="Guest"; $("d_class").textContent="—"; $("avatar").textContent="G";
+  setStudentUI(STATS.student);
   $("s_merits").textContent=STATS.merits;
   $("s_hm_wins").textContent=STATS.hangman.wins;
   $("s_30_total").textContent=STATS.seconds.totalCorrect;
@@ -406,15 +467,31 @@ function refreshDashboard(){
   const totalQ=(STATS.seconds.totalCorrect||0)+(STATS.million.totalAnswered||0);
   const acc=totalQ?Math.round(((STATS.seconds.totalCorrect+STATS.million.totalCorrect)/totalQ)*100):0;
   $("s_accuracy").textContent=acc+"%";
-  $("lbClassLabel").textContent="Guest";
   updateLeaderboards();
 }
-function getAllStats(){const raw=localStorage.getItem(`${KEY_PREFIX}:stats`);return raw?[JSON.parse(raw)]:[];}
 function scoreOf(s){return (s.merits||0)*100 + (s.million?.bestStep||0)*5 + (s.seconds?.totalCorrect||0)*2 + (s.hangman?.wins||0);}
 function renderLB(listEl, rows){listEl.innerHTML=""; if(rows.length===0){const li=document.createElement("li");li.innerHTML=`<span>No data yet</span><span>—</span>`;listEl.appendChild(li);return;}
-  rows.slice(0,5).forEach((r,idx)=>{const li=document.createElement("li");li.innerHTML=`<span>${idx+1}. Guest</span><span>${r.merits} merits · Step ${r.million.bestStep} · HM ${r.hangman.wins} · 30s ${r.seconds.totalCorrect}</span>`;listEl.appendChild(li);});
+  rows.slice(0,5).forEach((r,idx)=>{const nm=r.student.name?`${r.student.name} ${r.student.surname}`:"Guest";const li=document.createElement("li");li.innerHTML=`<span>${idx+1}. ${nm} <span class="pill">${r.student.class||"—"}</span></span><span>${r.merits} merits · Step ${r.million.bestStep} · HM ${r.hangman.wins} · 30s ${r.seconds.totalCorrect}</span>`;listEl.appendChild(li);});
 }
-function updateLeaderboards(){const all=getAllStats();all.sort((a,b)=>scoreOf(b)-scoreOf(a));renderLB($("lbGrade"),all);renderLB($("lbClass"),all);}
+function updateLeaderboards(){const all=getAllStats(); all.sort((a,b)=>scoreOf(b)-scoreOf(a)); renderLB($("lbGrade"), all); const cls=STATS.student.class?all.filter(s=>s.student.class===STATS.student.class):all; renderLB($("lbClass"), cls);}
+
+$("btnQuickPlay").onclick=()=>document.querySelector('.tab-btn[data-tab="hangman"]').click();
+$("btnResetStats").onclick=()=>{STATS=defaultStats(STATS.student);saveStats(STATS);toast("Stats reset");beep("open");};
+
+$("btnStudent").onclick=()=>{ // open panel
+  const s=STATS.student; $("stName").value=s.name||""; $("stSurname").value=s.surname||""; $("stClass").value=s.class||"10A";
+  $("studentPanel").style.display=""; beep("open");
+};
+$("stClose").onclick=()=>{$("studentPanel").style.display="none";};
+$("stSave").onclick=()=>{const s={name:$("stName").value.trim(),surname:$("stSurname").value.trim(),class:$("stClass").value.trim()}; if(!s.name||!s.surname){toast("Saved as Guest (name & surname optional)");}
+  // migrate current stats to new identity if changed
+  const old=STATS; const NEW=loadStatsFor(s.name? s : {name:"Guest",surname:"",class:""});
+  // If moving from guest to named, we keep progress by copying old totals when new profile is empty
+  if(NEW.merits===0 && NEW.hangman.wins===0 && NEW.seconds.totalCorrect===0 && NEW.million.totalAnswered===0){
+    NEW.merits=old.merits; NEW.hangman=old.hangman; NEW.seconds=old.seconds; NEW.million=old.million;
+  }
+  STATS=NEW; saveStats(STATS); $("studentPanel").style.display="none"; toast("Student saved"); beep("ok");
+};
 refreshDashboard();
 
 /* ---------- Hangman ---------- */
@@ -424,10 +501,10 @@ function drawGallows(){ctx.clearRect(0,0,cvs.width,cvs.height);ctx.strokeStyle="
 function drawStage(s){ctx.strokeStyle="#fca311";ctx.lineWidth=4;if(s===1){ctx.beginPath();ctx.arc(260,120,16,0,Math.PI*2);ctx.stroke();}if(s===2){ctx.beginPath();ctx.moveTo(260,136);ctx.lineTo(260,182);ctx.stroke();}if(s===3){ctx.beginPath();ctx.moveTo(260,146);ctx.lineTo(238,166);ctx.stroke();}if(s===4){ctx.beginPath();ctx.moveTo(260,146);ctx.lineTo(282,166);ctx.stroke();}if(s===5){ctx.beginPath();ctx.moveTo(260,182);ctx.lineTo(245,212);ctx.stroke();}if(s===6){ctx.beginPath();ctx.moveTo(260,182);ctx.lineTo(275,212);ctx.stroke();}}
 function drawByMistakes(m){drawGallows();for(let i=1;i<=m&&i<=6;i++)drawStage(i);}
 const drawKeyboard=()=>{const kb=$("keyboard");kb.innerHTML="";"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(k=>{const b=document.createElement("button");b.className="key";b.textContent=k;b.onclick=()=>guess(k);kb.appendChild(b);});};
-function newWord(){const {w,d}=TERMS[Math.floor(Math.random()*TERMS.length)];hmWord=w.toUpperCase();hmHint=d;hmMasked=hmWord.split("").map(ch=>/[A-Z]/.test(ch)?"_":ch);hmLives=6;hmUsed=new Set();$("slots").textContent=hmMasked.join(" ");$("lives").textContent=hmLives;$("used").textContent="Used: —";$("hint").style.display="none";$("hint").textContent="Hint: "+hmHint;$("result").textContent="";document.querySelectorAll(".key").forEach(k=>k.classList.remove("used"));drawByMistakes(0);}
-function reveal(){$("slots").textContent=hmWord.split("").join(" ");$("result").innerHTML=`Answer: <b>${hmWord}</b>`;}
+function newWord(){const {w,d}=TERMS[Math.floor(Math.random()*TERMS.length)];hmWord=w.toUpperCase();hmHint=d;hmMasked=hmWord.split("").map(ch=>/[A-Z]/.test(ch)?"_":ch);hmLives=6;hmUsed=new Set();$("slots").textContent=hmMasked.join(" ");$("lives").textContent=hmLives;$("used").textContent="Used: —";$("hint").style.display="none";$("hint").textContent="Hint: "+hmHint;$("result").textContent="";document.querySelectorAll(".key").forEach(k=>k.classList.remove("used"));drawByMistakes(0);beep("open");}
+function reveal(){$("slots").textContent=hmWord.split("").join(" ");$("result").innerHTML=`Answer: <b>${hmWord}</b>`;beep("open");}
 function guess(letter){if(hmLives<=0||hmUsed.has(letter))return;hmUsed.add(letter);document.querySelectorAll(".key").forEach(k=>{if(k.textContent===letter)k.classList.add("used");});$("used").textContent="Used: "+[...hmUsed].join(" ");if(hmWord.includes(letter)){hmWord.split("").forEach((ch,i)=>{if(ch===letter)hmMasked[i]=letter;});$("slots").textContent=hmMasked.join(" ");beep("ok");if(!hmMasked.includes("_")){$("result").innerHTML=`<span class="good">Great! You solved it.</span>`;hmWins++;$("wins").textContent=hmWins;STATS.hangman.wins++;saveStats(STATS);refreshDashboard();beep("win");toast("Win +1");}}else{hmLives--;$("lives").textContent=hmLives;drawByMistakes(6-hmLives);beep("wrong");if(hmLives<=0){$("result").innerHTML=`<span class="bad">Out of lives!</span> The word was <b>${hmWord}</b>.`;beep("lose");toast("Round over");}}}
-drawKeyboard();newWord();$("btnHint").onclick=()=>{$("hint").style.display=$("hint").style.display==="none"?"":"";};$("btnNew").onclick=()=>newWord();$("btnReveal").onclick=()=>reveal();
+drawKeyboard();newWord();$("btnHint").onclick=()=>{$("hint").style.display=$("hint").style.display==="none"?"":"none";beep("open");};$("btnNew").onclick=()=>newWord();$("btnReveal").onclick=()=>reveal();
 window.addEventListener("keydown",e=>{if($("hangman").style.display==="none")return;const L=e.key.toUpperCase();if(L>="A"&&L<="Z")guess(L);});
 
 /* ---------- 30 Seconds ---------- */
@@ -435,9 +512,9 @@ let secRoundActive=false,secTime=30,secTimer=null,secScore=0,secTotal=0,secQueue
 const secDuration=30;
 function updateHourglass(){const HG=60,prog=1-(secTime/secDuration),topH=(1-prog)*HG,bottomH=prog*HG;$("hgTop").setAttribute("height",topH.toFixed(2));$("hgBottom").setAttribute("y",(140-bottomH).toFixed(2));$("hgBottom").setAttribute("height",bottomH.toFixed(2));const stream=$("hgStream");if(secRoundActive&&secTime>0&&secTime<secDuration){const len=8+34*prog;stream.setAttribute("y",(80-len).toFixed(2));stream.setAttribute("height",len.toFixed(2));stream.setAttribute("visibility","visible");}else stream.setAttribute("visibility","hidden");}
 function secondsReset(){secRoundActive=false;secTime=secDuration;secScore=0;secQueue=shuffle(TERMS.slice());secCurrent=null;secQuestionStart=null;clearInterval(secTimer);$("secTime").textContent=secTime;$("secScore").textContent=0;$("secFeedback").textContent="";$("secInput").value="";$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("defBox").innerHTML="Press <b>Start 30-second Round</b> to begin.";updateHourglass();}
-function nextDefinition(){if(secQueue.length===0)secQueue=shuffle(TERMS.slice());secCurrent=secQueue.pop();$("defBox").innerHTML=`<b>Definition:</b> ${secCurrent.d}`;$("secInput").value="";$("secInput").focus();secQuestionStart=Date.now();}
-function startRound(){if(secRoundActive)return;secondsReset();secRoundActive=true;$("secInput").disabled=false;$("secSkip").disabled=false;$("secGive").disabled=false;nextDefinition();secTimer=setInterval(()=>{secTime--;$("secTime").textContent=secTime;updateHourglass();if(secTime<=0){endRound();beep("time");}},1000);}
-function endRound(){clearInterval(secTimer);secRoundActive=false;$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("secFeedback").innerHTML=`⏱️ Round over. You scored <b>${secScore}</b>.`;$("secLast").innerHTML="";STATS.seconds.totalRounds++;saveStats(STATS);refreshDashboard();toast("Round finished");updateHourglass();}
+function nextDefinition(){if(secQueue.length===0)secQueue=shuffle(TERMS.slice());secCurrent=secQueue.pop();$("defBox").innerHTML=`<b>Definition:</b> ${secCurrent.d}`;$("secInput").value="";$("secInput").focus();secQuestionStart=Date.now();beep("open");}
+function startRound(){if(secRoundActive)return;secondsReset();secRoundActive=true;$("secInput").disabled=false;$("secSkip").disabled=false;$("secGive").disabled=false;nextDefinition();secTimer=setInterval(()=>{secTime--;$("secTime").textContent=secTime;updateHourglass();if(secTime<=0){endRound();beep("time");}},1000);beep("open");}
+function endRound(){clearInterval(secTimer);secRoundActive=false;$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("secFeedback").innerHTML=`⏱️ Round over. You scored <b>${secScore}</b>.`;$("secLast").innerHTML="";STATS.seconds.totalRounds++;saveStats(STATS);refreshDashboard();toast("Round finished");beep("open");updateHourglass();}
 $("secStart").onclick=startRound;$("secSkip").onclick=()=>{if(!secRoundActive)return;$("secLast").innerHTML=`Skipped: <b>${secCurrent.w}</b>`;nextDefinition();};$("secGive").onclick=()=>{if(!secRoundActive)return;$("secLast").innerHTML=`Answer: <b>${secCurrent.w}</b>`;nextDefinition();};
 $("secInput").addEventListener("keydown",e=>{if(e.key==="Enter"){const g=e.target.value.trim().toLowerCase();if(!g)return;if(g===secCurrent.w.toLowerCase()){secScore++;secTotal++;$("secScore").textContent=secScore;$("secTotal").textContent=secTotal;$("secFeedback").innerHTML=`<span class="good">Correct!</span>`;beep("ok");if(secQuestionStart){const elapsed=Date.now()-secQuestionStart;const cur=STATS.seconds.fastestCorrectMs;if(!cur||elapsed<cur)STATS.seconds.fastestCorrectMs=elapsed;STATS.seconds.totalCorrect++;saveStats(STATS);refreshDashboard();}nextDefinition();}else{$("secFeedback").innerHTML=`<span class="bad">Try again.</span>`;beep("wrong");}}});
 secondsReset();
@@ -447,7 +524,7 @@ const ladderValues=["R 1 000 000","R 500 000","R 250 000","R 125 000","R 64 000"
 let milIndex=0,milUsed5050=false,milUsedSkip=false,milActive=false,milQSet=[],milHalfMeritGiven=false,milFinishMeritGiven=false;
 function buildLadder(){const ul=$("milLadder");ul.innerHTML="";ladderValues.forEach((v,i)=>{const li=document.createElement("li");const step=ladderValues.length-i;li.innerHTML=`<span>${step}</span><span>${v}</span>`;ul.appendChild(li);});}
 function highlightLadder(){const items=[...$("milLadder").children];items.forEach(li=>li.classList.remove("active"));const pos=ladderValues.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
-function prepareGame(){milIndex=0;milUsed5050=false;milUsedSkip=false;milActive=false;milHalfMeritGiven=false;milFinishMeritGiven=false;$("milFeedback").textContent="";$("milStep").textContent="1";$("mil5050").disabled=false;$("milSkip").disabled=false;milQSet=shuffle(QUESTION_BANK).slice(0,15);renderQuestion();}
+function prepareGame(){milIndex=0;milUsed5050=false;milUsedSkip=false;milActive=false;milHalfMeritGiven=false;milFinishMeritGiven=false;$("milFeedback").textContent="";$("milStep").textContent="1";$("mil5050").disabled=false;$("milSkip").disabled=false;milQSet=shuffle(QUESTION_BANK).slice(0,15);renderQuestion();beep("open");}
 function renderQuestion(){const q=milQSet[milIndex];$("milQ").innerHTML=q.q;const w=$("milOpts");w.innerHTML="";q.options.forEach((opt,i)=>{const b=document.createElement("button");b.dataset.opt=opt;b.innerHTML=`<span style="opacity:.8">${String.fromCharCode(65+i)})</span> ${opt}`;b.onclick=()=>checkAnswer(b,opt);w.appendChild(b);});highlightLadder();}
 function maybeAwardMerits(){if(milIndex>=8 && !milHalfMeritGiven){STATS.merits+=1;milHalfMeritGiven=true;toast("+1 merit (Halfway!)");}
   if(milIndex>=15 && !milFinishMeritGiven && !milUsedSkip){STATS.merits+=2;milFinishMeritGiven=true;toast("+2 merits (Completed!)");}}
@@ -471,22 +548,27 @@ $("lotfFilterChars").onclick=()=>buildLotfList("Characters");
 $("lotfFilterSymbol").onclick=()=>buildLotfList("Symbolism");
 $("lotfPrint").onclick=()=>{window.print();};
 
-/* ---------- Study: Shakespeare Q&A (with show/hide) ---------- */
+/* ---------- Study: Shakespeare Q&A (with show/hide + sounds) ---------- */
 function buildShQA(){
   const wrap=$("shQA"); wrap.innerHTML="";
   SHAKESPEARE_QA.forEach(section=>{
     const h=document.createElement("h3"); h.textContent=section.section; wrap.appendChild(h);
     section.items.forEach((item)=>{
       const card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";
-      card.innerHTML=`<div><b>${item.q}</b></div><div class="qa-a" style="display:none;margin-top:6px">${item.a}</div><div class="flex" style="margin-top:8px"><button class="btn secondary btnShow">Show Answer</button></div>`;
+      card.innerHTML=`<div><b>${item.q}</b></div>
+                      <div class="qa-a" style="display:none;margin-top:6px">${item.a}</div>
+                      <div class="row" style="margin-top:8px"><button class="btn secondary btnShow">Show Answer</button></div>`;
       const btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa-a");
-      btn.addEventListener("click",()=>{const vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
+      btn.addEventListener("click",()=>{
+        const vis=ans.style.display!=="none"; ans.style.display=vis?"none":"block";
+        btn.textContent=vis?"Show Answer":"Hide Answer"; beep("open");
+      });
       wrap.appendChild(card);
     });
   });
 }
-$("shExpandAll").onclick=()=>{[...$("shQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="block");[...$("shQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Hide Answer");}
-$("shCollapseAll").onclick=()=>{[...$("shQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="none");[...$("shQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Show Answer");}
+$("shExpandAll").onclick=()=>{[...$("shQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="block");[...$("shQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Hide Answer");beep("open");}
+$("shCollapseAll").onclick=()=>{[...$("shQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="none");[...$("shQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Show Answer");beep("open");}
 $("shPrint").onclick=()=>{window.print();};
 
 /* ---------- initialise study sections ---------- */
