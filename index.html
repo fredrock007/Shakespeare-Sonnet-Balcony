@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="Cache-Control" content="no-store, max-age=0" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mr Samuels’ Grade 10 English Hub</title>
 <style>
   :root{
     --bg:#070b1a; --panel:rgba(14,18,36,.72);
-    --text:#e7f2ff; --muted:#a8bfdd; --accent:#00f5d4; --accent2:#ff5e57; --accent3:#8a5cff; --accent4:#fca311;
+    --text:#e7f2ff; --muted:#a8bfdd;
+    --accent:#00f5d4; --accent2:#ff5e57; --accent3:#8a5cff; --accent4:#fca311;
     --good:#2ecc71; --bad:#ff4d6d;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% -10%,#102153 0,#0c1736 30%,#070b1a 65%) fixed;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
   .wrap{max-width:1220px;margin:0 auto;padding:20px}
-  header{position:relative;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  header{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative}
   .brand{font-weight:900;font-size:24px}
   .neon{background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .tabs{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+  .tabs{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px}
   .tab-btn{border:1px solid rgba(255,255,255,.08);padding:10px 14px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:#e7f2ff;cursor:pointer}
   .tab-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);font-weight:800;box-shadow:0 0 24px rgba(0,245,212,.25)}
   .badge{background:linear-gradient(90deg,var(--accent3),var(--accent2));padding:6px 10px;border-radius:999px;font-size:12px}
@@ -34,7 +35,6 @@
   .muted{color:var(--muted)} .big{font-size:18px}
   .grid-2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
   @media (max-width:980px){.grid-2{grid-template-columns:1fr}}
-
   .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   @media (max-width:900px){.statgrid{grid-template-columns:repeat(2,1fr)}}
   .stat{background:linear-gradient(180deg,#101837,#0c1330);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px}
@@ -71,6 +71,14 @@
   .overlayCard{max-width:560px;background:linear-gradient(180deg,#0f1837,#0b1230);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:16px}
   .overlayCard .opt{grid-template-columns:1fr}
 
+  /* Study */
+  .subtabs{display:flex;gap:8px;margin-bottom:10px}
+  .sub-btn{border:1px solid rgba(255,255,255,.1);padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:#cfe7ff;cursor:pointer}
+  .sub-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent2),var(--accent3));font-weight:800;box-shadow:0 0 18px rgba(255,94,87,.22)}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid rgba(255,255,255,.08);padding:8px;vertical-align:top}
+  th{background:linear-gradient(180deg,#0f1837,#0b1230)}
+
   /* Toast / Confetti */
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.12);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none;z-index:150}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
@@ -93,7 +101,7 @@
     </div>
   </header>
 
-  <!-- DASHBOARD (unchanged summary) -->
+  <!-- DASHBOARD -->
   <section id="dash" class="card">
     <div class="statgrid">
       <div class="stat"><h4>Merits</h4><div class="v" id="s_merits">0</div></div>
@@ -209,23 +217,62 @@
     </div>
   </section>
 
-  <!-- STUDY (omitted here for brevity — same as your last version) -->
+  <!-- STUDY -->
   <section id="study" class="card" style="display:none">
-    <div class="big">Study resources load here (unchanged).</div>
+    <div class="subtabs">
+      <button class="sub-btn active" data-sub="studyVocab">Vocabulary</button>
+      <button class="sub-btn" data-sub="lotf">Lord of the Flies</button>
+      <button class="sub-btn" data-sub="shakespeare">Shakespeare</button>
+    </div>
+
+    <div id="studyVocab">
+      <div class="row">
+        <input id="studySearch" type="text" placeholder="Search word/definition/example…">
+        <button id="studyReset" class="btn secondary">Clear</button>
+        <button id="studyPrint" class="btn">Print</button>
+      </div>
+      <div style="overflow:auto; max-height:60vh; margin-top:8px">
+        <table id="studyTable"><thead><tr><th style="width:18%">Word</th><th style="width:37%">Definition</th><th>Example sentence</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <div id="lotf" style="display:none">
+      <div class="row">
+        <button class="btn secondary" id="lotfAll">All</button>
+        <button class="btn secondary" id="lotfPlot">Plot</button>
+        <button class="btn secondary" id="lotfThemes">Themes</button>
+        <button class="btn secondary" id="lotfChars">Characters</button>
+        <button class="btn secondary" id="lotfSymbol">Symbolism</button>
+        <button class="btn" id="lotfPrint">Print</button>
+      </div>
+      <div id="lotfList" style="max-height:60vh; overflow:auto; margin-top:8px"></div>
+    </div>
+
+    <div id="shakespeare" style="display:none">
+      <div class="card" style="margin-bottom:10px">
+        <div class="big"><b>Shakespeare Study Pack</b> — <b>Sonnet 18</b> & <b>Romeo and Juliet</b> (renumbered & expanded Q&A).</div>
+      </div>
+      <div id="shQA" style="max-height:60vh; overflow:auto;"></div>
+      <div class="row" style="margin-top:8px">
+        <button id="shExpandAll" class="btn secondary">Expand all</button>
+        <button id="shCollapseAll" class="btn secondary">Collapse all</button>
+        <button id="shPrint" class="btn">Print</button>
+      </div>
+    </div>
   </section>
 </div>
 
 <div class="toast" id="toast">Saved</div>
 
 <script>
-/* ======= MICRO-POLYFILLS for older Android WebViews ======= */
-window.requestAnimationFrame = window.requestAnimationFrame || function(cb){ return setTimeout(function(){cb(Date.now());}, 16); };
+/* ==== Polyfills for older Lenovo WebViews ==== */
+window.requestAnimationFrame = window.requestAnimationFrame || function(cb){return setTimeout(function(){cb(Date.now());},16);};
 NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
 
-/* ======= Small audio helper (safe on old WebViews) ======= */
+/* ==== Audio (safe) ==== */
 var AC;
-function tone(f,d,type,g){ try{
-  AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+function tone(f,d,type,g){try{
+  AC=AC||new(window.AudioContext||window.webkitAudioContext)();
   var o=AC.createOscillator(), v=AC.createGain();
   o.type=type; o.frequency.value=f; o.connect(v); v.connect(AC.destination);
   var t=AC.currentTime; v.gain.setValueAtTime(0.0001,t);
@@ -233,60 +280,115 @@ function tone(f,d,type,g){ try{
   v.gain.exponentialRampToValueAtTime(0.0001,t+d);
   o.start(t); o.stop(t+d+0.02);
 }catch(e){}}
-function beep(kind){ var bank={
-  ui:[420,0.09,"sine",0.12], open:[560,0.12,"triangle",0.14], ok:[660,0.18,"triangle",0.2],
-  wrong:[200,0.18,"sawtooth",0.2], win:[880,0.25,"triangle",0.22], time:[300,0.18,"sine",0.18]
-}; var s=bank[kind||"ui"]; tone(s[0],s[1],s[2],s[3]); }
-addEventListener("click",function(e){
-  var el=e.target; if(el.closest && (el.closest("button")||el.closest(".tab-btn")||el.closest(".sub-btn"))) beep("ui");
-});
+function beep(kind){var m={ui:[420,0.09,"sine",0.12],open:[560,0.12,"triangle",0.14],ok:[660,0.18,"triangle",0.2],wrong:[200,0.18,"sawtooth",0.2],win:[880,0.25,"triangle",0.22],time:[300,0.18,"sine",0.18]};var s=m[kind||"ui"];tone(s[0],s[1],s[2],s[3]);}
+addEventListener("click",function(e){var el=e.target;if(el.closest&&(el.closest("button")||el.closest(".tab-btn")||el.closest(".sub-btn"))) beep("ui");});
 
-/* ======= helpers ======= */
+/* ==== Helpers ==== */
 function $(id){return document.getElementById(id);}
-function toast(msg){var t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show");},1200);}
-function confetti(msg){
-  for(var i=0;i<36;i++){
-    var p=document.createElement("div"); p.className="confetti-piece";
-    p.style.background=["#00f5d4","#8a5cff","#ff5e57","#fca311","#2ecc71"][Math.floor(Math.random()*5)];
-    p.style.left=(50+Math.random()*40-20)+"%"; p.style.top="60%";
-    p.style.transition="transform 1s ease-out, opacity 1.2s";
-    document.body.appendChild(p);
-    (function(p){ setTimeout(function(){
-      var dx=(Math.random()*2-1)*200, dy=-(200+Math.random()*300);
-      p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)"; p.style.opacity=0;
-    },10); setTimeout(function(){p.remove();},1200);})(p);
-  }
-  toast("🎉 "+msg); beep("win");
-}
-function thumbsDown(msg){toast("👎 "+(msg||"Try again")); beep("wrong");}
+function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},1200);}
+function confetti(msg){for(var i=0;i<40;i++){var p=document.createElement("div");p.className="confetti-piece";p.style.background=["#00f5d4","#8a5cff","#ff5e57","#fca311","#2ecc71"][Math.floor(Math.random()*5)];p.style.left=(50+Math.random()*40-20)+"%";p.style.top="60%";p.style.transition="transform 1s ease-out, opacity 1.2s";document.body.appendChild(p);(function(p){setTimeout(function(){var dx=(Math.random()*2-1)*200,dy=-(200+Math.random()*300);p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)";p.style.opacity=0;},10);setTimeout(function(){p.remove();},1200);})(p);}toast("🎉 "+msg);beep("win");}
+function thumbsDown(msg){toast("👎 "+(msg||"Try again"));beep("wrong");}
 
-/* ======= DATA (short subset to keep file shorter here) ======= */
-var TERMS=[{w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
-{w:"iambic pentameter",d:"A rhythm pattern of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
-{w:"metaphor",d:"A direct comparison without 'like' or 'as'.",e:"'Eye of heaven' is a metaphor for the sun."}];
-
-var TOPIC_TEST_MCQ=[
-  {q:"In Sonnet 18, the beloved is first compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
-  {q:"The phrase 'summer’s lease' suggests that summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
-  {q:"'Eye of heaven' is best identified as…",options:["Metaphor","Simile","Onomatopoeia","Pun"],correct:"Metaphor"}
+/* ==== Data ==== */
+var TERMS=[
+ {w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
+ {w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
+ {w:"metaphor",d:"Direct comparison without 'like' or 'as'.",e:"'Eye of heaven' is a metaphor for the sun."},
+ {w:"personification",d:"Human traits to non-human things.",e:"'Death brag' personifies death."},
+ {w:"oxymoron",d:"Contradictory terms together.",e:"'Brawling love' in Romeo and Juliet."},
+ {w:"soliloquy",d:"Speech revealing inner thoughts.",e:"Juliet’s Act 3 soliloquy shows her anxiety."},
+ {w:"dramatic irony",d:"Audience knows more than characters.",e:"We know Juliet isn’t dead; Romeo doesn’t."},
+ {w:"foil",d:"Character who contrasts another.",e:"Piggy is a foil to Jack in LotF."},
+ {w:"symbolism",d:"Objects/actions representing ideas.",e:"The conch symbolises order."},
+ {w:"allegory",d:"Narrative with deeper meaning.",e:"LotF is an allegory of civilisation vs savagery."},
+ {w:"microcosm",d:"Small system mirroring a larger one.",e:"The island is a microcosm of society."},
+ {w:"theme",d:"Central idea explored by a text.",e:"Abuse of power is a theme in LotF."},
+ {w:"temperate",d:"Mild; moderate.",e:"'More temperate' describes the beloved."},
+ {w:"complexion",d:"Appearance of the face/thing.",e:"The sun’s 'gold complexion' can be dimmed."},
+ {w:"savagery",d:"Brutal or violent behaviour.",e:"Jack’s tribe descends into savagery."},
+ {w:"conch",d:"Shell used to call assemblies; order.",e:"Whoever holds the conch may speak."}
 ];
 
-/* ======= SIMPLE STATS (localStorage with fallback) ======= */
-var KEY="g10_hub_v4";
+var LOTF_NOTES=[
+ {type:"Plot",text:"British schoolboys stranded on an island; Ralph elected; Jack hunts; fear and savagery rise; Simon and Piggy die; rescue comes with a naval officer."},
+ {type:"Themes",text:"Civilisation vs Savagery; Loss of Innocence; Power & Leadership; Fear and the 'Beast'."},
+ {type:"Themes",text:"Groupthink & Mob Mentality: chanting, face paint, ritual hunts."},
+ {type:"Characters",text:"Ralph — elected leader; order and rescue; civilisation."},
+ {type:"Characters",text:"Piggy — intelligence/logic; glasses = science; killed by Roger."},
+ {type:"Characters",text:"Jack — authoritarian hunter; uses fear and punishment."},
+ {type:"Characters",text:"Simon — spiritual insight; realises the 'beast' is within; killed in frenzy."},
+ {type:"Characters",text:"Roger — sadist; kills Piggy with boulder."},
+ {type:"Symbolism",text:"Conch — law & order; shattering = end of democracy."},
+ {type:"Symbolism",text:"Signal Fire — hope of rescue; neglect = moral decline."},
+ {type:"Symbolism",text:"Piggy’s Glasses — knowledge/technology; power shifts when stolen."},
+ {type:"Symbolism",text:"Painted Faces — anonymity → savagery."},
+ {type:"Symbolism",text:"Lord of the Flies — evil within humanity."}
+];
+
+var SHAKESPEARE_QA=[
+ {section:"POETRY — Sonnet 18",items:[
+   {q:"S1. What scene starts the poem?",a:"A summer’s day compared to the beloved."},
+   {q:"S2. Identify 'the eye of heaven'.",a:"Metaphor/personification for the sun."},
+   {q:"S3. Meaning of 'summer’s lease'?",a:"Summer is temporary; a fixed term that ends."},
+   {q:"S4. What happens at the volta (line 9)?",a:"Turns to the beloved’s 'eternal summer' preserved by verse."},
+   {q:"S5. Explain 'So long lives this…' in your own words.",a:"As long as the poem lasts, it keeps the beloved alive."},
+   {q:"S6. Name one sound device and effect.",a:"Alliteration in 'fair from fair' mimics fading."}
+ ]},
+ {section:"DRAMA — Romeo & Juliet (Balcony/Theme)",items:[
+   {q:"S7. Paraphrase 'Wherefore art thou Romeo?'",a:"Why must you be Romeo (a Montague) — not 'Where are you?'."},
+   {q:"S8. What conflict drives the scene?",a:"Love versus family identity/feud."},
+   {q:"S9. 'I’ll be new baptised' shows what about Romeo?",a:"Impulsive, willing to change his name for love."},
+   {q:"S10. How does the scene push the plot?",a:"Their decision for secret love speeds the tragedy."},
+   {q:"S11. Why is Friar Laurence skeptical?",a:"Romeo quickly switches from Rosaline to Juliet; sudden passions may end badly."},
+   {q:"S12. Give an example of dramatic irony.",a:"The audience knows Juliet isn’t dead in Act 5; Romeo does not."}
+ ]}
+];
+
+var MILLION_Q=[
+ {q:"What does the conch symbolise in Lord of the Flies?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
+ {q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
+ {q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
+ {q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
+ {q:"The 'beast' is ultimately…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
+ {q:"Why do the boys paint faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
+ {q:"The shattering of the conch means…",options:["Collapse of order","More equality","Festival","Rescue"],correct:"Collapse of order"},
+ {q:"A 14-line poem is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
+ {q:"'Eye of heaven' is a…",options:["Metaphor for the sun","Pun","Alliteration","Euphemism"],correct:"Metaphor for the sun"},
+ {q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
+ {q:"Which house is Juliet from?",options:["Capulet","Montague","Escalus","Paris"],correct:"Capulet"},
+ {q:"Which theme fits mob dances?",options:["Groupthink","Romantic love","Wealth","Pastoral"],correct:"Groupthink"},
+ {q:"What keeps hope of rescue alive?",options:["Signal fire","Hunting","Shelters","Chanting"],correct:"Signal fire"},
+ {q:"Who represents spiritual goodness?",options:["Simon","Roger","Jack","Samneric"],correct:"Simon"},
+ {q:"'Lord of the Flies' (pig’s head) symbolises…",options:["Evil within","Royalty","Salvation","Wealth"],correct:"Evil within"},
+ {q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"},
+ {q:"Which device: 'brawling love'?",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
+ {q:"Juliet’s main conflict is love vs…",options:["Family loyalty","Money","Travel","Ambition"],correct:"Family loyalty"},
+ {q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"},
+ {q:"The island is a _____ of society.",options:["Microcosm","Metropolis","Monarchy","Myth"],correct:"Microcosm"}
+];
+
+var TOPIC_TEST_MCQ=[
+  {q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
+  {q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
+  {q:"'Eye of heaven' is…",options:["Metaphor","Simile","Onomatopoeia","Pun"],correct:"Metaphor"},
+  {q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
+  {q:"Juliet’s central conflict is with…",options:["Family loyalty","Money","Fame","Travel"],correct:"Family loyalty"}
+];
+
+/* ==== Stats ==== */
+var KEY="g10_hub_v5";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
-try{var s=safeGet(KEY); if(s){STATS=JSON.parse(s);} }catch(e){}
+try{var s=safeGet(KEY);if(s){STATS=JSON.parse(s);} }catch(e){}
 function saveStats(){safeSet(KEY,JSON.stringify(STATS));}
-function refreshDash(){ $("s_merits").textContent=STATS.merits;
-  $("s_hm_wins").textContent=STATS.hangman.wins; $("s_30_total").textContent=STATS.seconds.total;
-  $("s_30_fast").textContent=STATS.seconds.fastest? (STATS.seconds.fastest/1000).toFixed(2)+"s":"—";
-  $("s_mil_best").textContent=STATS.million.best+" / 15"; $("s_mil_correct").textContent=STATS.million.correct;
-  $("s_mil_answered").textContent=STATS.million.answered; $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
-}
-refreshDash();
+function refreshDash(){ $("s_merits").textContent=STATS.merits; $("s_hm_wins").textContent=STATS.hangman.wins;
+  $("s_30_total").textContent=STATS.seconds.total; $("s_30_fast").textContent=STATS.seconds.fastest?(STATS.seconds.fastest/1000).toFixed(2)+"s":"—";
+  $("s_mil_best").textContent=STATS.million.best+" / 15"; $("s_mil_correct").textContent=STATS.million.correct; $("s_mil_answered").textContent=STATS.million.answered;
+  $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
+} refreshDash();
 
-/* ======= TABS ======= */
+/* ==== Tabs ==== */
 document.querySelectorAll(".tab-btn").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll(".tab-btn").forEach(function(x){x.classList.remove("active");});
@@ -294,12 +396,20 @@ document.querySelectorAll(".tab-btn").forEach(function(b){
     var t=b.getAttribute("data-tab");
     document.querySelectorAll("section").forEach(function(s){s.style.display="none";});
     $(t).style.display="";
-    if(t!=="driver"){ Driver.pause(); }
+    if(t!=="driver"){Driver.pause();}
     beep("open");
   });
 });
+document.querySelectorAll(".sub-btn").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll(".sub-btn").forEach(function(x){x.classList.remove("active");});
+    b.classList.add("active");
+    var t=b.getAttribute("data-sub");
+    ["studyVocab","lotf","shakespeare"].forEach(function(id){$(id).style.display=(id===t)?"":"none";});
+  });
+});
 
-/* ======= HANGMAN (unchanged logic, shortened word list) ======= */
+/* ==== Hangman ==== */
 var hmWord="",hmMask=[],hmLives=6,hmUsed={},hmHint="",hmWins=0;
 var hcv=$("hmCanvas"),hctx=hcv.getContext("2d");
 function hmGallows(){hctx.clearRect(0,0,hcv.width,hcv.height);hctx.strokeStyle="#cfe7ff";hctx.lineWidth=4;
@@ -337,12 +447,11 @@ function hmGuess(L){ if(hmLives<=0 || hmUsed[L])return; hmUsed[L]=1;
 hmKeyboard(); hmNew(); $("btnHint").onclick=function(){var el=$("hint"); el.style.display=el.style.display==="none"?"":"none";};
 $("btnNew").onclick=hmNew; $("btnReveal").onclick=hmReveal;
 
-/* ======= 30 Seconds (kept short) ======= */
+/* ==== 30 Seconds ==== */
 var secActive=false,secTime=30,secTimer=null,secScore=0,secQueue=[],secCurrent=null,secStart=null;
 function hg(){var HG=60,prog=1-(secTime/30),topH=(1-prog)*HG,bottomH=prog*HG;
-  $("hgTop").setAttribute("height",topH.toFixed(2)); $("hgBottom").setAttribute("y",(140-bottomH).toFixed(2));
-  $("hgBottom").setAttribute("height",bottomH.toFixed(2)); var s=$("hgStream");
-  if(secActive&&secTime>0&&secTime<30){var len=8+34*prog; s.setAttribute("y",(80-len).toFixed(2)); s.setAttribute("height",len.toFixed(2)); s.setAttribute("visibility","visible");}
+  $("hgTop").setAttribute("height",topH.toFixed(2)); $("hgBottom").setAttribute("y",(140-bottomH).toFixed(2)); $("hgBottom").setAttribute("height",bottomH.toFixed(2));
+  var s=$("hgStream"); if(secActive&&secTime>0&&secTime<30){var len=8+34*prog; s.setAttribute("y",(80-len).toFixed(2)); s.setAttribute("height",len.toFixed(2)); s.setAttribute("visibility","visible");}
   else s.setAttribute("visibility","hidden"); }
 function secReset(){secActive=false;secTime=30;secScore=0;secQueue=TERMS.slice();$("secScore").textContent=0;$("secFeedback").textContent="";$("defBox").innerHTML="Press <b>Start</b> to begin."; $("secInput").disabled=true; $("secSkip").disabled=true; $("secGive").disabled=true; hg();}
 function secNext(){ if(secQueue.length===0)secQueue=TERMS.slice(); secCurrent=secQueue[Math.floor(Math.random()*secQueue.length)];
@@ -354,147 +463,140 @@ $("secInput").addEventListener("keydown",function(e){ if(e.key==="Enter" && secA
   if(g===secCurrent.w.toLowerCase()){secScore++;$("secScore").textContent=secScore; STATS.seconds.total++; var t=Date.now()-secStart; if(!STATS.seconds.fastest||t<STATS.seconds.fastest)STATS.seconds.fastest=t; saveStats(); refreshDash(); confetti("Correct!"); secNext();}
   else{ thumbsDown("Incorrect"); }}}); secReset();
 
-/* ======= MILLIONAIRE (short demo set) ======= */
+/* ==== Millionaire ==== */
 var ladder=["R 1 000 000","R 500 000","R 250 000","R 125 000","R 64 000","R 32 000","R 16 000","R 8 000","R 4 000","R 2 000","R 1 000","R 500","R 300","R 200","R 100"];
 function buildLadder(){var ul=$("milLadder");ul.innerHTML="";for(var i=0;i<ladder.length;i++){var li=document.createElement("li");li.innerHTML="<span>"+(ladder.length-i)+"</span><span>"+ladder[i]+"</span>";ul.appendChild(li);} }
 buildLadder();
+var milIndex=0,milSet=[],milUsed5050=false,milUsedSkip=false,milActive=false;
+function setLadderActive(){var items=[].slice.call($("milLadder").children);items.forEach(function(li){li.classList.remove("active")});var pos=ladder.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
+function milPrepare(){milIndex=0;milSet=MILLION_Q.slice().sort(function(){return Math.random()-0.5;}).slice(0,15);milUsed5050=false;milUsedSkip=false;milActive=true;$("milStep").textContent="1";$("milFeedback").textContent="";$("mil5050").disabled=false;$("milSkip").disabled=false;milRender();}
+function milRender(){var q=milSet[milIndex];$("milQ").innerHTML=q.q;var w=$("milOpts");w.innerHTML="";q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt,i){var b=document.createElement("button");b.dataset.opt=opt;b.innerHTML="<span style='opacity:.8'>"+String.fromCharCode(65+i)+")</span> "+opt;b.onclick=function(){milCheck(opt,b)};w.appendChild(b);});setLadderActive();}
+function milCheck(choice,btn){var q=milSet[milIndex],buttons=[].slice.call($("milOpts").querySelectorAll("button"));buttons.forEach(function(b){b.disabled=true;});
+  STATS.million.answered++; if(choice===q.correct){STATS.million.correct++; btn.style.borderColor= "#2ecc71"; confetti("Correct!");
+    milIndex++; STATS.million.best=Math.max(STATS.million.best,milIndex); saveStats(); refreshDash();
+    if(milIndex>=milSet.length){$("milFeedback").innerHTML="🏆 <b>Well done!</b>"; milActive=false; return;}
+    $("milStep").textContent=String(milIndex+1); setTimeout(milRender,380);
+  }else{ btn.style.borderColor="#ff4d6d"; thumbsDown("Incorrect"); var cbtn=buttons.filter(function(b){return b.dataset.opt===q.correct;})[0]; if(cbtn)cbtn.style.borderColor="#2ecc71";
+    $("milFeedback").innerHTML="Correct answer: <b>"+q.correct+"</b>"; milActive=false; saveStats(); refreshDash();
+  }}
+$("milStart").onclick=milPrepare;
+$("mil5050").onclick=function(){if(milUsed5050)return;milUsed5050=true;this.disabled=true;var q=milSet[milIndex],buttons=[].slice.call($("milOpts").querySelectorAll("button"));buttons.filter(function(b){return b.dataset.opt!==q.correct;}).sort(function(){return Math.random()-0.5;}).slice(0,2).forEach(function(b){b.disabled=true;b.style.opacity=.4;});};
+$("milSkip").onclick=function(){if(milUsedSkip)return;milUsedSkip=true;this.disabled=true;milIndex++;STATS.million.best=Math.max(STATS.million.best,milIndex);saveStats();refreshDash();if(milIndex>=milSet.length){$("milFeedback").innerHTML="You skipped to the end.";milActive=false;}else{$("milStep").textContent=String(milIndex+1);milRender();}};
+$("milQuit").onclick=function(){milActive=false;$("milFeedback").textContent="Game ended.";};
 
-/* ======= ENGLISH DRIVER — fully revised for compatibility ======= */
+/* ==== Study: Vocabulary ==== */
+function buildStudy(){var tb=$("studyTable").querySelector("tbody");tb.innerHTML="";TERMS.forEach(function(t){var tr=document.createElement("tr");tr.innerHTML="<td><b>"+t.w+"</b></td><td>"+t.d+"</td><td><em>"+t.e+"</em></td>";tb.appendChild(tr);});}
+function filterStudy(){var q=$("studySearch").value.toLowerCase();[].slice.call($("studyTable").querySelectorAll("tbody tr")).forEach(function(r){r.style.display=r.textContent.toLowerCase().indexOf(q)>-1?"":"none";});}
+$("studySearch").addEventListener("input",filterStudy); $("studyReset").onclick=function(){ $("studySearch").value=""; filterStudy();}; $("studyPrint").onclick=function(){window.print();}; buildStudy();
+
+/* ==== Study: LOTF ==== */
+function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(function(n){return !filter||filter==="All"||n.type===filter;}).forEach(function(n){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
+$("lotfAll").onclick=function(){lotfRender("All")}; $("lotfPlot").onclick=function(){lotfRender("Plot")}; $("lotfThemes").onclick=function(){lotfRender("Themes")}; $("lotfChars").onclick=function(){lotfRender("Characters")}; $("lotfSymbol").onclick=function(){lotfRender("Symbolism")}; $("lotfPrint").onclick=function(){window.print();}; lotfRender("All");
+
+/* ==== Study: Shakespeare QA ==== */
+function buildShQA(){var wrap=$("shQA");wrap.innerHTML="";SHAKESPEARE_QA.forEach(function(sec){var h=document.createElement("h3");h.textContent=sec.section;wrap.appendChild(h);sec.items.forEach(function(it){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";var btn=card.querySelector(".btnShow"),ans=card.querySelector(".qa");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});wrap.appendChild(card);});});}
+$("shExpandAll").onclick=function(){[].slice.call($("shQA").querySelectorAll(".qa")).forEach(function(a){a.style.display="block"});[].slice.call($("shQA").querySelectorAll(".btnShow")).forEach(function(b){b.textContent="Hide Answer"});};
+$("shCollapseAll").onclick=function(){[].slice.call($("shQA").querySelectorAll(".qa")).forEach(function(a){a.style.display="none"});[].slice.call($("shQA").querySelectorAll(".btnShow")).forEach(function(b){b.textContent="Show Answer"});};
+$("shPrint").onclick=function(){window.print();}; buildShQA();
+
+/* ==== ENGLISH DRIVER (with obstacles) ==== */
 var Driver=(function(){
   var cvs=$("drvCanvas"), ctx=cvs.getContext("2d"), DPR=1, W=360, H=540;
-  var lanes=3, roadMargin=0.16;     // percent each side
-  var laneX=[], dashes=[], pxPerSec=220; // visual scroll speed
-  var running=false, last=0, meters=0, speed=50, nextCP=500, score=0, pickup=null;
+  var lanes=3, roadMargin=0.16, laneX=[], dashes=[], pxPerSec=220;
+  var running=false, last=0, meters=0, speed=50, nextCP=500, score=0, pickup=null, obstacles=[];
+  var player={lane:1,y:0,color:"#00f5d4"};
 
   function dprScale(){
-    // responsive canvas: fit 94vw up to 520px
     var cssW=Math.min(520, Math.floor(window.innerWidth*0.94));
     var cssH=Math.floor(cssW*1.5);
     cvs.style.width=cssW+"px"; cvs.style.height=cssH+"px";
     DPR = window.devicePixelRatio || 1;
     W = cssW; H = cssH;
-    cvs.width = Math.floor(cssW*DPR); cvs.height=Math.floor(cssH*DPR);
-    ctx.setTransform(DPR,0,0,DPR,0,0); // draw in CSS pixels
-    // recompute lanes
-    var left = W*roadMargin, right = W*(1-roadMargin), inner = right-left;
-    laneX = [];
-    for(var i=0;i<lanes;i++){ laneX.push(left + inner*((i+0.5)/lanes)); }
-    // build dashes
-    dashes=[]; for(var y=0;y<H;y+=60){ dashes.push({y:y});}
-    pxPerSec = H/2.5; // scale speed with height for feel
+    cvs.width=Math.floor(cssW*DPR); cvs.height=Math.floor(cssH*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    var left = W*roadMargin, right=W*(1-roadMargin), inner=right-left;
+    laneX=[]; for(var i=0;i<lanes;i++){laneX.push(left+inner*((i+0.5)/lanes));}
+    dashes=[]; for(var y=0;y<H;y+=60){dashes.push({y:y});}
+    pxPerSec = H/2.5;
+    player.y=Math.floor(H*0.86);
     draw();
   }
-  function roundRectPath(x,y,w,h,r){
-    if(r> w/2)r=w/2; if(r>h/2)r=h/2;
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);
-    ctx.lineTo(x+w-r,y);
-    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-    ctx.lineTo(x+w,y+h-r);
-    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-    ctx.lineTo(x+r,y+h);
-    ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-    ctx.lineTo(x,y+r);
-    ctx.quadraticCurveTo(x,y,x+r,y);
-    ctx.closePath();
-  }
-  function drawCar(cx,cy,color){
-    var w=36, h=56, x=cx-w/2, y=cy-h/2;
-    ctx.fillStyle=color; ctx.strokeStyle="#233"; ctx.lineWidth=2;
-    roundRectPath(x,y,w,h,8); ctx.fill(); ctx.stroke();
-    // windscreen
-    ctx.fillStyle="#071018"; roundRectPath(x+6,y+6,w-12,14,4); ctx.fill();
-  }
-  function draw(){
-    // background + road
-    ctx.fillStyle="#0a0f21"; ctx.fillRect(0,0,W,H);
-    var left=W*roadMargin, right=W*(1-roadMargin);
-    ctx.fillStyle="#0f1837"; ctx.fillRect(left,0,right-left,H);
-    // center dashed line
-    ctx.strokeStyle="#cfe7ff"; ctx.setLineDash([12,12]); ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo((left+right)/2,0); ctx.lineTo((left+right)/2,H); ctx.stroke();
-    ctx.setLineDash([]);
-    // horizontal "speed" dashes
-    ctx.strokeStyle="#fca311"; ctx.lineWidth=6;
-    for(var i=0;i<dashes.length;i++){ ctx.beginPath(); ctx.moveTo(left+20,dashes[i].y); ctx.lineTo(right-20,dashes[i].y); ctx.stroke(); }
-    // cars
-    drawCar(laneX[player.lane], player.y, player.color);
-    if(pickup){ drawCar(laneX[pickup.lane], pickup.y, "#ffffff"); }
-  }
 
-  var player={lane:1, y:Math.floor(H*0.86), color:"#00f5d4"};
+  function rr(x,y,w,h,r){if(r>w/2)r=w/2;if(r>h/2)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+  function drawCar(cx,cy,color){var w=36,h=56,x=cx-w/2,y=cy-h/2;ctx.fillStyle=color;ctx.strokeStyle="#233";ctx.lineWidth=2;rr(x,y,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle="#071018";rr(x+6,y+6,w-12,14,4);ctx.fill();}
+  function drawCone(cx,cy){ctx.fillStyle="#ffbd66";ctx.strokeStyle="#8a5b1f";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy-16);ctx.lineTo(cx-12,cy+16);ctx.lineTo(cx+12,cy+16);ctx.closePath();ctx.fill();ctx.stroke();}
+
+  function draw(){
+    ctx.fillStyle="#0a0f21";ctx.fillRect(0,0,W,H);
+    var left=W*roadMargin,right=W*(1-roadMargin);
+    ctx.fillStyle="#0f1837";ctx.fillRect(left,0,right-left,H);
+    ctx.strokeStyle="#cfe7ff";ctx.setLineDash([12,12]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo((left+right)/2,0);ctx.lineTo((left+right)/2,H);ctx.stroke();ctx.setLineDash([]);
+    ctx.strokeStyle="#fca311";ctx.lineWidth=6;for(var i=0;i<dashes.length;i++){ctx.beginPath();ctx.moveTo(left+20,dashes[i].y);ctx.lineTo(right-20,dashes[i].y);ctx.stroke();}
+    // obstacles
+    for(i=0;i<obstacles.length;i++){var ob=obstacles[i];if(ob.type==="cone")drawCone(laneX[ob.lane],ob.y);else drawCar(laneX[ob.lane],ob.y,"#ffffff");}
+    // player
+    drawCar(laneX[player.lane],player.y,player.color);
+    // pickup
+    if(pickup){drawCar(laneX[pickup.lane], pickup.y, "#9ad0ff");}
+  }
 
   function reset(){
-    meters=0; nextCP=500; score=0; pickup=null; player.lane=1; $("drvDist").textContent=0; $("drvScore").textContent=0;
-    dprScale(); draw();
+    meters=0;nextCP=500;score=0;pickup=null;obstacles=[];player.lane=1;$("drvDist").textContent=0;$("drvScore").textContent=0;$("drvSpeed").textContent=speed;
+    dprScale();draw();
   }
 
   function update(ts){
-    if(!running){ last=ts; return; }
+    if(!running){last=ts;return;}
     var dt=(ts-last)/1000; last=ts;
+    for(var i=0;i<dashes.length;i++){dashes[i].y+=pxPerSec*dt; if(dashes[i].y>H)dashes[i].y-=H;}
+    meters+=speed*dt; $("drvDist").textContent=Math.floor(meters);
 
-    // scroll dashes
-    for(var i=0;i<dashes.length;i++){ dashes[i].y += pxPerSec*dt; if(dashes[i].y>H) dashes[i].y-=H; }
+    // Spawn pickup sometimes
+    if(!pickup && Math.random()<0.012){pickup={lane:Math.floor(Math.random()*lanes),y:-60};}
+    if(pickup){pickup.y+=pxPerSec*0.9*dt; if(pickup.y>H+60)pickup=null;}
 
-    // movement
-    meters += speed*dt; $("drvDist").textContent = Math.floor(meters);
-
-    // spawn / move pickup
-    if(!pickup && Math.random()<0.014){ pickup={lane:Math.floor(Math.random()*lanes),y:-60}; }
-    if(pickup){ pickup.y += pxPerSec*0.9*dt; if(pickup.y>H+60) pickup=null; }
+    // Spawn obstacles more frequently
+    if(Math.random()<0.03){obstacles.push({lane:Math.floor(Math.random()*lanes),y:-30,type:Math.random()<0.6?"cone":"car"});}
+    for(i=obstacles.length-1;i>=0;i--){obstacles[i].y+=pxPerSec*dt; if(obstacles[i].y>H+40)obstacles.splice(i,1);}
 
     // collisions
-    if(pickup && pickup.lane===player.lane && Math.abs(pickup.y-player.y)<40){
-      running=false; showQuestion(true); pickup=null;
+    if(pickup && pickup.lane===player.lane && Math.abs(pickup.y-player.y)<40){running=false; showQuestion(true); pickup=null;}
+    for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(ob2.lane===player.lane && Math.abs(ob2.y-player.y)<40){ // hit!
+        obstacles.splice(i,1); score=Math.max(0,score-50); $("drvScore").textContent=score; thumbsDown("Obstacle hit −50"); meters=Math.max(0,meters-50);
+      }
     }
 
-    // checkpoint every 500 m
-    if(meters>=nextCP){ running=false; showQuestion(false); nextCP+=500; }
-
-    draw();
-    requestAnimationFrame(update);
+    if(meters>=nextCP){running=false;showQuestion(false);nextCP+=500;}
+    draw(); requestAnimationFrame(update);
   }
 
-  function showQuestion(isBonus){
+  function showQuestion(bonus){
     var overlay=$("drvOverlay"); overlay.style.display="flex";
-    var q=TOPIC_TEST_MCQ[Math.floor(Math.random()*TOPIC_TEST_MCQ.length)];
-    $("drvQ").textContent=(isBonus?"Bonus — ":"")+q.q;
+    var q=TOPIC_TEST_MCQ[Math.floor(Math.random()*TOPIC_TEST_MCQ.length)]; $("drvQ").textContent=(bonus?"Bonus — ":"")+q.q;
     var box=$("drvOpts"); box.innerHTML="";
-    var opts=q.options.slice().sort(function(){return Math.random()-0.5;});
-    opts.forEach(function(opt){
-      var b=document.createElement("button"); b.className="btn secondary"; b.textContent=opt;
-      b.onclick=function(){
-        if(opt===q.correct){
-          overlay.style.display="none";
-          score += isBonus?200:100; $("drvScore").textContent=score; confetti(isBonus?"+Bonus!":"Correct!");
-          STATS.driver.bestMeters = Math.max(STATS.driver.bestMeters, Math.floor(meters)); saveStats(); refreshDash();
-          run();
+    q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt){
+      var btn=document.createElement("button"); btn.className="btn secondary"; btn.textContent=opt;
+      btn.onclick=function(){
+        if(opt===q.correct){ overlay.style.display="none"; score+=bonus?200:100; $("drvScore").textContent=score; confetti(bonus?"+Bonus!":"Correct!");
+          STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash(); run();
         }else{ thumbsDown("Incorrect — try again"); }
       };
-      box.appendChild(b);
+      box.appendChild(btn);
     });
   }
 
-  // controls
-  function left(){ player.lane=Math.max(0, player.lane-1); draw(); beep("open"); }
-  function right(){ player.lane=Math.min(lanes-1, player.lane+1); draw(); beep("open"); }
-  $("drvLeft").addEventListener("touchstart",function(e){e.preventDefault();left();});
-  $("drvRight").addEventListener("touchstart",function(e){e.preventDefault();right();});
+  function left(){player.lane=Math.max(0,player.lane-1);draw();beep("open");}
+  function right(){player.lane=Math.min(lanes-1,player.lane+1);draw();beep("open");}
+  $("drvLeft").addEventListener("touchstart",function(e){e.preventDefault();left();}); $("drvRight").addEventListener("touchstart",function(e){e.preventDefault();right();});
   $("drvLeft").addEventListener("click",left); $("drvRight").addEventListener("click",right);
-  var startX=null;
-  cvs.addEventListener("touchstart",function(e){startX=e.touches[0].clientX;});
-  cvs.addEventListener("touchend",function(e){ if(startX===null) return; var dx=e.changedTouches[0].clientX-startX; if(dx<-20) left(); else if(dx>20) right(); startX=null; });
+  var sx=null; cvs.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;});
+  cvs.addEventListener("touchend",function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(dx<-20)left();else if(dx>20)right();sx=null;});
 
-  function run(){ running=true; last=performance.now(); requestAnimationFrame(update); }
-  function pause(){ running=false; }
-  $("drvStart").onclick=function(){ reset(); run(); };
-  $("drvPause").onclick=function(){ pause(); };
-
-  window.addEventListener("resize", dprScale);
-  dprScale(); // initial
-  reset();
-
-  return { pause: pause };
+  function run(){running=true;last=performance.now();requestAnimationFrame(update);}
+  function pause(){running=false;}
+  $("drvStart").onclick=function(){reset();run();}; $("drvPause").onclick=pause;
+  window.addEventListener("resize",dprScale); dprScale(); reset();
+  return {pause:pause};
 })();
 </script>
 </body>
