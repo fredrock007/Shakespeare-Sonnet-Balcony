@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grade 10 Vocabulary Games Hub — Neon Edition</title>
+<title>Grade 10 Vocabulary Games Hub — Guest Mode</title>
 <style>
   :root{
     --bg:#070b1a; --panel:rgba(14,18,36,.72); --glass:rgba(20,26,55,.55);
@@ -20,7 +20,6 @@
   .tab-btn{border:1px solid rgba(255,255,255,.08);padding:10px 14px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:var(--text);cursor:pointer}
   .tab-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);font-weight:800;box-shadow:0 0 24px rgba(0,245,212,.25)}
   .badge{background:linear-gradient(90deg,var(--accent3),var(--accent2));padding:6px 10px;border-radius:999px;font-size:12px}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,.2)}
   .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#101a34;border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px}
   .btn{border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);box-shadow:0 6px 22px rgba(138,92,255,.25)}
   .btn.secondary{color:#cfe7ff;background:linear-gradient(180deg,#1b2546 0,#121c3a 100%);border:1px solid rgba(255,255,255,.08)}
@@ -72,23 +71,16 @@
   th,td{border:1px solid rgba(255,255,255,.08);padding:8px;vertical-align:top}
   th{background:linear-gradient(180deg,#0f1837,#0b1230)}
 
-  /* Toast + modal */
+  /* Toast */
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.12);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
-  .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(3,6,18,.75),rgba(3,6,18,.9));backdrop-filter:blur(6px);z-index:10}
-  .modal-card{width:min(540px,92%);background:var(--glass);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .field{display:flex;flex-direction:column;gap:6px;flex:1}
-  label{font-size:12px;color:#cfdcff}
-  select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="brand">Grade 10 <span class="neon">Vocabulary Games Hub</span></div>
-    <span id="studentBadge" class="badge">No student</span>
-    <button id="btnChangeStudent" class="tab-btn ghost">Change Student</button>
+    <span class="badge">Guest Mode — no login</span>
     <div class="tabs">
       <button class="tab-btn active" data-tab="dash">Dashboard</button>
       <button class="tab-btn" data-tab="hangman">Hangman</button>
@@ -102,23 +94,23 @@
   <section id="dash" class="card">
     <div class="grid-2">
       <div class="card" style="background:linear-gradient(180deg,#0c1430,#0a1126);">
-        <div class="row">
-          <div class="avatar" id="avatar">A</div>
+        <div class="flex" style="align-items:center">
+          <div class="avatar" id="avatar">G</div>
           <div>
             <div class="muted">Student</div>
-            <div id="d_name" style="font-weight:900;font-size:20px">—</div>
+            <div id="d_name" style="font-weight:900;font-size:20px">Guest</div>
             <div id="d_class" class="muted">—</div>
           </div>
         </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn secondary" id="btnResetStats">Reset My Stats</button>
+        <div class="flex" style="margin-top:10px">
+          <button class="btn secondary" id="btnResetStats">Reset Device Stats</button>
           <button class="btn" id="btnQuickPlay">Jump into Hangman</button>
         </div>
       </div>
 
       <div class="card">
         <div class="muted">Notes</div>
-        <div class="big">Local login keeps scores & leaderboards on this device. For multi-device competition, we can add Supabase later.</div>
+        <div class="big">Everything runs without login. Scores and leaderboards save on this device only.</div>
       </div>
     </div>
 
@@ -135,14 +127,14 @@
 
     <div class="grid-2" style="margin-top:14px">
       <div class="card">
-        <div class="row" style="justify-content:space-between;align-items:center">
-          <h3 style="margin:0">Class Leaderboard</h3>
-          <span id="lbClassLabel" class="pill">—</span>
+        <div class="flex" style="justify-content:space-between;align-items:center">
+          <h3 style="margin:0">Class Leaderboard (Device)</h3>
+          <span id="lbClassLabel" class="pill">Guest</span>
         </div>
         <ol id="lbClass" class="lb"></ol>
       </div>
       <div class="card">
-        <h3 style="margin:0">Grade Leaderboard</h3>
+        <h3 style="margin:0">Grade Leaderboard (Device)</h3>
         <ol id="lbGrade" class="lb"></ol>
       </div>
     </div>
@@ -156,13 +148,13 @@
         <canvas id="hmCanvas" width="430" height="280" aria-label="Hangman drawing"></canvas>
       </div>
       <div class="grow">
-        <div class="row">
+        <div class="flex">
           <span class="pill">Lives: <span id="lives" class="lives">6</span></span>
           <span class="pill">Wins: <span id="wins">0</span></span>
         </div>
         <div id="slots" class="slots">_ _ _ _ _</div>
         <div id="used" class="muted">Used: —</div>
-        <div class="row" style="margin-top:8px">
+        <div class="flex" style="margin-top:8px">
           <button id="btnHint" class="btn secondary">Show Hint</button>
           <button id="btnNew" class="btn">New Word</button>
           <button id="btnReveal" class="btn warn">Reveal</button>
@@ -176,9 +168,9 @@
 
   <!-- 30 SECONDS -->
   <section id="seconds" class="card" style="display:none">
-    <div class="row" style="justify-content:space-between;align-items:center">
+    <div class="flex" style="justify-content:space-between;align-items:center">
       <div class="pill">Round Score: <span id="secScore">0</span></div>
-      <div class="row" style="gap:10px;align-items:center">
+      <div class="flex" style="gap:10px;align-items:center">
         <svg id="hourglass" viewBox="0 0 100 160" class="hourglass" aria-label="Timer hourglass">
           <defs><clipPath id="clipTop"><polygon points="20,20 80,20 50,80"/></clipPath><clipPath id="clipBottom"><polygon points="20,140 80,140 50,80"/></clipPath></defs>
           <rect id="hgTop" x="20" y="20" width="60" height="60" fill="#fca311" clip-path="url(#clipTop)"/>
@@ -191,7 +183,7 @@
     </div>
     <div id="defBox" class="def-box" style="margin:10px 0 8px"></div>
     <input id="secInput" type="text" placeholder="Type the word here…" autocomplete="off" />
-    <div class="row" style="margin-top:10px">
+    <div class="flex" style="margin-top:10px">
       <button id="secStart" class="btn">Start 30-second Round</button>
       <button id="secSkip" class="btn secondary" disabled>Skip</button>
       <button id="secGive" class="btn warn" disabled>Give Answer</button>
@@ -205,9 +197,9 @@
   <section id="million" class="card" style="display:none">
     <div class="grid-2">
       <div>
-        <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="flex" style="justify-content:space-between;align-items:center">
           <div class="pill">Question <span id="milStep">1</span>/15</div>
-          <div class="row">
+          <div class="flex">
             <button id="mil5050" class="btn secondary">50:50</button>
             <button id="milSkip" class="btn secondary">Skip</button>
             <button id="milQuit" class="btn warn">Quit</button>
@@ -216,7 +208,7 @@
         <div id="milQ" class="def-box" style="margin-top:10px;font-weight:700"></div>
         <div class="opt" id="milOpts" style="margin-top:10px"></div>
         <div id="milFeedback" class="big" style="margin-top:10px"></div>
-        <div class="row" style="margin-top:10px">
+        <div class="flex" style="margin-top:10px">
           <button id="milStart" class="btn">Start New Game</button>
         </div>
       </div>
@@ -234,7 +226,7 @@
 
     <!-- Vocabulary -->
     <div id="studyVocab">
-      <div class="row"><input id="studySearch" type="text" placeholder="Search word/definition/example…" />
+      <div class="flex"><input id="studySearch" type="text" placeholder="Search word/definition/example…" />
         <button id="studyReset" class="btn secondary">Clear</button>
         <button id="studyPrint" class="btn">Print</button></div>
       <div style="overflow:auto; max-height:60vh; margin-top:8px">
@@ -245,7 +237,7 @@
 
     <!-- Lord of the Flies -->
     <div id="lotf" style="display:none">
-      <div class="row">
+      <div class="flex">
         <button id="lotfFilterAll" class="btn secondary">All</button>
         <button id="lotfFilterPlot" class="btn secondary">Plot</button>
         <button id="lotfFilterThemes" class="btn secondary">Themes</button>
@@ -256,48 +248,27 @@
       <div id="lotfList" style="max-height:60vh; overflow:auto; margin-top:8px"></div>
     </div>
 
-    <!-- Shakespeare (replaces Topic Test tab) -->
+    <!-- Shakespeare -->
     <div id="shakespeare" style="display:none">
       <div class="card" style="margin-bottom:10px">
-        <div class="big"><b>Shakespeare Study Pack</b> · <b>Sonnet 18</b> (Poetry) & <b>Romeo and Juliet</b> (Drama) · Exam-style Q&A + quick-reference notes.</div>
+        <div class="big"><b>Shakespeare Study Pack</b> — <b>Sonnet 18</b> & <b>Romeo and Juliet</b> (exam-style Q&A + quick notes).</div>
       </div>
-      <!-- Quick resources -->
       <div class="card" style="margin-bottom:10px">
         <b>Quick Reference</b>
         <ul>
-          <li><b>Sonnet 18</b>: form (Shakespearean sonnet), iambic pentameter, key images: <em>summer’s day</em>, <em>eye of heaven</em>, <em>eternal lines</em>.</li>
-          <li><b>Devices</b>: metaphor, personification, rhythm, volta (line 9: “But thy eternal summer…”).</li>
-          <li><b>R&J Balcony Scene</b>: conflict of love vs family; names/identity; impulsiveness; dramatic irony.</li>
+          <li><b>Sonnet 18</b>: Shakespearean sonnet, iambic pentameter, volta at line 9.</li>
+          <li><b>Key images</b>: summer’s day, eye of heaven, eternal lines.</li>
+          <li><b>Balcony scene</b>: love vs family; names/identity; dramatic irony; impulsiveness.</li>
         </ul>
       </div>
-
-      <!-- Q&A with show/hide -->
       <div id="shQA" style="max-height:60vh; overflow:auto;"></div>
-      <div class="row" style="margin-top:8px">
+      <div class="flex" style="margin-top:8px">
         <button id="shExpandAll" class="btn secondary">Expand all answers</button>
         <button id="shCollapseAll" class="btn secondary">Collapse all</button>
         <button id="shPrint" class="btn">Print</button>
       </div>
     </div>
   </section>
-</div>
-
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="modal" style="display:none">
-  <div class="modal-card">
-    <h2 style="margin:0 0 8px 0">Student Login</h2>
-    <div class="muted">Enter your details to track progress on this device.</div>
-    <div class="row" style="margin-top:10px">
-      <div class="field"><label for="inName">Name</label><input id="inName" type="text" placeholder="e.g., Sizwe" /></div>
-      <div class="field"><label for="inSurname">Surname</label><input id="inSurname" type="text" placeholder="e.g., Mokoena" /></div>
-      <div class="field"><label for="inClass">Class</label>
-        <select id="inClass"><option value="">Select…</option><option>10A</option><option>10B</option><option>10C</option></select></div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button id="btnLogin" class="btn">Save & Continue</button>
-      <button id="btnLoginCancel" class="btn secondary">Cancel</button>
-    </div>
-  </div>
 </div>
 
 <div class="toast" id="toast">Saved</div>
@@ -342,18 +313,18 @@ const TERMS=[
 /* ---------- LOTF study notes ---------- */
 const LOTF_NOTES=[
   {type:"Plot", text:"A group of British schoolboys is stranded on a deserted island. Ralph, elected leader, prioritises rescue (signal fire). Jack focuses on hunting. The boys descend into fear and savagery, leading to the deaths of Simon and Piggy; a naval officer finally rescues them."},
-  {type:"Themes", text:"Civilisation vs Savagery: the struggle between rule-based order (Ralph/Piggy) and primal instincts (Jack). Loss of Innocence: the boys commit violence and murder. Power & Leadership: democratic order vs authoritarian rule. Fear and the 'Beast': fear externalises inner darkness."},
-  {type:"Themes", text:"Groupthink & Mob Mentality: Chanting, face paint, and ritual hunts suppress individual morality."},
-  {type:"Characters", text:"Ralph — elected leader; values order, shelters, and rescue; represents civilisation."},
-  {type:"Characters", text:"Piggy — intelligent, physically vulnerable; his glasses mean science/logic; killed by Roger."},
-  {type:"Characters", text:"Jack — charismatic hunter; uses fear/punishment; represents authoritarian power and savagery."},
-  {type:"Characters", text:"Simon — spiritual, kind; understands the 'beast' is within; killed in a frenzied ritual."},
-  {type:"Characters", text:"Roger — sadistic; enjoys cruelty; rolls the boulder that kills Piggy."},
-  {type:"Symbolism", text:"Conch — law, order, and equal speech; shatters with Piggy’s death (end of order)."},
-  {type:"Symbolism", text:"Signal Fire — hope of rescue; its neglect shows the boys’ moral decline."},
-  {type:"Symbolism", text:"Piggy’s Glasses — knowledge, science, ability to create fire; power shifts when stolen."},
-  {type:"Symbolism", text:"Painted Faces — anonymity; loss of individual responsibility; unleash savagery."},
-  {type:"Symbolism", text:"Lord of the Flies (pig’s head) — evil within; a symbol of innate human darkness."}
+  {type:"Themes", text:"Civilisation vs Savagery; Loss of Innocence; Power & Leadership; Fear and the 'Beast'."},
+  {type:"Themes", text:"Groupthink & Mob Mentality: chanting, face paint, ritual hunts suppress individual morality."},
+  {type:"Characters", text:"Ralph — elected leader; values order and rescue; civilisation."},
+  {type:"Characters", text:"Piggy — intelligence/logic; glasses = science; killed by Roger."},
+  {type:"Characters", text:"Jack — authoritarian hunter; uses fear/punishment; savagery."},
+  {type:"Characters", text:"Simon — spiritual insight; realises the 'beast' is within; killed in frenzy."},
+  {type:"Characters", text:"Roger — sadist; kills Piggy with boulder."},
+  {type:"Symbolism", text:"Conch — law & order; shattering = end of democracy."},
+  {type:"Symbolism", text:"Signal Fire — hope of rescue; neglect = moral decline."},
+  {type:"Symbolism", text:"Piggy’s Glasses — knowledge/technology; power shifts when stolen."},
+  {type:"Symbolism", text:"Painted Faces — anonymity → savagery."},
+  {type:"Symbolism", text:"Lord of the Flies — evil within humanity."}
 ];
 
 /* ---------- Millionaire questions (LotF + Shakespeare basics) ---------- */
@@ -380,25 +351,25 @@ const QUESTION_BANK=[
   {q:"Dramatic irony is when…",options:["Audience knows more than characters","Two words sound alike","A character talks to themselves","The setting is ironic"],correct:"Audience knows more than characters"}
 ];
 
-/* ---------- Shakespeare Q&A (test-aligned) ---------- */
+/* ---------- Shakespeare Q&A (exam-aligned) ---------- */
 const SHAKESPEARE_QA = [
   {section:"POETRY — Sonnet 18", items:[
     {q:"1. To what is the beloved compared in line 1?", a:"A summer’s day."},
     {q:"2. Identify the figure of speech in 'the eye of heaven' (line 5).", a:"Metaphor (the sun as an eye); also implies personification."},
     {q:"3. Quote two consecutive words showing summer’s temporary nature.", a:"“summer’s lease”. It suggests a limited period."},
     {q:"4. How does the speaker immortalise the beloved?", a:"Through 'eternal lines' of poetry—so long as men can breathe or eyes can see, the poem gives life."},
-    {q:"5. Explain the volta (turn) in line 9.", a:"The poem shifts from summer’s flaws to the beloved’s 'eternal summer' that shall not fade, thanks to verse."}
+    {q:"5. Explain the volta (turn) in line 9.", a:"Shift from summer’s flaws to the beloved’s 'eternal summer' that does not fade, thanks to verse."}
   ]},
   {section:"DRAMA — Romeo and Juliet (Balcony Scene focus)", items:[
-    {q:"1. Meaning of 'Wherefore art thou Romeo?'", a:"Juliet means 'Why are you Romeo (a Montague)?'—it’s about his name/family, not his location."},
-    {q:"2. Identify Juliet’s central conflict.", a:"Love versus family loyalty/name; her love clashes with the feud."},
-    {q:"3. 'I’ll be new baptized'—what does this reveal about Romeo?", a:"He is impulsive and passionate; willing to abandon his name/identity for love."},
-    {q:"4. How does the scene develop the theme love vs loyalty?", a:"Both question the meaning of names and prioritise love; it drives them to secrecy and quick marriage, escalating conflict."},
-    {q:"5. Friar Laurence’s view of Romeo’s sudden love?", a:"He cautions that Romeo is inconstant (from Rosaline to Juliet) and urges moderation—'they stumble that run fast'."}
+    {q:"1. Meaning of 'Wherefore art thou Romeo?'", a:"'Why are you Romeo (a Montague)?'—about his name/family, not his location."},
+    {q:"2. Identify Juliet’s central conflict.", a:"Love vs family loyalty/name; love clashes with the feud."},
+    {q:"3. 'I’ll be new baptized'—what does this reveal about Romeo?", a:"He is impulsive and passionate; willing to abandon his name for love."},
+    {q:"4. How does the scene develop the theme love vs loyalty?", a:"They question the meaning of names and prioritise love; leads to secrecy and haste."},
+    {q:"5. Friar Laurence’s view of Romeo’s sudden love?", a:"He cautions that Romeo is inconstant and urges moderation—'they stumble that run fast'."}
   ]}
 ];
 
-/* ---------- tabs ---------- */
+/* ---------- Tabs ---------- */
 document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
@@ -413,28 +384,38 @@ document.querySelectorAll(".sub-btn").forEach(b=>b.addEventListener("click",()=>
   ["studyVocab","lotf","shakespeare"].forEach(id=>$(id).style.display=(id===t)?"":"none");
 }));
 
-/* ---------- student & stats (local) ---------- */
-const KEY_PREFIX="g10_vg_neon_v1";
-function studentId(s){return `${s.class||"?"}-${(s.surname||"").trim().toLowerCase()}-${(s.name||"").trim().toLowerCase()}`;}
+/* ---------- Guest stats (device only) ---------- */
+const KEY_PREFIX="g10_vg_guest_v1"; // new keyspace (no login)
+const currentStudent={name:"Guest",surname:"",class:""};
 function defaultStats(student){return{student,createdAt:Date.now(),merits:0,hangman:{wins:0},seconds:{totalCorrect:0,totalRounds:0,fastestCorrectMs:null},million:{bestStep:0,totalAnswered:0,totalCorrect:0}};}
-function loadStats(student){const id=studentId(student);const raw=localStorage.getItem(`${KEY_PREFIX}:${id}`);return raw?JSON.parse(raw):defaultStats(student);}
-function saveStats(stats){const id=studentId(stats.student);localStorage.setItem(`${KEY_PREFIX}:${id}`,JSON.stringify(stats));localStorage.setItem(`${KEY_PREFIX}:last`,JSON.stringify(stats.student));updateLeaderboards();}
-let currentStudent=null, STATS=null;
-function setStudent(s){currentStudent=s;const initials=(s.name?.[0]||"")+(s.surname?.[0]||"");$("avatar").textContent=(initials||"A").toUpperCase();$("studentBadge").textContent=s.name?`${s.name} ${s.surname} · ${s.class}`:"No student";$("d_name").textContent=s.name?`${s.name} ${s.surname}`:"—";$("d_class").textContent=s.class||"—";refreshDashboard();}
-async function initStudent(s){let stats=loadStats(s);STATS=stats;setStudent(STATS.student);saveStats(STATS);}
-function refreshDashboard(){ $("s_merits").textContent=STATS?.merits??0; $("s_hm_wins").textContent=STATS?.hangman.wins??0; $("s_30_total").textContent=STATS?.seconds.totalCorrect??0; const f=STATS?.seconds.fastestCorrectMs; $("s_30_fast").textContent=f?(f/1000).toFixed(2)+"s":"—"; $("s_mil_best").textContent=`${STATS?.million.bestStep??0} / 15`; $("s_mil_correct").textContent=STATS?.million.totalCorrect??0; $("s_mil_answered").textContent=STATS?.million.totalAnswered??0; const totalQ=(STATS?.seconds.totalCorrect??0)+(STATS?.million.totalAnswered??0); const acc=totalQ?Math.round(((STATS.seconds.totalCorrect+STATS.million.totalCorrect)/totalQ)*100):0; $("s_accuracy").textContent=acc+"%"; $("lbClassLabel").textContent=currentStudent?currentStudent.class:"—"; updateLeaderboards(); }
-function showLogin(show=true){$("loginModal").style.display=show?"":"none";}
-$("btnChangeStudent").onclick=()=>showLogin(true); $("btnLoginCancel").onclick=()=>showLogin(false);
-$("btnLogin").onclick=async()=>{const name=$("inName").value.trim(),surname=$("inSurname").value.trim(),cls=$("inClass").value.trim();if(!name||!surname||!cls){toast("Please fill all fields");beep("wrong");return;}await initStudent({name,surname,class:cls});showLogin(false);toast("Welcome! Stats loaded");};
-$("btnResetStats").onclick=()=>{if(!currentStudent)return;STATS=defaultStats(currentStudent);saveStats(STATS);refreshDashboard();toast("Stats reset");};
+function loadStats(){const raw=localStorage.getItem(`${KEY_PREFIX}:stats`);return raw?JSON.parse(raw):defaultStats(currentStudent);}
+function saveStats(stats){localStorage.setItem(`${KEY_PREFIX}:stats`,JSON.stringify(stats));refreshDashboard();}
+let STATS=loadStats();
+$("btnResetStats").onclick=()=>{STATS=defaultStats(currentStudent);saveStats(STATS);refreshDashboard();toast("Device stats reset");};
 $("btnQuickPlay").onclick=()=>{document.querySelector('.tab-btn[data-tab="hangman"]').click();};
-(function(){const last=localStorage.getItem(`${KEY_PREFIX}:last`);if(last){initStudent(JSON.parse(last));}else{showLogin(true);}})();
 
-/* ---------- leaderboards (class + grade) ---------- */
-function getAllStats(){const arr=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!k.startsWith(`${KEY_PREFIX}:`)||k.endsWith(":last"))continue;try{arr.push(JSON.parse(localStorage.getItem(k)));}catch(e){}}return arr;}
+function refreshDashboard(){
+  $("d_name").textContent="Guest"; $("d_class").textContent="—"; $("avatar").textContent="G";
+  $("s_merits").textContent=STATS.merits;
+  $("s_hm_wins").textContent=STATS.hangman.wins;
+  $("s_30_total").textContent=STATS.seconds.totalCorrect;
+  $("s_30_fast").textContent=STATS.seconds.fastestCorrectMs?(STATS.seconds.fastestCorrectMs/1000).toFixed(2)+"s":"—";
+  $("s_mil_best").textContent=`${STATS.million.bestStep} / 15`;
+  $("s_mil_correct").textContent=STATS.million.totalCorrect;
+  $("s_mil_answered").textContent=STATS.million.totalAnswered;
+  const totalQ=(STATS.seconds.totalCorrect||0)+(STATS.million.totalAnswered||0);
+  const acc=totalQ?Math.round(((STATS.seconds.totalCorrect+STATS.million.totalCorrect)/totalQ)*100):0;
+  $("s_accuracy").textContent=acc+"%";
+  $("lbClassLabel").textContent="Guest";
+  updateLeaderboards();
+}
+function getAllStats(){const raw=localStorage.getItem(`${KEY_PREFIX}:stats`);return raw?[JSON.parse(raw)]:[];}
 function scoreOf(s){return (s.merits||0)*100 + (s.million?.bestStep||0)*5 + (s.seconds?.totalCorrect||0)*2 + (s.hangman?.wins||0);}
-function renderLB(listEl, rows){listEl.innerHTML=""; rows.slice(0,5).forEach((r,idx)=>{const li=document.createElement("li");li.innerHTML=`<span>${idx+1}. ${r.student.name} ${r.student.surname} <span class="pill">${r.student.class}</span></span><span>${r.merits} merits · Step ${r.million.bestStep} · HM ${r.hangman.wins} · 30s ${r.seconds.totalCorrect}</span>`;listEl.appendChild(li);}); if(rows.length===0){const li=document.createElement("li");li.innerHTML=`<span>No data yet</span><span>—</span>`;listEl.appendChild(li);} }
-function updateLeaderboards(){const all=getAllStats(); all.sort((a,b)=>scoreOf(b)-scoreOf(a)); renderLB($("lbGrade"), all); if(currentStudent){const cls=all.filter(s=>s.student.class===currentStudent.class).sort((a,b)=>scoreOf(b)-scoreOf(a)); renderLB($("lbClass"), cls);} }
+function renderLB(listEl, rows){listEl.innerHTML=""; if(rows.length===0){const li=document.createElement("li");li.innerHTML=`<span>No data yet</span><span>—</span>`;listEl.appendChild(li);return;}
+  rows.slice(0,5).forEach((r,idx)=>{const li=document.createElement("li");li.innerHTML=`<span>${idx+1}. Guest</span><span>${r.merits} merits · Step ${r.million.bestStep} · HM ${r.hangman.wins} · 30s ${r.seconds.totalCorrect}</span>`;listEl.appendChild(li);});
+}
+function updateLeaderboards(){const all=getAllStats();all.sort((a,b)=>scoreOf(b)-scoreOf(a));renderLB($("lbGrade"),all);renderLB($("lbClass"),all);}
+refreshDashboard();
 
 /* ---------- Hangman ---------- */
 let hmWord="",hmMasked=[],hmLives=6,hmUsed=new Set(),hmHint="",hmWins=0;
@@ -445,7 +426,7 @@ function drawByMistakes(m){drawGallows();for(let i=1;i<=m&&i<=6;i++)drawStage(i)
 const drawKeyboard=()=>{const kb=$("keyboard");kb.innerHTML="";"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(k=>{const b=document.createElement("button");b.className="key";b.textContent=k;b.onclick=()=>guess(k);kb.appendChild(b);});};
 function newWord(){const {w,d}=TERMS[Math.floor(Math.random()*TERMS.length)];hmWord=w.toUpperCase();hmHint=d;hmMasked=hmWord.split("").map(ch=>/[A-Z]/.test(ch)?"_":ch);hmLives=6;hmUsed=new Set();$("slots").textContent=hmMasked.join(" ");$("lives").textContent=hmLives;$("used").textContent="Used: —";$("hint").style.display="none";$("hint").textContent="Hint: "+hmHint;$("result").textContent="";document.querySelectorAll(".key").forEach(k=>k.classList.remove("used"));drawByMistakes(0);}
 function reveal(){$("slots").textContent=hmWord.split("").join(" ");$("result").innerHTML=`Answer: <b>${hmWord}</b>`;}
-function guess(letter){if(hmLives<=0||hmUsed.has(letter))return;hmUsed.add(letter);document.querySelectorAll(".key").forEach(k=>{if(k.textContent===letter)k.classList.add("used");});$("used").textContent="Used: "+[...hmUsed].join(" ");if(hmWord.includes(letter)){hmWord.split("").forEach((ch,i)=>{if(ch===letter)hmMasked[i]=letter;});$("slots").textContent=hmMasked.join(" ");beep("ok");if(!hmMasked.includes("_")){$("result").innerHTML=`<span class="good">Great! You solved it.</span>`;hmWins++;$("wins").textContent=hmWins;if(STATS){STATS.hangman.wins++;saveStats(STATS);refreshDashboard();}beep("win");toast("Win +1");}}else{hmLives--;$("lives").textContent=hmLives;drawByMistakes(6-hmLives);beep("wrong");if(hmLives<=0){$("result").innerHTML=`<span class="bad">Out of lives!</span> The word was <b>${hmWord}</b>.`;beep("lose");toast("Round over");}}}
+function guess(letter){if(hmLives<=0||hmUsed.has(letter))return;hmUsed.add(letter);document.querySelectorAll(".key").forEach(k=>{if(k.textContent===letter)k.classList.add("used");});$("used").textContent="Used: "+[...hmUsed].join(" ");if(hmWord.includes(letter)){hmWord.split("").forEach((ch,i)=>{if(ch===letter)hmMasked[i]=letter;});$("slots").textContent=hmMasked.join(" ");beep("ok");if(!hmMasked.includes("_")){$("result").innerHTML=`<span class="good">Great! You solved it.</span>`;hmWins++;$("wins").textContent=hmWins;STATS.hangman.wins++;saveStats(STATS);refreshDashboard();beep("win");toast("Win +1");}}else{hmLives--;$("lives").textContent=hmLives;drawByMistakes(6-hmLives);beep("wrong");if(hmLives<=0){$("result").innerHTML=`<span class="bad">Out of lives!</span> The word was <b>${hmWord}</b>.`;beep("lose");toast("Round over");}}}
 drawKeyboard();newWord();$("btnHint").onclick=()=>{$("hint").style.display=$("hint").style.display==="none"?"":"";};$("btnNew").onclick=()=>newWord();$("btnReveal").onclick=()=>reveal();
 window.addEventListener("keydown",e=>{if($("hangman").style.display==="none")return;const L=e.key.toUpperCase();if(L>="A"&&L<="Z")guess(L);});
 
@@ -456,9 +437,9 @@ function updateHourglass(){const HG=60,prog=1-(secTime/secDuration),topH=(1-prog
 function secondsReset(){secRoundActive=false;secTime=secDuration;secScore=0;secQueue=shuffle(TERMS.slice());secCurrent=null;secQuestionStart=null;clearInterval(secTimer);$("secTime").textContent=secTime;$("secScore").textContent=0;$("secFeedback").textContent="";$("secInput").value="";$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("defBox").innerHTML="Press <b>Start 30-second Round</b> to begin.";updateHourglass();}
 function nextDefinition(){if(secQueue.length===0)secQueue=shuffle(TERMS.slice());secCurrent=secQueue.pop();$("defBox").innerHTML=`<b>Definition:</b> ${secCurrent.d}`;$("secInput").value="";$("secInput").focus();secQuestionStart=Date.now();}
 function startRound(){if(secRoundActive)return;secondsReset();secRoundActive=true;$("secInput").disabled=false;$("secSkip").disabled=false;$("secGive").disabled=false;nextDefinition();secTimer=setInterval(()=>{secTime--;$("secTime").textContent=secTime;updateHourglass();if(secTime<=0){endRound();beep("time");}},1000);}
-function endRound(){clearInterval(secTimer);secRoundActive=false;$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("secFeedback").innerHTML=`⏱️ Round over. You scored <b>${secScore}</b>.`;$("secLast").innerHTML="";if(STATS){STATS.seconds.totalRounds++;saveStats(STATS);refreshDashboard();}toast("Round finished");updateHourglass();}
+function endRound(){clearInterval(secTimer);secRoundActive=false;$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("secFeedback").innerHTML=`⏱️ Round over. You scored <b>${secScore}</b>.`;$("secLast").innerHTML="";STATS.seconds.totalRounds++;saveStats(STATS);refreshDashboard();toast("Round finished");updateHourglass();}
 $("secStart").onclick=startRound;$("secSkip").onclick=()=>{if(!secRoundActive)return;$("secLast").innerHTML=`Skipped: <b>${secCurrent.w}</b>`;nextDefinition();};$("secGive").onclick=()=>{if(!secRoundActive)return;$("secLast").innerHTML=`Answer: <b>${secCurrent.w}</b>`;nextDefinition();};
-$("secInput").addEventListener("keydown",e=>{if(e.key==="Enter"){const g=e.target.value.trim().toLowerCase();if(!g)return;if(g===secCurrent.w.toLowerCase()){secScore++;secTotal++;$("secScore").textContent=secScore;$("secTotal").textContent=secTotal;$("secFeedback").innerHTML=`<span class="good">Correct!</span>`;beep("ok");if(secQuestionStart&&STATS){const elapsed=Date.now()-secQuestionStart;const cur=STATS.seconds.fastestCorrectMs;if(!cur||elapsed<cur)STATS.seconds.fastestCorrectMs=elapsed;STATS.seconds.totalCorrect++;saveStats(STATS);refreshDashboard();}nextDefinition();}else{$("secFeedback").innerHTML=`<span class="bad">Try again.</span>`;beep("wrong");}}});
+$("secInput").addEventListener("keydown",e=>{if(e.key==="Enter"){const g=e.target.value.trim().toLowerCase();if(!g)return;if(g===secCurrent.w.toLowerCase()){secScore++;secTotal++;$("secScore").textContent=secScore;$("secTotal").textContent=secTotal;$("secFeedback").innerHTML=`<span class="good">Correct!</span>`;beep("ok");if(secQuestionStart){const elapsed=Date.now()-secQuestionStart;const cur=STATS.seconds.fastestCorrectMs;if(!cur||elapsed<cur)STATS.seconds.fastestCorrectMs=elapsed;STATS.seconds.totalCorrect++;saveStats(STATS);refreshDashboard();}nextDefinition();}else{$("secFeedback").innerHTML=`<span class="bad">Try again.</span>`;beep("wrong");}}});
 secondsReset();
 
 /* ---------- Millionaire (merits halfway + finish) ---------- */
@@ -468,11 +449,12 @@ function buildLadder(){const ul=$("milLadder");ul.innerHTML="";ladderValues.forE
 function highlightLadder(){const items=[...$("milLadder").children];items.forEach(li=>li.classList.remove("active"));const pos=ladderValues.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
 function prepareGame(){milIndex=0;milUsed5050=false;milUsedSkip=false;milActive=false;milHalfMeritGiven=false;milFinishMeritGiven=false;$("milFeedback").textContent="";$("milStep").textContent="1";$("mil5050").disabled=false;$("milSkip").disabled=false;milQSet=shuffle(QUESTION_BANK).slice(0,15);renderQuestion();}
 function renderQuestion(){const q=milQSet[milIndex];$("milQ").innerHTML=q.q;const w=$("milOpts");w.innerHTML="";q.options.forEach((opt,i)=>{const b=document.createElement("button");b.dataset.opt=opt;b.innerHTML=`<span style="opacity:.8">${String.fromCharCode(65+i)})</span> ${opt}`;b.onclick=()=>checkAnswer(b,opt);w.appendChild(b);});highlightLadder();}
-function maybeAwardMerits(){if(!STATS)return;if(milIndex>=8 && !milHalfMeritGiven){STATS.merits+=1;milHalfMeritGiven=true;toast("+1 merit (Halfway!)");}if(milIndex>=15 && !milFinishMeritGiven && !milUsedSkip){STATS.merits+=2;milFinishMeritGiven=true;toast("+2 merits (Completed!)");}}
-function checkAnswer(btn, choice){if(!milActive)milActive=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];buttons.forEach(b=>b.disabled=true);if(STATS)STATS.million.totalAnswered++;if(choice.toLowerCase()===q.correct.toLowerCase()){if(STATS)STATS.million.totalCorrect++;btn.classList.add("right");beep("ok");setTimeout(()=>{milIndex++;if(STATS){STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);}maybeAwardMerits();if(STATS){saveStats(STATS);refreshDashboard();}if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`🏆 <span class="good">Congratulations!</span> You reached <b>${ladderValues[0]}</b>.`;beep("win");milActive=false;}else{$("milStep").textContent=String(milIndex+1);renderQuestion();buttons.forEach(b=>b.classList.remove("right"));}},480);}else{btn.classList.add("wrong");beep("wrong");const cbtn=buttons.find(b=>b.dataset.opt.toLowerCase()===q.correct.toLowerCase());if(cbtn)cbtn.classList.add("right");$("milFeedback").innerHTML=`❌ <span class="bad">Incorrect.</span> Correct answer: <b>${q.correct}</b>.`;milActive=false;if(STATS){saveStats(STATS);refreshDashboard();}}}
+function maybeAwardMerits(){if(milIndex>=8 && !milHalfMeritGiven){STATS.merits+=1;milHalfMeritGiven=true;toast("+1 merit (Halfway!)");}
+  if(milIndex>=15 && !milFinishMeritGiven && !milUsedSkip){STATS.merits+=2;milFinishMeritGiven=true;toast("+2 merits (Completed!)");}}
+function checkAnswer(btn, choice){if(!milActive)milActive=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];buttons.forEach(b=>b.disabled=true);STATS.million.totalAnswered++;if(choice.toLowerCase()===q.correct.toLowerCase()){STATS.million.totalCorrect++;btn.classList.add("right");beep("ok");setTimeout(()=>{milIndex++;STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);maybeAwardMerits();saveStats(STATS);refreshDashboard();if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`🏆 <span class="good">Congratulations!</span> You reached <b>${ladderValues[0]}</b>.`;beep("win");milActive=false;}else{$("milStep").textContent=String(milIndex+1);renderQuestion();buttons.forEach(b=>b.classList.remove("right"));}},480);}else{btn.classList.add("wrong");beep("wrong");const cbtn=buttons.find(b=>b.dataset.opt.toLowerCase()===q.correct.toLowerCase());if(cbtn)cbtn.classList.add("right");$("milFeedback").innerHTML=`❌ <span class="bad">Incorrect.</span> Correct answer: <b>${q.correct}</b>.`;milActive=false;saveStats(STATS);refreshDashboard();}}
 $("mil5050").onclick=()=>{if(milUsed5050)return;milUsed5050=true;$("mil5050").disabled=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];shuffle(buttons.filter(b=>b.dataset.opt.toLowerCase()!==q.correct.toLowerCase())).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity=.4;});};
-$("milSkip").onclick=()=>{if(milUsedSkip)return;milUsedSkip=true;$("milSkip").disabled=true;milIndex++;if(STATS){STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);saveStats(STATS);refreshDashboard();}if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`You skipped to the end. Final: <b>${ladderValues[0]}</b>.`;milActive=false;return}$("milStep").textContent=String(milIndex+1);renderQuestion();};
-$("milQuit").onclick=()=>{const prizeIndex=Math.max(ladderValues.length-milIndex,1);$("milFeedback").innerHTML=`👋 You quit with <b>${ladderValues[prizeIndex-1]}</b>.`;milActive=false;if(STATS){saveStats(STATS);refreshDashboard();}};
+$("milSkip").onclick=()=>{if(milUsedSkip)return;milUsedSkip=true;$("milSkip").disabled=true;milIndex++;STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);saveStats(STATS);refreshDashboard();if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`You skipped to the end. Final: <b>${ladderValues[0]}</b>.`;milActive=false;return}$("milStep").textContent=String(milIndex+1);renderQuestion();};
+$("milQuit").onclick=()=>{const prizeIndex=Math.max(ladderValues.length-milIndex,1);$("milFeedback").innerHTML=`👋 You quit with <b>${ladderValues[prizeIndex-1]}</b>.`;milActive=false;saveStats(STATS);refreshDashboard();};
 $("milStart").onclick=()=>{buildLadder();prepareGame();};buildLadder();
 
 /* ---------- Study: Vocab table ---------- */
@@ -496,7 +478,7 @@ function buildShQA(){
     const h=document.createElement("h3"); h.textContent=section.section; wrap.appendChild(h);
     section.items.forEach((item)=>{
       const card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";
-      card.innerHTML=`<div><b>${item.q}</b></div><div class="qa-a" style="display:none;margin-top:6px">${item.a}</div><div class="row" style="margin-top:8px"><button class="btn secondary btnShow">Show Answer</button></div>`;
+      card.innerHTML=`<div><b>${item.q}</b></div><div class="qa-a" style="display:none;margin-top:6px">${item.a}</div><div class="flex" style="margin-top:8px"><button class="btn secondary btnShow">Show Answer</button></div>`;
       const btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa-a");
       btn.addEventListener("click",()=>{const vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
       wrap.appendChild(card);
