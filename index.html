@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grade 10 Vocabulary Games Hub — Neon Edition</title>
+<style>
+  :root{
+    --bg:#070b1a; --panel:rgba(14,18,36,.72); --glass:rgba(20,26,55,.55);
+    --text:#e7f2ff; --muted:#a8bfdd; --accent:#00f5d4; --accent2:#ff5e57; --accent3:#8a5cff; --accent4:#fca311;
+    --good:#2ecc71; --bad:#ff4d6d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% -10%,#102153 0,#0c1736 30%,#070b1a 65%) fixed;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+  .wrap{max-width:1220px;margin:0 auto;padding:20px}
+  header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .brand{font-weight:900;font-size:24px;letter-spacing:.5px}
+  .neon{background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tabs{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+  .tab-btn{border:1px solid rgba(255,255,255,.08);padding:10px 14px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:var(--text);cursor:pointer}
+  .tab-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);font-weight:800;box-shadow:0 0 24px rgba(0,245,212,.25)}
+  .badge{background:linear-gradient(90deg,var(--accent3),var(--accent2));padding:6px 10px;border-radius:999px;font-size:12px}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,.2)}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#101a34;border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px}
+  .btn{border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);box-shadow:0 6px 22px rgba(138,92,255,.25)}
+  .btn.secondary{color:#cfe7ff;background:linear-gradient(180deg,#1b2546 0,#121c3a 100%);border:1px solid rgba(255,255,255,.08)}
+  .btn.warn{color:#130a00;background:linear-gradient(180deg,#ffd166 0,var(--accent4) 100%)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 10px 40px rgba(0,0,0,.35),0 0 50px rgba(138,92,255,.05);backdrop-filter:blur(8px)}
+  .flex{display:flex;gap:16px;flex-wrap:wrap}.grow{flex:1 1 360px}
+  .muted{color:var(--muted)} .big{font-size:18px}
+  .grid-2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+  @media (max-width:980px){.grid-2{grid-template-columns:1fr}}
+
+  /* Dashboard */
+  .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media (max-width:900px){.statgrid{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:linear-gradient(180deg,#101837,#0c1330);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px}
+  .stat h4{margin:0 0 6px 0;font-size:12px;color:#bcd1ff}.stat .v{font-size:24px;font-weight:900}
+  .avatar{width:56px;height:56px;border-radius:14px;background:linear-gradient(180deg,var(--accent3),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900}
+  .lb{list-style:none;margin:8px 0 0 0;padding:0}.lb li{padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:linear-gradient(180deg,#0f1836,#0b1230);display:flex;justify-content:space-between;margin-bottom:8px}
+
+  /* Hangman */
+  .hm-title{font-weight:800;margin:0 0 8px 0;letter-spacing:.4px}
+  canvas{background:linear-gradient(180deg,#0c1228,#0a0f21);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:100%}
+  .slots{letter-spacing:.28em;font-size:26px;margin:10px 0 6px;white-space:pre}
+  .kbd{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:12px}
+  .key{background:linear-gradient(180deg,#131e41,#101936);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 0;text-align:center;font-weight:700;cursor:pointer;color:#cfe7ff}
+  .key.used{opacity:.35;pointer-events:none}
+  .hint{background:linear-gradient(180deg,#0f1837,#0b1230);border:1px solid rgba(255,255,255,.08);padding:10px;border-radius:10px}
+  .good{color:var(--good)} .bad{color:var(--bad)}
+
+  /* 30 Seconds */
+  input[type="text"]{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px}
+  .def-box{font-size:18px;line-height:1.45}.hourglass{width:58px;height:90px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+  /* Millionaire */
+  .ladder{list-style:none;padding:0;margin:0;display:flex;flex-direction:column-reverse;gap:6px}
+  .ladder li{padding:8px 10px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:linear-gradient(180deg,#0f1836,#0b1230);font-weight:700;display:flex;justify-content:space-between}
+  .ladder li.active{background:linear-gradient(90deg,rgba(0,245,212,.35),rgba(138,92,255,.35));border-color:var(--accent);color:#e9fcff}
+  .opt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .opt button{padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-weight:800;cursor:pointer}
+  .opt button:hover{border-color:#3c62a7}
+  .opt .right{border-color:var(--good);box-shadow:0 0 18px rgba(46,204,113,.3)}
+  .opt .wrong{border-color:var(--bad);box-shadow:0 0 18px rgba(255,77,109,.25)}
+
+  /* Study */
+  .subtabs{display:flex;gap:8px;margin-bottom:10px}
+  .sub-btn{border:1px solid rgba(255,255,255,.1);padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:#cfe7ff;cursor:pointer}
+  .sub-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent2),var(--accent3));font-weight:800;box-shadow:0 0 18px rgba(255,94,87,.22)}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid rgba(255,255,255,.08);padding:8px;vertical-align:top}
+  th{background:linear-gradient(180deg,#0f1837,#0b1230)}
+
+  /* Toast + modal */
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.12);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+  .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(3,6,18,.75),rgba(3,6,18,.9));backdrop-filter:blur(6px);z-index:10}
+  .modal-card{width:min(540px,92%);background:var(--glass);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .field{display:flex;flex-direction:column;gap:6px;flex:1}
+  label{font-size:12px;color:#cfdcff}
+  select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Grade 10 <span class="neon">Vocabulary Games Hub</span></div>
+    <span id="studentBadge" class="badge">No student</span>
+    <button id="btnChangeStudent" class="tab-btn ghost">Change Student</button>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dash">Dashboard</button>
+      <button class="tab-btn" data-tab="hangman">Hangman</button>
+      <button class="tab-btn" data-tab="seconds">30 Seconds</button>
+      <button class="tab-btn" data-tab="million">Millionaire</button>
+      <button class="tab-btn" data-tab="study">Study</button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section id="dash" class="card">
+    <div class="grid-2">
+      <div class="card" style="background:linear-gradient(180deg,#0c1430,#0a1126);">
+        <div class="row">
+          <div class="avatar" id="avatar">A</div>
+          <div>
+            <div class="muted">Student</div>
+            <div id="d_name" style="font-weight:900;font-size:20px">—</div>
+            <div id="d_class" class="muted">—</div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn secondary" id="btnResetStats">Reset My Stats</button>
+          <button class="btn" id="btnQuickPlay">Jump into Hangman</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Notes</div>
+        <div class="big">Local login keeps scores & leaderboards on this device. For multi-device competition (whole grade/whole school), we can add Supabase later.</div>
+      </div>
+    </div>
+
+    <div class="statgrid" style="margin-top:12px">
+      <div class="stat"><h4>Merits</h4><div class="v" id="s_merits">0</div></div>
+      <div class="stat"><h4>Hangman Wins</h4><div class="v" id="s_hm_wins">0</div></div>
+      <div class="stat"><h4>30 Seconds — Fastest Correct</h4><div class="v" id="s_30_fast">—</div></div>
+      <div class="stat"><h4>30 Seconds — Correct Total</h4><div class="v" id="s_30_total">0</div></div>
+      <div class="stat"><h4>Millionaire — Best Step</h4><div class="v" id="s_mil_best">0 / 15</div></div>
+      <div class="stat"><h4>Millionaire — Correct</h4><div class="v" id="s_mil_correct">0</div></div>
+      <div class="stat"><h4>Millionaire — Answered</h4><div class="v" id="s_mil_answered">0</div></div>
+      <div class="stat"><h4>Accuracy</h4><div class="v" id="s_accuracy">0%</div></div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h3 style="margin:0">Class Leaderboard</h3>
+          <span id="lbClassLabel" class="pill">—</span>
+        </div>
+        <ol id="lbClass" class="lb"></ol>
+      </div>
+      <div class="card">
+        <h3 style="margin:0">Grade Leaderboard</h3>
+        <ol id="lbGrade" class="lb"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- HANGMAN -->
+  <section id="hangman" class="card" style="display:none">
+    <div class="flex">
+      <div class="grow" style="max-width:480px">
+        <h2 class="hm-title">Mr Samuels – Grade 10 HL Hangman</h2>
+        <canvas id="hmCanvas" width="430" height="280" aria-label="Hangman drawing"></canvas>
+      </div>
+      <div class="grow">
+        <div class="row">
+          <span class="pill">Lives: <span id="lives" class="lives">6</span></span>
+          <span class="pill">Wins: <span id="wins">0</span></span>
+        </div>
+        <div id="slots" class="slots">_ _ _ _ _</div>
+        <div id="used" class="muted">Used: —</div>
+        <div class="row" style="margin-top:8px">
+          <button id="btnHint" class="btn secondary">Show Hint</button>
+          <button id="btnNew" class="btn">New Word</button>
+          <button id="btnReveal" class="btn warn">Reveal</button>
+        </div>
+        <div id="hint" class="hint" style="margin-top:10px;display:none"></div>
+        <div id="result" class="big" style="margin-top:8px"></div>
+        <div class="kbd" id="keyboard" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 30 SECONDS -->
+  <section id="seconds" class="card" style="display:none">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="pill">Round Score: <span id="secScore">0</span></div>
+      <div class="row" style="gap:10px;align-items:center">
+        <svg id="hourglass" viewBox="0 0 100 160" class="hourglass" aria-label="Timer hourglass">
+          <defs><clipPath id="clipTop"><polygon points="20,20 80,20 50,80"/></clipPath><clipPath id="clipBottom"><polygon points="20,140 80,140 50,80"/></clipPath></defs>
+          <rect id="hgTop" x="20" y="20" width="60" height="60" fill="#fca311" clip-path="url(#clipTop)"/>
+          <rect id="hgBottom" x="20" y="140" width="60" height="0" fill="#fca311" clip-path="url(#clipBottom)"/>
+          <rect id="hgStream" x="48.5" y="78" width="3" height="0" fill="#fca311" visibility="hidden"/>
+          <polygon points="20,20 80,20 50,80 20,140 80,140 50,80" fill="none" stroke="#cfe7ff" stroke-width="4"/>
+          <rect x="15" y="10" width="70" height="8" fill="#cfe7ff"/><rect x="15" y="142" width="70" height="8" fill="#cfe7ff"/>
+        </svg><span id="secTime" class="sr-only">30</span>
+      </div>
+    </div>
+    <div id="defBox" class="def-box" style="margin:10px 0 8px"></div>
+    <input id="secInput" type="text" placeholder="Type the word here…" autocomplete="off" />
+    <div class="row" style="margin-top:10px">
+      <button id="secStart" class="btn">Start 30-second Round</button>
+      <button id="secSkip" class="btn secondary" disabled>Skip</button>
+      <button id="secGive" class="btn warn" disabled>Give Answer</button>
+      <span class="pill">Correct total: <span id="secTotal">0</span></span>
+    </div>
+    <div id="secFeedback" class="big" style="margin-top:8px"></div>
+    <div id="secLast" class="muted" style="margin-top:6px"></div>
+  </section>
+
+  <!-- MILLIONAIRE -->
+  <section id="million" class="card" style="display:none">
+    <div class="grid-2">
+      <div>
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div class="pill">Question <span id="milStep">1</span>/15</div>
+          <div class="row">
+            <button id="mil5050" class="btn secondary">50:50</button>
+            <button id="milSkip" class="btn secondary">Skip</button>
+            <button id="milQuit" class="btn warn">Quit</button>
+          </div>
+        </div>
+        <div id="milQ" class="def-box" style="margin-top:10px;font-weight:700"></div>
+        <div class="opt" id="milOpts" style="margin-top:10px"></div>
+        <div id="milFeedback" class="big" style="margin-top:10px"></div>
+        <div class="row" style="margin-top:10px">
+          <button id="milStart" class="btn">Start New Game</button>
+        </div>
+      </div>
+      <div><ul class="ladder" id="milLadder"></ul></div>
+    </div>
+  </section>
+
+  <!-- STUDY -->
+  <section id="study" class="card" style="display:none">
+    <div class="subtabs">
+      <button class="sub-btn active" data-sub="studyVocab">Vocabulary</button>
+      <button class="sub-btn" data-sub="lotf">Lord of the Flies</button>
+      <button class="sub-btn" data-sub="test">Topic Test (15 Aug 2025)</button>
+    </div>
+
+    <!-- Vocabulary -->
+    <div id="studyVocab">
+      <div class="row"><input id="studySearch" type="text" placeholder="Search word/definition/example…" />
+        <button id="studyReset" class="btn secondary">Clear</button>
+        <button id="studyPrint" class="btn">Print</button></div>
+      <div style="overflow:auto; max-height:60vh; margin-top:8px">
+        <table id="studyTable"><thead><tr><th style="width:18%">Word</th><th style="width:37%">Definition</th><th>Example sentence</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="muted" style="margin-top:8px">Grade 10 HL vocabulary (poetry, drama, LotF).</div>
+    </div>
+
+    <!-- Lord of the Flies -->
+    <div id="lotf" style="display:none">
+      <div class="row">
+        <button id="lotfFilterAll" class="btn secondary">All</button>
+        <button id="lotfFilterPlot" class="btn secondary">Plot</button>
+        <button id="lotfFilterThemes" class="btn secondary">Themes</button>
+        <button id="lotfFilterChars" class="btn secondary">Characters</button>
+        <button id="lotfFilterSymbol" class="btn secondary">Symbolism</button>
+        <button id="lotfPrint" class="btn">Print</button>
+      </div>
+      <div id="lotfList" style="max-height:60vh; overflow:auto; margin-top:8px"></div>
+    </div>
+
+    <!-- Topic Test -->
+    <div id="test" style="display:none">
+      <div class="card" style="margin-bottom:10px">
+        <div class="big"><b>English HL — Topic Test</b> · Grade 10 · <b>15 August 2025</b> · <b>Total: 30 marks</b> · Time: 45 minutes</div>
+        <div class="muted">Section A: Poetry (Shakespeare, Sonnet 18) · Section B: Drama (Romeo and Juliet)</div>
+      </div>
+      <div id="testQA" style="max-height:60vh; overflow:auto;"></div>
+      <div class="row" style="margin-top:8px">
+        <button id="testExpandAll" class="btn secondary">Expand all answers</button>
+        <button id="testCollapseAll" class="btn secondary">Collapse all</button>
+        <button id="testPrint" class="btn">Print</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal" style="display:none">
+  <div class="modal-card">
+    <h2 style="margin:0 0 8px 0">Student Login</h2>
+    <div class="muted">Enter your details to track progress on this device.</div>
+    <div class="row" style="margin-top:10px">
+      <div class="field"><label for="inName">Name</label><input id="inName" type="text" placeholder="e.g., Sizwe" /></div>
+      <div class="field"><label for="inSurname">Surname</label><input id="inSurname" type="text" placeholder="e.g., Mokoena" /></div>
+      <div class="field"><label for="inClass">Class</label>
+        <select id="inClass"><option value="">Select…</option><option>10A</option><option>10B</option><option>10C</option></select></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button id="btnLogin" class="btn">Save & Continue</button>
+      <button id="btnLoginCancel" class="btn secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+/* ---------- utils & audio ---------- */
+let AC;
+function beep(type="ok"){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);const n=AC.currentTime;const P={ok:660,wrong:200,win:880,lose:120,time:300}[type]||500;o.frequency.setValueAtTime(P,n);g.gain.setValueAtTime(.001,n);g.gain.exponentialRampToValueAtTime(.2,n+.02);g.gain.exponentialRampToValueAtTime(.001,n+.24);o.type=type==="win"?"triangle":"sine";o.start(n);o.stop(n+.26);}catch(e){}}
+const $=id=>document.getElementById(id);
+const toast=msg=>{const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1200);};
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+
+/* ---------- Grade 10 vocabulary ---------- */
+const TERMS=[
+  {w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
+  {w:"iambic pentameter",d:"A rhythm pattern of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
+  {w:"metaphor",d:"A direct comparison without 'like' or 'as'.",e:"'Eye of heaven' is a metaphor for the sun."},
+  {w:"personification",d:"Giving human traits to non-human things.",e:"'Death brag' personifies death."},
+  {w:"oxymoron",d:"Two contradictory terms together.",e:"'Brawling love' in Romeo and Juliet."},
+  {w:"soliloquy",d:"A speech revealing a character’s inner thoughts.",e:"Juliet’s Act 3 soliloquy reveals her anxiety."},
+  {w:"dramatic irony",d:"Audience knows more than characters.",e:"We know Juliet isn’t dead; the characters don’t."},
+  {w:"foil",d:"A character who contrasts another.",e:"Piggy is a foil to Jack in LotF."},
+  {w:"symbolism",d:"Objects or actions representing ideas.",e:"The conch symbolises order in LotF."},
+  {w:"allegory",d:"A narrative with deeper moral/political meaning.",e:"LotF is an allegory of civilisation vs savagery."},
+  {w:"microcosm",d:"A small system reflecting a larger one.",e:"The island is a microcosm of society."},
+  {w:"protagonist",d:"Main character who drives the plot.",e:"Ralph is a protagonist in LotF."},
+  {w:"antagonist",d:"Character opposing the protagonist.",e:"Jack is Ralph’s antagonist."},
+  {w:"theme",d:"Central idea explored by a text.",e:"Abuse of power is a theme in LotF."},
+  {w:"motif",d:"Recurring element with significance.",e:"Chanting is a motif for mob mentality in LotF."},
+  {w:"temperate",d:"Mild; moderate.",e:"'More temperate' describes the beloved in Sonnet 18."},
+  {w:"complexion",d:"Skin appearance; also the look of a thing.",e:"The sun’s 'gold complexion' can be dimmed."},
+  {w:"lease",d:"A fixed period of use; tenure.",e:"'Summer’s lease' suggests it ends."},
+  {w:"savagery",d:"Brutal or violent behaviour.",e:"Jack’s tribe descends into savagery."},
+  {w:"civilisation",d:"Organised society with rules and order.",e:"Ralph tries to maintain civilisation on the island."},
+  {w:"conch",d:"A shell used to call assemblies; symbol of order.",e:"Whoever holds the conch may speak."},
+  {w:"beast",d:"Imagined monster symbolising inner fear.",e:"The 'beast' reflects the boys’ own darkness."},
+  {w:"fire",d:"Signal fire symbolises hope and rescue.",e:"Neglecting the fire leads to missed rescue."},
+  {w:"specs",d:"Piggy’s glasses; tool of science and reason.",e:"Glasses start the fire — power of technology."},
+  {w:"anarchy",d:"Absence of authority; disorder.",e:"Without rules, the island slides into anarchy."}
+];
+
+/* ---------- LOTF study notes ---------- */
+const LOTF_NOTES=[
+  {type:"Plot", text:"A group of British schoolboys is stranded on a deserted island. Ralph, elected leader, prioritises rescue (signal fire). Jack focuses on hunting. The boys descend into fear and savagery, leading to the deaths of Simon and Piggy; a naval officer finally rescues them."},
+  {type:"Themes", text:"Civilisation vs Savagery: the struggle between rule-based order (Ralph/Piggy) and primal instincts (Jack). Loss of Innocence: the boys commit violence and murder. Power & Leadership: democratic order vs authoritarian rule. Fear and the 'Beast': fear externalises inner darkness."},
+  {type:"Themes", text:"Groupthink & Mob Mentality: Chanting, face paint, and ritual hunts suppress individual morality."},
+  {type:"Characters", text:"Ralph — elected leader; values order, shelters, and rescue; represents civilisation."},
+  {type:"Characters", text:"Piggy — intelligent, physically vulnerable; his glasses mean science/logic; killed by Roger."},
+  {type:"Characters", text:"Jack — charismatic hunter; uses fear/punishment; represents authoritarian power and savagery."},
+  {type:"Characters", text:"Simon — spiritual, kind; understands the 'beast' is within; killed in a frenzied ritual."},
+  {type:"Characters", text:"Roger — sadistic; enjoys cruelty; rolls the boulder that kills Piggy."},
+  {type:"Symbolism", text:"Conch — law, order, and equal speech; shatters with Piggy’s death (end of order)."},
+  {type:"Symbolism", text:"Signal Fire — hope of rescue; its neglect shows the boys’ moral decline."},
+  {type:"Symbolism", text:"Piggy’s Glasses — knowledge, science, ability to create fire; power shifts when stolen."},
+  {type:"Symbolism", text:"Painted Faces — anonymity; loss of individual responsibility; unleash savagery."},
+  {type:"Symbolism", text:"Lord of the Flies (pig’s head) — evil within; a symbol of innate human darkness."}
+];
+
+/* ---------- Millionaire questions (focus: LotF + Shakespeare basics) ---------- */
+const QUESTION_BANK=[
+  // Lord of the Flies – plot/themes/characters/symbols
+  {q:"Who is elected leader at the beginning of Lord of the Flies?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
+  {q:"Which object symbolises order and democratic speech?",options:["The conch","The fire","The glasses","The spear"],correct:"The conch"},
+  {q:"Jack’s priority soon becomes…",options:["Hunting","Shelters","Keeping the fire","Exploring"],correct:"Hunting"},
+  {q:"What do Piggy’s glasses most strongly symbolise?",options:["Reason and science","Beauty","Wealth","Tradition"],correct:"Reason and science"},
+  {q:"Who kills Piggy?",options:["Roger","Jack","Ralph","The naval officer"],correct:"Roger"},
+  {q:"What is the 'beast' ultimately revealed to be?",options:["The boys’ inner savagery","A real monster","A wild boar","A ghost"],correct:"The boys’ inner savagery"},
+  {q:"Which character represents spiritual goodness and insight?",options:["Simon","Jack","Roger","Samneric"],correct:"Simon"},
+  {q:"The signal fire represents…",options:["Hope of rescue","Punishment","Wealth","Boredom"],correct:"Hope of rescue"},
+  {q:"Why do the boys paint their faces?",options:["To feel anonymous and savage","To look beautiful","To honor Ralph","For warmth"],correct:"To feel anonymous and savage"},
+  {q:"The shattering of the conch signifies…",options:["Collapse of order","A celebration","More equality","The arrival of adults"],correct:"Collapse of order"},
+  {q:"What does the naval officer’s arrival create at the end?",options:["A sudden return to civilisation","A new war","A bigger fire","A second island"],correct:"A sudden return to civilisation"},
+  {q:"Which theme best fits the boys’ chanting and mob dances?",options:["Mob mentality","Romantic love","Economic growth","Pastoral beauty"],correct:"Mob mentality"},
+  {q:"What does Jack primarily use to control his tribe?",options:["Fear and punishment","Fair debate","Shared leadership","Random votes"],correct:"Fear and punishment"},
+  {q:"Which pair best contrasts leadership styles?",options:["Ralph vs Jack","Piggy vs Simon","Roger vs Sam","Officer vs Jack"],correct:"Ralph vs Jack"},
+  {q:"'Lord of the Flies' (pig’s head) most closely symbolises…",options:["Evil within humanity","Royal authority","Religious salvation","Wealth"],correct:"Evil within humanity"},
+  // Shakespeare / poetry quick checks
+  {q:"A 14-line poem with regular meter is called a…",options:["Sonnet","Ode","Elegy","Haiku"],correct:"Sonnet"},
+  {q:"'Eye of heaven' in Sonnet 18 is a…",options:["Metaphor for the sun","Simile","Alliteration","Hyperbole"],correct:"Metaphor for the sun"},
+  {q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","When will you come?","Who are you?"],correct:"Why are you Romeo?"},
+  {q:"Which family is Romeo from?",options:["Montague","Capulet","Escalus","Paris"],correct:"Montague"},
+  {q:"Dramatic irony is when…",options:["Audience knows more than characters","Two words sound alike","A character talks to themselves","The setting is ironic"],correct:"Audience knows more than characters"}
+];
+
+/* ---------- Topic Test Q&A (built-in answers) ---------- */
+const TEST_QA = [
+  {section:"SECTION A: POETRY — Sonnet 18", items:[
+    {q:"1.1 To whom is the speaker comparing the subject in line 1?", a:"A summer’s day."},
+    {q:"1.2a Identify the figure of speech in 'the eye of heaven' (line 5).", a:"Metaphor (the sun is compared to an eye); also personification by implication."},
+    {q:"1.2b Explain its effectiveness.", a:"It vividly suggests the sun’s intense heat and illuminates nature’s power, reinforcing that natural conditions vary compared to the beloved’s steadiness."},
+    {q:"1.3 Quote two consecutive words showing summer’s temporary nature.", a:"“summer’s lease”. (A lease ends; it implies limited duration.)"},
+    {q:"1.4 How does the speaker immortalise the subject?", a:"By preserving their beauty in poetry ('eternal lines'); as long as people read, the beloved lives on."},
+    {q:"1.5 Who is the beloved? Briefly explain.", a:"The addressee of the Fair Youth sonnets (an idealised young man/friend). Shakespeare keeps the identity unspecified; the poem elevates the beloved’s beauty and virtue."}
+  ]},
+  {section:"SECTION B: DRAMA — Romeo and Juliet", items:[
+    {q:"2.1 Meaning of 'O Romeo, Romeo! wherefore art thou Romeo?'", a:"She means 'Why are you Romeo (a Montague)?' — questioning the problem of his name/family, not his location."},
+    {q:"2.2 Identify Juliet’s conflict in the balcony scene.", a:"Love vs family loyalty/name; she loves Romeo but his family is her family’s enemy."},
+    {q:"2.3 'I’ll be new baptized' — what does it reveal about Romeo?", a:"He is passionate and impulsive; willing to abandon his name/identity for love."},
+    {q:"2.4 How does this scene develop love vs family loyalty?", a:"They prioritise love over the feud, debating the meaninglessness of names; it sets up secret marriage and later conflict."},
+    {q:"2.5 Why is Friar Laurence surprised by Romeo’s request (Act 2, Sc 3)?", a:"Romeo has just abandoned Rosaline; his sudden switch to Juliet seems rash."},
+    {q:"2.6 What does that reveal about Romeo’s personality?", a:"He is changeable/impulsive and led by intense emotion/appearance."},
+    {q:"2.7 Is the Friar right to agree to marry them? Motivate.", a:"Open: Many argue it’s unwise (enables secrecy → tragedy). Others say he hopes to end the feud. On balance, it was reckless given the danger and their youth."},
+    {q:"2.8 Compare Juliet vs Friar’s attitude to Romeo’s impulsiveness.", a:"Juliet loves him yet often shows caution/maturity (questions the speed). The Friar openly criticises Romeo’s inconstancy ('love lies...in their eyes'), warning him to be prudent."}
+  ]}
+];
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  const t=b.dataset.tab;
+  document.querySelectorAll("section").forEach(s=>s.style.display="none");
+  $(t).style.display="";
+}));
+document.querySelectorAll(".sub-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".sub-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  const t=b.dataset.sub;
+  ["studyVocab","lotf","test"].forEach(id=>$(id).style.display=(id===t)?"":"none");
+}));
+
+/* ---------- student & stats (local) ---------- */
+const KEY_PREFIX="g10_vg_neon_v1"; // grade 10 keyspace
+function studentId(s){return `${s.class||"?"}-${(s.surname||"").trim().toLowerCase()}-${(s.name||"").trim().toLowerCase()}`;}
+function defaultStats(student){return{student,createdAt:Date.now(),merits:0,hangman:{wins:0},seconds:{totalCorrect:0,totalRounds:0,fastestCorrectMs:null},million:{bestStep:0,totalAnswered:0,totalCorrect:0}};}
+function loadStats(student){const id=studentId(student);const raw=localStorage.getItem(`${KEY_PREFIX}:${id}`);return raw?JSON.parse(raw):defaultStats(student);}
+function saveStats(stats){const id=studentId(stats.student);localStorage.setItem(`${KEY_PREFIX}:${id}`,JSON.stringify(stats));localStorage.setItem(`${KEY_PREFIX}:last`,JSON.stringify(stats.student));updateLeaderboards();}
+let currentStudent=null, STATS=null;
+function setStudent(s){currentStudent=s;const initials=(s.name?.[0]||"")+(s.surname?.[0]||"");$("avatar").textContent=(initials||"A").toUpperCase();$("studentBadge").textContent=s.name?`${s.name} ${s.surname} · ${s.class}`:"No student";$("d_name").textContent=s.name?`${s.name} ${s.surname}`:"—";$("d_class").textContent=s.class||"—";refreshDashboard();}
+async function initStudent(s){let stats=loadStats(s);STATS=stats;setStudent(STATS.student);saveStats(STATS);}
+function refreshDashboard(){ $("s_merits").textContent=STATS?.merits??0; $("s_hm_wins").textContent=STATS?.hangman.wins??0; $("s_30_total").textContent=STATS?.seconds.totalCorrect??0; const f=STATS?.seconds.fastestCorrectMs; $("s_30_fast").textContent=f?(f/1000).toFixed(2)+"s":"—"; $("s_mil_best").textContent=`${STATS?.million.bestStep??0} / 15`; $("s_mil_correct").textContent=STATS?.million.totalCorrect??0; $("s_mil_answered").textContent=STATS?.million.totalAnswered??0; const totalQ=(STATS?.seconds.totalCorrect??0)+(STATS?.million.totalAnswered??0); const acc=totalQ?Math.round(((STATS.seconds.totalCorrect+STATS.million.totalCorrect)/totalQ)*100):0; $("s_accuracy").textContent=acc+"%"; $("lbClassLabel").textContent=currentStudent?currentStudent.class:"—"; updateLeaderboards(); }
+function showLogin(show=true){$("loginModal").style.display=show?"":"none";}
+$("btnChangeStudent").onclick=()=>showLogin(true); $("btnLoginCancel").onclick=()=>showLogin(false);
+$("btnLogin").onclick=async()=>{const name=$("inName").value.trim(),surname=$("inSurname").value.trim(),cls=$("inClass").value.trim();if(!name||!surname||!cls){toast("Please fill all fields");beep("wrong");return;}await initStudent({name,surname,class:cls});showLogin(false);toast("Welcome! Stats loaded");};
+$("btnResetStats").onclick=()=>{if(!currentStudent)return;STATS=defaultStats(currentStudent);saveStats(STATS);refreshDashboard();toast("Stats reset");};
+$("btnQuickPlay").onclick=()=>{document.querySelector('.tab-btn[data-tab="hangman"]').click();};
+(function(){const last=localStorage.getItem(`${KEY_PREFIX}:last`);if(last){initStudent(JSON.parse(last));}else{showLogin(true);}})();
+
+/* ---------- leaderboards (class + grade) ---------- */
+function getAllStats(){const arr=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||!k.startsWith(`${KEY_PREFIX}:`)||k.endsWith(":last"))continue;try{arr.push(JSON.parse(localStorage.getItem(k)));}catch(e){}}return arr;}
+function scoreOf(s){return (s.merits||0)*100 + (s.million?.bestStep||0)*5 + (s.seconds?.totalCorrect||0)*2 + (s.hangman?.wins||0);}
+function renderLB(listEl, rows){listEl.innerHTML=""; rows.slice(0,5).forEach((r,idx)=>{const li=document.createElement("li");li.innerHTML=`<span>${idx+1}. ${r.student.name} ${r.student.surname} <span class="pill">${r.student.class}</span></span><span>${r.merits} merits · Step ${r.million.bestStep} · HM ${r.hangman.wins} · 30s ${r.seconds.totalCorrect}</span>`;listEl.appendChild(li);}); if(rows.length===0){const li=document.createElement("li");li.innerHTML=`<span>No data yet</span><span>—</span>`;listEl.appendChild(li);} }
+function updateLeaderboards(){const all=getAllStats(); all.sort((a,b)=>scoreOf(b)-scoreOf(a)); renderLB($("lbGrade"), all); if(currentStudent){const cls=all.filter(s=>s.student.class===currentStudent.class).sort((a,b)=>scoreOf(b)-scoreOf(a)); renderLB($("lbClass"), cls);} }
+
+/* ---------- Hangman ---------- */
+let hmWord="",hmMasked=[],hmLives=6,hmUsed=new Set(),hmHint="",hmWins=0;
+const cvs=$("hmCanvas"),ctx=cvs.getContext("2d");
+function drawGallows(){ctx.clearRect(0,0,cvs.width,cvs.height);ctx.strokeStyle="#cfe7ff";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(40,250);ctx.lineTo(200,250);ctx.stroke();ctx.beginPath();ctx.moveTo(80,250);ctx.lineTo(80,50);ctx.lineTo(260,50);ctx.lineTo(260,80);ctx.stroke();ctx.beginPath();ctx.moveTo(260,80);ctx.lineTo(260,105);ctx.stroke();}
+function drawStage(s){ctx.strokeStyle="#fca311";ctx.lineWidth=4;if(s===1){ctx.beginPath();ctx.arc(260,120,16,0,Math.PI*2);ctx.stroke();}if(s===2){ctx.beginPath();ctx.moveTo(260,136);ctx.lineTo(260,182);ctx.stroke();}if(s===3){ctx.beginPath();ctx.moveTo(260,146);ctx.lineTo(238,166);ctx.stroke();}if(s===4){ctx.beginPath();ctx.moveTo(260,146);ctx.lineTo(282,166);ctx.stroke();}if(s===5){ctx.beginPath();ctx.moveTo(260,182);ctx.lineTo(245,212);ctx.stroke();}if(s===6){ctx.beginPath();ctx.moveTo(260,182);ctx.lineTo(275,212);ctx.stroke();}}
+function drawByMistakes(m){drawGallows();for(let i=1;i<=m&&i<=6;i++)drawStage(i);}
+const drawKeyboard=()=>{const kb=$("keyboard");kb.innerHTML="";"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(k=>{const b=document.createElement("button");b.className="key";b.textContent=k;b.onclick=()=>guess(k);kb.appendChild(b);});};
+function newWord(){const {w,d}=TERMS[Math.floor(Math.random()*TERMS.length)];hmWord=w.toUpperCase();hmHint=d;hmMasked=hmWord.split("").map(ch=>/[A-Z]/.test(ch)?"_":ch);hmLives=6;hmUsed=new Set();$("slots").textContent=hmMasked.join(" ");$("lives").textContent=hmLives;$("used").textContent="Used: —";$("hint").style.display="none";$("hint").textContent="Hint: "+hmHint;$("result").textContent="";document.querySelectorAll(".key").forEach(k=>k.classList.remove("used"));drawByMistakes(0);}
+function reveal(){$("slots").textContent=hmWord.split("").join(" ");$("result").innerHTML=`Answer: <b>${hmWord}</b>`;}
+function guess(letter){if(hmLives<=0||hmUsed.has(letter))return;hmUsed.add(letter);document.querySelectorAll(".key").forEach(k=>{if(k.textContent===letter)k.classList.add("used");});$("used").textContent="Used: "+[...hmUsed].join(" ");if(hmWord.includes(letter)){hmWord.split("").forEach((ch,i)=>{if(ch===letter)hmMasked[i]=letter;});$("slots").textContent=hmMasked.join(" ");beep("ok");if(!hmMasked.includes("_")){$("result").innerHTML=`<span class="good">Great! You solved it.</span>`;hmWins++;$("wins").textContent=hmWins;if(STATS){STATS.hangman.wins++;saveStats(STATS);refreshDashboard();}beep("win");toast("Win +1");}}else{hmLives--;$("lives").textContent=hmLives;drawByMistakes(6-hmLives);beep("wrong");if(hmLives<=0){$("result").innerHTML=`<span class="bad">Out of lives!</span> The word was <b>${hmWord}</b>.`;beep("lose");toast("Round over");}}}
+drawKeyboard();newWord();$("btnHint").onclick=()=>{$("hint").style.display=$("hint").style.display==="none"?"":"";};$("btnNew").onclick=()=>newWord();$("btnReveal").onclick=()=>reveal();
+window.addEventListener("keydown",e=>{if($("hangman").style.display==="none")return;const L=e.key.toUpperCase();if(L>="A"&&L<="Z")guess(L);});
+
+/* ---------- 30 Seconds ---------- */
+let secRoundActive=false,secTime=30,secTimer=null,secScore=0,secTotal=0,secQueue=[],secCurrent=null,secQuestionStart=null;
+const secDuration=30;
+function updateHourglass(){const HG=60,prog=1-(secTime/secDuration),topH=(1-prog)*HG,bottomH=prog*HG;$("hgTop").setAttribute("height",topH.toFixed(2));$("hgBottom").setAttribute("y",(140-bottomH).toFixed(2));$("hgBottom").setAttribute("height",bottomH.toFixed(2));const stream=$("hgStream");if(secRoundActive&&secTime>0&&secTime<secDuration){const len=8+34*prog;stream.setAttribute("y",(80-len).toFixed(2));stream.setAttribute("height",len.toFixed(2));stream.setAttribute("visibility","visible");}else stream.setAttribute("visibility","hidden");}
+function secondsReset(){secRoundActive=false;secTime=secDuration;secScore=0;secQueue=shuffle(TERMS.slice());secCurrent=null;secQuestionStart=null;clearInterval(secTimer);$("secTime").textContent=secTime;$("secScore").textContent=0;$("secFeedback").textContent="";$("secInput").value="";$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("defBox").innerHTML="Press <b>Start 30-second Round</b> to begin.";updateHourglass();}
+function nextDefinition(){if(secQueue.length===0)secQueue=shuffle(TERMS.slice());secCurrent=secQueue.pop();$("defBox").innerHTML=`<b>Definition:</b> ${secCurrent.d}`;$("secInput").value="";$("secInput").focus();secQuestionStart=Date.now();}
+function startRound(){if(secRoundActive)return;secondsReset();secRoundActive=true;$("secInput").disabled=false;$("secSkip").disabled=false;$("secGive").disabled=false;nextDefinition();secTimer=setInterval(()=>{secTime--;$("secTime").textContent=secTime;updateHourglass();if(secTime<=0){endRound();beep("time");}},1000);}
+function endRound(){clearInterval(secTimer);secRoundActive=false;$("secInput").disabled=true;$("secSkip").disabled=true;$("secGive").disabled=true;$("secFeedback").innerHTML=`⏱️ Round over. You scored <b>${secScore}</b>.`;$("secLast").innerHTML="";if(STATS){STATS.seconds.totalRounds++;saveStats(STATS);refreshDashboard();}toast("Round finished");updateHourglass();}
+$("secStart").onclick=startRound;$("secSkip").onclick=()=>{if(!secRoundActive)return;$("secLast").innerHTML=`Skipped: <b>${secCurrent.w}</b>`;nextDefinition();};$("secGive").onclick=()=>{if(!secRoundActive)return;$("secLast").innerHTML=`Answer: <b>${secCurrent.w}</b>`;nextDefinition();};
+$("secInput").addEventListener("keydown",e=>{if(e.key==="Enter"){const g=e.target.value.trim().toLowerCase();if(!g)return;if(g===secCurrent.w.toLowerCase()){secScore++;secTotal++;$("secScore").textContent=secScore;$("secTotal").textContent=secTotal;$("secFeedback").innerHTML=`<span class="good">Correct!</span>`;beep("ok");if(secQuestionStart&&STATS){const elapsed=Date.now()-secQuestionStart;const cur=STATS.seconds.fastestCorrectMs;if(!cur||elapsed<cur)STATS.seconds.fastestCorrectMs=elapsed;STATS.seconds.totalCorrect++;saveStats(STATS);refreshDashboard();}nextDefinition();}else{$("secFeedback").innerHTML=`<span class="bad">Try again.</span>`;beep("wrong");}}});
+secondsReset();
+
+/* ---------- Millionaire (merits halfway + finish) ---------- */
+const ladderValues=["R 1 000 000","R 500 000","R 250 000","R 125 000","R 64 000","R 32 000","R 16 000","R 8 000","R 4 000","R 2 000","R 1 000","R 500","R 300","R 200","R 100"];
+let milIndex=0,milUsed5050=false,milUsedSkip=false,milActive=false,milQSet=[],milHalfMeritGiven=false,milFinishMeritGiven=false;
+function buildLadder(){const ul=$("milLadder");ul.innerHTML="";ladderValues.forEach((v,i)=>{const li=document.createElement("li");const step=ladderValues.length-i;li.innerHTML=`<span>${step}</span><span>${v}</span>`;ul.appendChild(li);});}
+function highlightLadder(){const items=[...$("milLadder").children];items.forEach(li=>li.classList.remove("active"));const pos=ladderValues.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
+function prepareGame(){milIndex=0;milUsed5050=false;milUsedSkip=false;milActive=false;milHalfMeritGiven=false;milFinishMeritGiven=false;$("milFeedback").textContent="";$("milStep").textContent="1";$("mil5050").disabled=false;$("milSkip").disabled=false;milQSet=shuffle(QUESTION_BANK).slice(0,15);renderQuestion();}
+function renderQuestion(){const q=milQSet[milIndex];$("milQ").innerHTML=q.q;const w=$("milOpts");w.innerHTML="";q.options.forEach((opt,i)=>{const b=document.createElement("button");b.dataset.opt=opt;b.innerHTML=`<span style="opacity:.8">${String.fromCharCode(65+i)})</span> ${opt}`;b.onclick=()=>checkAnswer(b,opt);w.appendChild(b);});highlightLadder();}
+function maybeAwardMerits(){if(!STATS)return;if(milIndex>=8 && !milHalfMeritGiven){STATS.merits+=1;milHalfMeritGiven=true;toast("+1 merit (Halfway!)");}if(milIndex>=15 && !milFinishMeritGiven && !milUsedSkip){STATS.merits+=2;milFinishMeritGiven=true;toast("+2 merits (Completed!)");}}
+function checkAnswer(btn, choice){if(!milActive)milActive=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];buttons.forEach(b=>b.disabled=true);if(STATS)STATS.million.totalAnswered++;if(choice.toLowerCase()===q.correct.toLowerCase()){if(STATS)STATS.million.totalCorrect++;btn.classList.add("right");beep("ok");setTimeout(()=>{milIndex++;if(STATS){STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);}maybeAwardMerits();if(STATS){saveStats(STATS);refreshDashboard();}if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`🏆 <span class="good">Congratulations!</span> You reached <b>${ladderValues[0]}</b>.`;beep("win");milActive=false;}else{$("milStep").textContent=String(milIndex+1);renderQuestion();buttons.forEach(b=>b.classList.remove("right"));}},480);}else{btn.classList.add("wrong");beep("wrong");const cbtn=buttons.find(b=>b.dataset.opt.toLowerCase()===q.correct.toLowerCase());if(cbtn)cbtn.classList.add("right");$("milFeedback").innerHTML=`❌ <span class="bad">Incorrect.</span> Correct answer: <b>${q.correct}</b>.`;milActive=false;if(STATS){saveStats(STATS);refreshDashboard();}}}
+$("mil5050").onclick=()=>{if(milUsed5050)return;milUsed5050=true;$("mil5050").disabled=true;const q=milQSet[milIndex],buttons=[...$("milOpts").querySelectorAll("button")];shuffle(buttons.filter(b=>b.dataset.opt.toLowerCase()!==q.correct.toLowerCase())).slice(0,2).forEach(b=>{b.disabled=true;b.style.opacity=.4;});};
+$("milSkip").onclick=()=>{if(milUsedSkip)return;milUsedSkip=true;$("milSkip").disabled=true;milIndex++;if(STATS){STATS.million.bestStep=Math.max(STATS.million.bestStep,milIndex);saveStats(STATS);refreshDashboard();}if(milIndex>=milQSet.length){$("milFeedback").innerHTML=`You skipped to the end. Final: <b>${ladderValues[0]}</b>.`;milActive=false;return}$("milStep").textContent=String(milIndex+1);renderQuestion();};
+$("milQuit").onclick=()=>{const prizeIndex=Math.max(ladderValues.length-milIndex,1);$("milFeedback").innerHTML=`👋 You quit with <b>${ladderValues[prizeIndex-1]}</b>.`;milActive=false;if(STATS){saveStats(STATS);refreshDashboard();}};
+$("milStart").onclick=()=>{buildLadder();prepareGame();};buildLadder();
+
+/* ---------- Study: Vocab table ---------- */
+function buildStudyTable(){const tb=$("studyTable").querySelector("tbody");tb.innerHTML="";TERMS.forEach(t=>{const tr=document.createElement("tr");tr.innerHTML=`<td><b>${t.w}</b></td><td>${t.d}</td><td><em>${t.e}</em></td>`;tb.appendChild(tr);});}
+function filterStudy(){const q=$("studySearch").value.trim().toLowerCase();[...$("studyTable").querySelectorAll("tbody tr")].forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?"":"none";});}
+$("studySearch").addEventListener("input",filterStudy);$("studyReset").onclick=()=>{$("studySearch").value="";filterStudy();};$("studyPrint").onclick=()=>{window.print();};
+
+/* ---------- Study: LOTF ---------- */
+function buildLotfList(filter="All"){const wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(n=>filter==="All"||n.type===filter).forEach((n,i)=>{const card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML=`<div class="pill" style="margin-bottom:6px">${n.type}</div><div>${n.text}</div>`;wrap.appendChild(card);});}
+$("lotfFilterAll").onclick=()=>buildLotfList("All");
+$("lotfFilterPlot").onclick=()=>buildLotfList("Plot");
+$("lotfFilterThemes").onclick=()=>buildLotfList("Themes");
+$("lotfFilterChars").onclick=()=>buildLotfList("Characters");
+$("lotfFilterSymbol").onclick=()=>buildLotfList("Symbolism");
+$("lotfPrint").onclick=()=>{window.print();};
+
+/* ---------- Study: Topic Test with answers ---------- */
+function buildTestQA(){
+  const wrap=$("testQA"); wrap.innerHTML="";
+  TEST_QA.forEach(section=>{
+    const h=document.createElement("h3"); h.textContent=section.section; wrap.appendChild(h);
+    section.items.forEach((item,idx)=>{
+      const card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";
+      card.innerHTML=`<div><b>${item.q}</b></div><div class="qa-a" style="display:none;margin-top:6px">${item.a}</div><div class="row" style="margin-top:8px"><button class="btn secondary btnShow">Show Answer</button></div>`;
+      const btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa-a");
+      btn.addEventListener("click",()=>{const vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
+      wrap.appendChild(card);
+    });
+  });
+}
+$("testExpandAll").onclick=()=>{[...$("testQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="block");[...$("testQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Hide Answer");}
+$("testCollapseAll").onclick=()=>{[...$("testQA").querySelectorAll(".qa-a")].forEach(a=>a.style.display="none");[...$("testQA").querySelectorAll(".btnShow")].forEach(b=>b.textContent="Show Answer");}
+$("testPrint").onclick=()=>{window.print();};
+
+/* ---------- initialise study sections ---------- */
+buildStudyTable(); buildLotfList("All"); buildTestQA();
+</script>
+</body>
+</html>
