@@ -9,21 +9,14 @@
 <title>Mr Samuels’ Grade 10 English Hub</title>
 <style>
   :root{
-    --bg:#040713;
-    --panel:rgba(8,14,34,.72);
-    --text:#e7f2ff;
-    --muted:#a8bfdd;
-    --accent:#00f5d4;
-    --accent2:#ff5e57;
-    --accent3:#8a5cff;
-    --accent4:#fca311;
-    --good:#2ecc71;
-    --bad:#ff4d6d;
-    --theme:#8a5cff;
+    --bg:#040713; --panel:rgba(8,14,34,.72); --text:#e7f2ff; --muted:#a8bfdd;
+    --accent:#00f5d4; --accent2:#ff5e57; --accent3:#8a5cff; --accent4:#fca311;
+    --good:#2ecc71; --bad:#ff4d6d; --theme:#8a5cff;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#000}
 
+  /* Futuristic shell */
   .bg3d{position:fixed; inset:0; z-index:-2; overflow:hidden; perspective:1200px;
     background:radial-gradient(1200px 600px at 10% -10%, #102153 0, #0c1736 35%, #070b1a 65%, #040713 100%), #040713;}
   .bg3d::before{content:""; position:absolute; inset:-20vh -20vw; z-index:-2;
@@ -65,6 +58,7 @@
   .btn{border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:800;color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);box-shadow:0 10px 26px rgba(138,92,255,.28)}
   .btn.secondary{color:#cfe7ff;background:linear-gradient(180deg,#1b2546 0,#121c3a 100%);border:1px solid rgba(255,255,255,.12)}
   .btn.warn{color:#130a00;background:linear-gradient(180deg,#ffd166 0,var(--accent4) 100%)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
 
   canvas{background:linear-gradient(180deg,#0c1228,#0a0f21);border:1px solid rgba(255,255,255,.12);border-radius:16px;max-width:100%}
   .slots{letter-spacing:.28em;font-size:26px;margin:10px 0 6px}
@@ -84,15 +78,20 @@
   .opt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
   .opt button{padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.14);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-weight:800;cursor:pointer}
 
+  /* ROAD RAGE */
   .driver-wrap{display:grid;grid-template-columns:1fr;gap:10px}
-  .driver-controls{display:flex;gap:10px;justify-content:center}
-  .ctrl{width:120px;height:120px;border-radius:18px;border:2px solid rgba(255,255,255,.14);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-size:22px;font-weight:900;touch-action:none}
   .hud{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .overlayQ{position:absolute;inset:0;background:rgba(7,11,26,.8);display:none;align-items:center;justify-content:center;z-index:50}
-  .overlayCard{max-width:560px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px}
+  .overlayCard{max-width:620px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px}
   .overlayCard .opt{grid-template-columns:1fr}
   .gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,0,0,.65);z-index:60;color:#ff1e1e;font-weight:900;font-size:44px;text-shadow:0 0 22px #300}
+  .driver-controls{display:flex;gap:10px;justify-content:space-between}
+  .pedal{flex:1;min-width:140px;height:140px;border-radius:18px;border:2px solid rgba(255,255,255,.14);
+    background:linear-gradient(180deg,#0d1736,#0b1230);color:#e7f2ff;font-size:20px;font-weight:900;touch-action:none;box-shadow:0 12px 24px rgba(0,0,0,.45)}
+  .pedal:active{transform:scale(.98)}
+  @media (max-width:600px){.pedal{min-width:120px;height:120px;font-size:18px}}
 
+  /* Study */
   .subtabs{display:flex;gap:8px;margin-bottom:10px}
   .sub-btn{border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:#cfe7ff;cursor:pointer}
   table{width:100%;border-collapse:collapse}
@@ -104,8 +103,7 @@
   .confetti-piece{position:fixed;top:0;left:0;width:8px;height:14px;opacity:.9;pointer-events:none;border-radius:2px}
 
   section{opacity:1; transition:opacity .28s ease;}
-
-  /* Splash logo overlay */
+  /* Splash */
   .splash{position:fixed; inset:0; display:none; align-items:center; justify-content:center;
     background:linear-gradient(180deg,rgba(5,8,20,.72),rgba(4,7,19,.82)); backdrop-filter: blur(4px); z-index:200;}
   .logo3d{position:relative; padding:24px 28px; border-radius:22px; transform:perspective(1000px) rotateX(10deg);
@@ -163,7 +161,7 @@
   <section id="hangman" class="card" style="display:none">
     <div class="flex">
       <div class="grow" style="max-width:480px">
-        <h2 class="hm-title">Mr Samuels – Grade 10 HL Hangman</h2>
+        <h2>Mr Samuels – Grade 10 HL Hangman</h2>
         <canvas id="hmCanvas" width="430" height="280"></canvas>
       </div>
       <div class="grow">
@@ -238,29 +236,29 @@
 
   <!-- ROAD RAGE -->
   <section id="driver" class="card" style="display:none">
-    <div class="driver-wrap">
-      <div class="row hud" style="justify-content:space-between">
-        <span class="pill">Distance: <b id="drvDist">0</b> m</span>
-        <span class="pill">Speed: <b id="drvSpeed">50</b> m/s</span>
-        <span class="pill">Score: <b id="drvScore">0</b></span>
-        <span class="pill">Lives: <b id="drvLives">3</b></span>
-        <button id="drvStart" class="btn">Start Run</button>
-        <button id="drvPause" class="btn secondary">Pause</button>
-      </div>
-      <div style="position:relative;display:flex;justify-content:center">
-        <canvas id="drvCanvas" width="360" height="540" style="border-radius:16px;border:1px solid rgba(255,255,255,.14)"></canvas>
-        <div id="drvOverlay" class="overlayQ">
-          <div class="overlayCard">
-            <div class="big" id="drvQ">Question here</div>
-            <div id="drvOpts" class="opt" style="margin-top:10px"></div>
-          </div>
+    <div class="row hud" style="justify-content:space-between">
+      <span class="pill">Stage: <b id="drvStageName">—</b></span>
+      <span class="pill">Time Left: <b id="drvTime">100</b>s</span>
+      <span class="pill">Distance: <b id="drvDist">0</b> m</span>
+      <span class="pill">Speed: <b id="drvSpeed">50</b> m/s</span>
+      <span class="pill">Score: <b id="drvScore">0</b></span>
+      <span class="pill">Lives: <b id="drvLives">3</b></span>
+      <button id="drvStart" class="btn">Start Run</button>
+      <button id="drvPause" class="btn secondary">Pause</button>
+    </div>
+    <div style="position:relative;display:flex;justify-content:center">
+      <canvas id="drvCanvas" width="360" height="540" style="border-radius:16px;border:1px solid rgba(255,255,255,.14)"></canvas>
+      <div id="drvOverlay" class="overlayQ">
+        <div class="overlayCard">
+          <div class="big" id="drvQ">Question here</div>
+          <div id="drvOpts" class="opt" style="margin-top:10px"></div>
         </div>
-        <div id="drvGameOver" class="gameOver">GAME OVER</div>
       </div>
-      <div class="driver-controls">
-        <button id="drvLeft" class="ctrl">⟵<br/><small>LEFT</small></button>
-        <button id="drvRight" class="ctrl">⟶<br/><small>RIGHT</small></button>
-      </div>
+      <div id="drvGameOver" class="gameOver">GAME OVER</div>
+    </div>
+    <div class="driver-controls">
+      <button id="pedalAccel" class="pedal">⏫<br/><small>ACCELERATOR</small></button>
+      <button id="pedalBrake" class="pedal">⏬<br/><small>BRAKE</small></button>
     </div>
   </section>
 
@@ -327,92 +325,53 @@
 window.requestAnimationFrame = window.requestAnimationFrame || function(cb){return setTimeout(function(){cb(Date.now());},16);};
 NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
 
-/* ===== Audio (UI + Millionaire fanfare) ===== */
+/* ===== Audio helpers ===== */
 var AC;
+function safeAC(){AC=AC||new (window.AudioContext||window.webkitAudioContext)(); return AC;}
 function tone(f,d,type,g){try{
-  AC=AC||new(window.AudioContext||window.webkitAudioContext)();
-  var o=AC.createOscillator(), v=AC.createGain();
-  o.type=type; o.frequency.value=f; o.connect(v); v.connect(AC.destination);
-  var t=AC.currentTime; v.gain.setValueAtTime(0.0001,t);
-  v.gain.exponentialRampToValueAtTime(g||0.18,t+0.01);
-  v.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.2));
-  o.start(t); o.stop(t+(d||0.2)+0.02);
+  var ac=safeAC(), o=ac.createOscillator(), v=ac.createGain();
+  o.type=type; o.frequency.value=f; o.connect(v); v.connect(ac.destination);
+  var t=ac.currentTime; v.gain.setValueAtTime(0.0001,t); v.gain.exponentialRampToValueAtTime(g||0.18,t+0.01);
+  v.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.2)); o.start(t); o.stop(t+(d||0.2)+0.02);
+}catch(e){}}
+function crashSound(){ try{
+  var ac=safeAC(); var dur=0.25, n=ac.createBuffer(1, ac.sampleRate*dur, ac.sampleRate);
+  var data=n.getChannelData(0); for(var i=0;i<data.length;i++){ data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2); }
+  var src=ac.createBufferSource(); src.buffer=n; var g=ac.createGain(); g.gain.value=0.25;
+  var lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=600;
+  src.connect(lp); lp.connect(g); g.connect(ac.destination); src.start();
 }catch(e){}}
 function fanfare(){ try{
-  AC=AC||new(window.AudioContext||window.webkitAudioContext)();
-  var t=AC.currentTime, seq=[
-    {f:392,d:.16,type:"triangle"},{f:523,d:.16,type:"triangle"},{f:659,d:.16,type:"triangle"},
-    {f:784,d:.28,type:"triangle"},
-    {f:0,d:.08},{f:784,d:.16},{f:659,d:.16},{f:523,d:.16},{f:392,d:.28}
-  ];
-  var at=t; seq.forEach(function(n){ if(n.f>0){var o=AC.createOscillator(), g=AC.createGain();o.type=n.type;o.frequency.value=n.f;o.connect(g);g.connect(AC.destination);g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.22,at+0.01);g.gain.exponentialRampToValueAtTime(0.0001,at+n.d);o.start(at);o.stop(at+n.d+0.02);} at+=n.d;});
+  var ac=safeAC(), t=ac.currentTime, seq=[[392,.16],[523,.16],[659,.16],[784,.28],[0,.08],[784,.16],[659,.16],[523,.16],[392,.28]];
+  seq.reduce(function(at,s){ if(s[0]){var o=ac.createOscillator(), g=ac.createGain(); o.type="triangle"; o.frequency.value=s[0];
+    o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(0.0001,at); g.gain.exponentialRampToValueAtTime(0.22,at+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,at+s[1]); o.start(at); o.stop(at+s[1]+.02);} return at+s[1]; }, t);
 }catch(e){}}
 function beep(kind){var m={ui:[420,0.09,"sine",0.12],open:[560,0.12,"triangle",0.14],ok:[660,0.18,"triangle",0.2],wrong:[200,0.18,"sawtooth",0.2],win:[880,0.25,"triangle",0.22],time:[300,0.18,"sine",0.18]};
   var s=m[kind||"ui"]; tone(s[0],s[1],s[2],s[3]); }
 addEventListener("click",function(e){var el=e.target;if(el.closest&&(el.closest("button")||el.closest(".tab-btn")||el.closest(".sub-btn"))) beep("ui");});
 
-/* ===== Helpers & Splash ===== */
+/* ===== Splash & helpers ===== */
 function $(id){return document.getElementById(id);}
 function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},1200);}
 function confetti(msg){for(var i=0;i<40;i++){var p=document.createElement("div");p.className="confetti-piece";p.style.background=["#00f5d4","#8a5cff","#ff5e57","#fca311","#2ecc71"][Math.floor(Math.random()*5)];p.style.left=(50+Math.random()*40-20)+"%";p.style.top="60%";p.style.transition="transform 1s ease-out, opacity 1.2s";document.body.appendChild(p);(function(p){setTimeout(function(){var dx=(Math.random()*2-1)*200,dy=-(200+Math.random()*300);p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)";p.style.opacity=0;},10);setTimeout(function(){p.remove();},1200);})(p);}toast("🎉 "+msg);beep("win");}
-function thumbsDown(msg){toast("👎 "+(msg||"Try again"));beep("wrong");}
-
 var splash=$("splash");
-function showSplash(cb){
-  splash.style.display="flex";
-  var h=splash.querySelector("h1"); h.style.animation="none"; void h.offsetWidth; h.style.animation="";
-  setTimeout(function(){ splash.style.display="none"; if(typeof cb==="function") cb(); }, 2200);
-}
+function showSplash(cb){ splash.style.display="flex"; var h=splash.querySelector("h1"); h.style.animation="none"; void h.offsetWidth; h.style.animation="";
+  setTimeout(function(){ splash.style.display="none"; if(typeof cb==="function") cb(); }, 2200); }
 
-/* ===== Data ===== */
+/* ===== Study/Millionaire data (abbrev for brevity) ===== */
 var CAT_COLORS={"Sonnet 18":"#ff4d6d","Romeo & Juliet – Balcony":"#fca311","Lord of the Flies":"#2ecc71","Literary Devices":"#8a5cff","Parts of Speech":"#4da3ff"};
-
-var TERMS=[{w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},{w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},{w:"metaphor",d:"Direct comparison without 'like' or 'as'.",e:"'Eye of heaven' is a metaphor for the sun."},{w:"personification",d:"Human traits to non-human things.",e:"'Death brag' personifies death."},{w:"oxymoron",d:"Contradictory terms together.",e:"'Brawling love' in Romeo and Juliet."},{w:"soliloquy",d:"Speech revealing inner thoughts.",e:"Juliet’s Act 3 soliloquy shows her anxiety."},{w:"dramatic irony",d:"Audience knows more than characters.",e:"We know Juliet isn’t dead; Romeo doesn’t."},{w:"symbolism",d:"Objects/actions representing ideas.",e:"The conch symbolises order."},{w:"microcosm",d:"Small system mirroring a larger one.",e:"The island is a microcosm of society."}];
-
-var LOTF_NOTES=[{type:"Plot",text:"British schoolboys stranded on an island; Ralph elected; Jack hunts; fear and savagery rise; Simon and Piggy die; rescue with a naval officer."},{type:"Themes",text:"Civilisation vs Savagery; Loss of Innocence; Power; Fear and the 'Beast'."},{type:"Characters",text:"Ralph (order/rescue), Piggy (reason), Jack (authoritarian), Simon (spiritual good), Roger (sadism)."},
-{type:"Symbolism",text:"Conch (order), Signal Fire (hope), Glasses (science), Painted Faces (anonymity), Lord of the Flies (evil within)."}];
-
-var SHAKESPEARE_QA=[{section:"POETRY — Sonnet 18 (Concept & Craft)", items:[
-  {q:"What quality of a 'summer’s day' does the speaker find unreliable, and how does the poem counter that weakness?", a:"Weather is changeable—too hot, windy, or brief; the poem’s 'eternal lines' offer lasting perfection beyond seasonal change."},
-  {q:"Identify the metrical pattern and explain how it supports the poem’s voice.", a:"Iambic pentameter; the steady beat suits praise and confidence."},
-  {q:"How does the poem use contrast before and after line 9?", a:"The octave lists flaws of summer; the sestet turns to the 'eternal summer' preserved by verse."},
-  {q:"Explain how the couplet acts as an argument.", a:"It claims the poem itself guarantees life to the beloved—so long as it is read, beauty 'lives'."}
-]},{section:"DRAMA — Romeo & Juliet (Balcony Scene: Language & Choice)", items:[
-  {q:"Why does Juliet question the value of names, and what does this suggest about social identity?", a:"She argues a name is a label, not essence; love should outrank family identities, challenging the feud’s authority."},
-  {q:"How does dramatic irony operate in the scene even before tragedy unfolds?", a:"The audience senses the risk of secrecy and haste; we foresee danger though the lovers speak with hope."},
-  {q:"Quote or paraphrase one line that reveals Romeo’s impulsive nature and explain it.", a:"E.g., 'I’ll be new baptised'; he is willing to abandon his name immediately, showing impetuous commitment."},
-  {q:"What practical obstacles does the scene highlight (beyond emotions)?", a:"Physical danger in the orchard, family surveillance, and arranging marriage without parental consent."}
-]}];
-
-var SHAKESPEARE_SA=[{ section: "Sonnet 18 — Technique Focus", items:[
-  {q:"Give the full rhyme scheme and name one effect of the final couplet.", a:"ABAB CDCD EFEF GG; the couplet clinches the claim of poetic immortality."},
-  {q:"Choose one personification from the poem and explain its function.", a:"'Death brag' gives Death a boastful role, making the triumph of poetry more dramatic."},
-  {q:"Why is the comparison to a summer’s day ultimately rejected?", a:"Summer is less temperate and too short; the beloved exceeds nature’s variability."}
-]},{ section: "Balcony Scene — Meaning & Stagecraft", items:[
-  {q:"How could staging emphasise secrecy in this scene?", a:"Use shadowed lighting, high window, and hushed delivery to show risk and privacy."},
-  {q:"What does the exchange reveal about Juliet’s maturity?", a:"She is cautious and practical—asks about intention and marriage—contrasting with Romeo’s speed."}
-]}];
-
-var MCQ=[{cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
-{cat:"Sonnet 18",q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
-{cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
-{cat:"Sonnet 18",q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
-{cat:"Romeo & Juliet – Balcony",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
-{cat:"Romeo & Juliet – Balcony",q:"Juliet’s central conflict is with…",options:["Family identity","Money","Fame","Travel"],correct:"Family identity"},
-{cat:"Romeo & Juliet – Balcony",q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"},
-{cat:"Lord of the Flies",q:"What does the conch symbolise?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
-{cat:"Lord of the Flies",q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
-{cat:"Lord of the Flies",q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
-{cat:"Lord of the Flies",q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
-{cat:"Lord of the Flies",q:"The 'beast' ultimately represents…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
-{cat:"Lord of the Flies",q:"Why do the boys paint their faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
-{cat:"Literary Devices",q:"A 14-line poem with a set rhyme scheme is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
-{cat:"Literary Devices",q:"'Brawling love' is an example of…",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
-{cat:"Literary Devices",q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"},
-{cat:"Parts of Speech",q:"In 'She quickly ran', 'quickly' is an…",options:["Adverb","Adjective","Preposition","Interjection"],correct:"Adverb"}];
+var TERMS=[{w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},{w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},{w:"metaphor",d:"Direct comparison without 'like' or 'as'." ,e:"'Eye of heaven' is a metaphor for the sun."},{w:"personification",d:"Human traits to non-human things.",e:"'Death brag' personifies death."},{w:"oxymoron",d:"Contradictory terms together.",e:"'Brawling love' in Romeo and Juliet."},{w:"soliloquy",d:"Speech revealing inner thoughts.",e:"Juliet’s Act 3 soliloquy shows her anxiety."},{w:"dramatic irony",d:"Audience knows more than characters.",e:"We know Juliet isn’t dead; Romeo doesn’t."},{w:"symbolism",d:"Objects/actions representing ideas.",e:"The conch symbolises order."},{w:"microcosm",d:"Small system mirroring a larger one.",e:"The island is a microcosm of society."}];
+var MCQ=[
+  {cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
+  {cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
+  {cat:"Romeo & Juliet – Balcony",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
+  {cat:"Lord of the Flies",q:"What does the conch symbolise?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
+  {cat:"Literary Devices",q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"}
+];
 
 /* ===== Stats ===== */
-var KEY="g10_hub_v11";
+var KEY="g10_hub_v12";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
@@ -424,7 +383,7 @@ function refreshDash(){ $("s_merits").textContent=STATS.merits; $("s_hm_wins").t
   $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
 } refreshDash();
 
-/* ===== Tabs + Splash ===== */
+/* ===== Tabs & subtabs ===== */
 var gameTabs=new Set(["hangman","seconds","million","driver","study"]);
 document.querySelectorAll(".tab-btn").forEach(function(b){
   b.addEventListener("click",function(){
@@ -439,70 +398,85 @@ document.querySelectorAll(".tab-btn").forEach(function(b){
     if(target!=="driver" && window.RoadRage && RoadRage.pause) RoadRage.pause();
   });
 });
+document.querySelectorAll(".sub-btn").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll(".sub-btn").forEach(function(x){x.classList.remove("active");});
+    b.classList.add("active");
+    var t=b.getAttribute("data-sub");
+    ["studyVocab","lotf","shakespeare"].forEach(function(id){$(id).style.display=(id===t)?"":"none";});
+  });
+});
 
-/* ===== Study builders ===== */
+/* ===== Study builders (brief) ===== */
 function buildStudy(){var tb=$("studyTable").querySelector("tbody");tb.innerHTML="";TERMS.forEach(function(t){var tr=document.createElement("tr");tr.innerHTML="<td><b>"+t.w+"</b></td><td>"+t.d+"</td><td><em>"+t.e+"</em></td>";tb.appendChild(tr);});}
 function filterStudy(){var q=$("studySearch").value.toLowerCase();[].slice.call($("studyTable").querySelectorAll("tbody tr")).forEach(function(r){r.style.display=r.textContent.toLowerCase().indexOf(q)>-1?"":"none";});}
 $("studySearch").addEventListener("input",filterStudy); $("studyReset").onclick=function(){ $("studySearch").value=""; filterStudy();}; $("studyPrint").onclick=function(){window.print();}; buildStudy();
-
-function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(function(n){return !filter||filter==="All"||n.type===filter;}).forEach(function(n){var card=document.createElement("div");card.className="card";card.style;marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
+function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";[{type:"Plot",text:"British schoolboys stranded…"}, {type:"Themes",text:"Civilisation vs Savagery…"}, {type:"Characters",text:"Ralph, Piggy, Jack, Simon, Roger."},{type:"Symbolism",text:"Conch, Signal Fire, Glasses, Painted Faces, Lord of the Flies."}]
+  .filter(function(n){return !filter||filter==="All"||n.type===filter;})
+  .forEach(function(n){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
 $("lotfAll").onclick=function(){lotfRender("All")}; $("lotfPlot").onclick=function(){lotfRender("Plot")}; $("lotfThemes").onclick=function(){lotfRender("Themes")}; $("lotfChars").onclick=function(){lotfRender("Characters")}; $("lotfSymbol").onclick=function(){lotfRender("Symbolism")}; $("lotfPrint").onclick=function(){window.print();}; lotfRender("All");
 
-/* Shakespeare panels */
-function buildShQA(){var wrap=$("shQA");wrap.innerHTML="";SHAKESPEARE_QA.forEach(function(sec){var h=document.createElement("h3");h.textContent=sec.section;wrap.appendChild(h);sec.items.forEach(function(it){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";var btn=card.querySelector(".btnShow"),ans=card.querySelector(".qa");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});wrap.appendChild(card);});});}
-function buildShMCQ(){var box=$("shMCQ");box.innerHTML="";MCQ.forEach(function(q,i){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";var opts=q.options.map(function(o,ix){return "<div>"+String.fromCharCode(65+ix)+") "+o+"</div>";}).join("");var tag="<div class='pill' style='display:inline-flex;gap:8px;align-items:center;margin-bottom:6px'><span style='width:10px;height:10px;border-radius:50%;background:"+(CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>";card.innerHTML=tag+"<div><b>Q"+(i+1)+". "+q.q+"</b></div><div style='margin-top:6px'>"+opts+"</div><div class='ans' style='display:none;margin-top:6px'><b>Answer:</b> "+q.correct+"</div><div class='row' style='margin-top:8px'><button class='btn secondary showAns'>Show Answer</button></div>";var btn=card.querySelector(".showAns"),ans=card.querySelector(".ans");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});box.appendChild(card);});}
-function buildShSA(){var box=$("shSA"); box.innerHTML="";SHAKESPEARE_SA.forEach(function(sec){var tag=document.createElement("div"); tag.className="pill"; tag.style.margin="6px 0"; tag.textContent=sec.section; box.appendChild(tag);sec.items.forEach(function(it){var card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";var btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});box.appendChild(card);});});}
-$("shExpandAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans, #shSA .qa")).forEach(function(a){a.style.display="block"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns, #shSA .btnShow")).forEach(function(b){b.textContent="Hide Answer"});};
-$("shCollapseAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans, #shSA .qa")).forEach(function(a){a.style.display="none"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns, #shSA .btnShow")).forEach(function(b){b.textContent="Show Answer"});};
-$("shPrint").onclick=function(){window.print();};
-buildShQA(); buildShMCQ(); buildShSA();
-
-/* ===== ROAD RAGE with Tilt + Smooth Physics + Engine Sound ===== */
+/* ===== Road Rage (5 lanes, tilt + pedals, stages, fair traffic) ===== */
 var RoadRage=(function(){
   var cvs=$("drvCanvas"), ctx=cvs.getContext("2d"), DPR=1, W=360, H=540;
-  var lanes=3, roadMargin=0.24, laneX=[], dashes=[], pxBase=220, pxPerSec=220;
 
-  // Physics state
-  var running=false, last=0, meters=0, speed=50, nextCP=500, score=0;
-  var pickup=null, obstacles=[], boosts=[];
-  var lives=3, respawn=false, respawnTimer=null;
+  // CONFIG
+  var lanes=5, roadMargin=0.16; // wider road, 5 lanes
+  var pxBase=220;               // baseline scroll speed for 50 m/s
+  var STIFF=12, DAMP=7;         // lateral spring-damper
+  var MAX_SPEED=250, MIN_SPEED=30;
+  var OB_CLUSTER_P=0.0036;      // ~80% reduced from earlier (~0.018)
+  var BOOST_P=0.002;            // rarer boost
+  var OIL_P=0.0025;             // oil slick spawn
+  var STAGE_TIME=100;           // seconds per stage
+  var VEH_TYPES=[
+    {t:"car",  w:34,h:52, color:"#ffffff", vf:1.00},
+    {t:"bus",  w:44,h:80, color:"#ffd166", vf:0.90},
+    {t:"truck",w:44,h:74, color:"#9ad0ff", vf:0.95},
+    {t:"bike", w:24,h:44, color:"#a4ff9a", vf:0.80},
+    {t:"super",w:36,h:48, color:"#ff5e57", vf:1.15},
+    {t:"moto", w:18,h:36, color:"#ffb3c1", vf:1.10}
+  ];
+  var STAGES=[
+    {name:"Mountainous",  road:"#11243f", dash:"#fca311", sky:"#041225"},
+    {name:"Farmland",     road:"#0e2a1c", dash:"#b7e07e", sky:"#02150b"},
+    {name:"Dirt Road",    road:"#3b2a16", dash:"#e1b382", sky:"#120a04"},
+    {name:"City",         road:"#1a1f2c", dash:"#9ad0ff", sky:"#0b0d16"},
+    {name:"Suburbs",      road:"#1c2631", dash:"#bcd1ff", sky:"#0c1420"},
+    {name:"Ghetto",       road:"#2a1c24", dash:"#ff8aa1", sky:"#12070c"},
+    {name:"Futuristic",   road:"#101c36", dash:"#00f5d4", sky:"#030b1a"}
+  ];
 
-  // Smooth lateral motion (lane as float 0..2)
-  var player={lane:1, y:0, color:"#00f5d4", visible:true};
-  var targetLane=1, laneVel=0;           // velocity along lane index
-  var STIFF=10, DAMP=6;                  // spring-damper constants (tuned for “Road Fighter” feel)
+  // STATE
+  var laneX=[], dashes=[];
+  var running=false, paused=false, last=0, meters=0, speed=50, score=0;
+  var stageIdx=0, stageStart=0, timeLeft=STAGE_TIME;
+  var pickup=null, obstacles=[], boosts=[], oils=[];
+  var lives=3, respawn=false, respawnTimer=null, slipTime=0, slipDir=0;
+  var player={lane:2, y:0, color:"#00f5d4", visible:true}; // start middle lane of 5
+  var targetLane=2, laneVel=0;
 
-  // Input (buttons, swipe, keyboard, tilt)
-  var sx=null;
-  var tiltEnabled=false, tiltGamma=0, tiltZero=null; // degrees; gamma: left(-) / right(+)
-  function enableTiltIfPossible(){
+  // INPUT
+  var sx=null; // swipe
+  var tiltEnabled=false, tiltGamma=0, tiltZero=null;
+  function enableTilt(){
     try{
-      if(typeof DeviceOrientationEvent !== "undefined"){
-        if(DeviceOrientationEvent.requestPermission){ // iOS-style
-          DeviceOrientationEvent.requestPermission().then(function(state){
-            if(state==="granted"){window.addEventListener("deviceorientation", onOrientation, true); tiltEnabled=true;}
-          }).catch(function(){/* ignore */});
-        }else{
-          window.addEventListener("deviceorientation", onOrientation, true);
-          tiltEnabled=true;
-        }
+      if(typeof DeviceOrientationEvent!=="undefined"){
+        if(DeviceOrientationEvent.requestPermission){
+          DeviceOrientationEvent.requestPermission().then(function(s){ if(s==="granted"){window.addEventListener("deviceorientation",onOri,true); tiltEnabled=true;}});
+        }else{ window.addEventListener("deviceorientation",onOri,true); tiltEnabled=true; }
       }
     }catch(e){}
   }
-  function onOrientation(e){
-    if(typeof e.gamma==="number"){ 
-      if(tiltZero===null) tiltZero=e.gamma;           // calibrate first value as center
-      tiltGamma = e.gamma - tiltZero;                 // relative tilt
-    }
-  }
+  function onOri(e){ if(typeof e.gamma==="number"){ if(tiltZero===null) tiltZero=e.gamma; tiltGamma=e.gamma-tiltZero; } }
 
-  // Keyboard
-  document.addEventListener("keydown",function(e){
-    if(!running) return;
-    if(e.key==="ArrowLeft"){ left(); }
-    if(e.key==="ArrowRight"){ right(); }
+  // KEYBOARD (fixed + preventDefault)
+  window.addEventListener("keydown",function(e){
+    if(e.key==="ArrowLeft"){ e.preventDefault(); left(); }
+    if(e.key==="ArrowRight"){ e.preventDefault(); right(); }
   });
 
+  // RESPONSIVE CANVAS
   function dprScale(){
     var vw=window.innerWidth, vh=window.innerHeight;
     var maxH = Math.floor(vh*0.78);
@@ -512,12 +486,10 @@ var RoadRage=(function(){
     cssH = Math.min(cssH, Math.floor(cssW*1.5));
     cvs.style.width=cssW+"px"; cvs.style.height=cssH+"px";
     DPR = window.devicePixelRatio || 1;
-    W = cssW; H = cssH;
-    cvs.width=Math.floor(cssW*DPR); cvs.height=Math.floor(cssH*DPR);
-    ctx.setTransform(DPR,0,0,DPR,0,0);
+    W = cssW; H = cssH; cvs.width=Math.floor(cssW*DPR); cvs.height=Math.floor(cssH*DPR); ctx.setTransform(DPR,0,0,DPR,0,0);
     var left=W*roadMargin, right=W*(1-roadMargin), inner=right-left;
-    laneX=[]; for(var i=0;i<lanes;i++){ laneX.push(left+inner*((i+0.5)/lanes)); }
-    dashes=[]; for(var y=0;y<H;y+=60){dashes.push({y:y});}
+    laneX=[]; for(var i=0;i<lanes;i++) laneX.push(left+inner*((i+0.5)/lanes));
+    dashes=[]; for(var y=0;y<H;y+=60) dashes.push({y:y});
     pxBase = H/2.6;
     player.y=Math.floor(H*0.86);
     draw();
@@ -525,142 +497,203 @@ var RoadRage=(function(){
   window.addEventListener("resize",dprScale);
   window.addEventListener("orientationchange",function(){setTimeout(dprScale,200);});
 
+  // DRAWING
   function rr(x,y,w,h,r){if(r>w/2)r=w/2;if(r>h/2)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
-  function drawCar(cx,cy,color){var w=36,h=56,x=cx-w/2,y=cy-h/2;ctx.fillStyle=color;ctx.strokeStyle="#233";ctx.lineWidth=2;rr(x,y,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle="#071018";rr(x+6,y+6,w-12,14,4);ctx.fill();}
-  function drawCone(cx,cy){ctx.fillStyle="#ffbd66";ctx.strokeStyle="#8a5b1f";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy-16);ctx.lineTo(cx-12,cy+16);ctx.lineTo(cx+12,cy+16);ctx.closePath();ctx.fill();ctx.stroke();}
+  function drawVehicle(cx,cy,vt){var w=vt.w,h=vt.h,x=cx-w/2,y=cy-h/2;ctx.fillStyle=vt.color;ctx.strokeStyle="#233";ctx.lineWidth=2;rr(x,y,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle="#071018";rr(x+6,y+6,w-12,14,4);ctx.fill();}
+  function drawOil(cx,cy){ctx.fillStyle="#111";ctx.beginPath();ctx.ellipse(cx,cy,14,8,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#222";ctx.stroke();}
   function drawBoost(cx,cy){ctx.fillStyle="#2ecc71";ctx.beginPath();ctx.arc(cx,cy,12,0,Math.PI*2);ctx.fill();ctx.fillStyle="#061314";ctx.font="bold 14px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("+",cx,cy+1);}
 
+  function stageTheme(){return STAGES[stageIdx % STAGES.length];}
+
   function draw(){
-    ctx.fillStyle="#0a0f21";ctx.fillRect(0,0,W,H);
+    var th=stageTheme();
+    // background sky tint
+    ctx.fillStyle=th.sky; ctx.fillRect(0,0,W,H);
     var left=W*roadMargin,right=W*(1-roadMargin);
-    ctx.fillStyle="#0f1837";ctx.fillRect(left,0,right-left,H);
-    ctx.strokeStyle="#cfe7ff";ctx.setLineDash([12,12]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo((left+right)/2,0);ctx.lineTo((left+right)/2,H);ctx.stroke();ctx.setLineDash([]);
-    ctx.strokeStyle="#fca311";ctx.lineWidth=6;for(var i=0;i<dashes.length;i++){ctx.beginPath();ctx.moveTo(left+20,dashes[i].y);ctx.lineTo(right-20,dashes[i].y);ctx.stroke();}
-    for(i=0;i<obstacles.length;i++){var ob=obstacles[i];if(ob.type==="cone")drawCone(laneX[ob.lane],ob.y);else drawCar(laneX[ob.lane],ob.y,"#ffffff");}
-    for(i=0;i<boosts.length;i++){drawBoost(laneX[boosts[i].lane],boosts[i].y);}
-    if(pickup){drawCar(laneX[pickup.lane], pickup.y, "#9ad0ff");}
-    // convert fractional lane -> x
-    var step=(laneX[1]-laneX[0]); var px = laneX[0] + step*player.lane;
-    if(player.visible) drawCar(px,player.y,player.color);
+    ctx.fillStyle=th.road; ctx.fillRect(left,0,right-left,H);
+    // lane markers
+    ctx.strokeStyle="#cfe7ff"; ctx.setLineDash([12,12]); ctx.lineWidth=2;
+    for(var i=1;i<lanes;i++){ var x=left+(right-left)*i/lanes; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    ctx.setLineDash([]);
+    // scrolling dashes across road (horizon stripes)
+    ctx.strokeStyle=th.dash; ctx.lineWidth=6;
+    for(var i=0;i<dashes.length;i++){ ctx.beginPath(); ctx.moveTo(left+20,dashes[i].y); ctx.lineTo(right-20,dashes[i].y); ctx.stroke(); }
+
+    // objects
+    for(i=0;i<oils.length;i++) drawOil(laneX[oils[i].lane], oils[i].y);
+    for(i=0;i<obstacles.length;i++){ var ob=obstacles[i]; drawVehicle(laneX[ob.lane], ob.y, ob.vt); }
+    for(i=0;i<boosts.length;i++) drawBoost(laneX[boosts[i].lane], boosts[i].y);
+
+    // player
+    var step=(laneX[1]-laneX[0]), px=laneX[0] + step*player.lane;
+    if(player.visible) drawVehicle(px, player.y, {w:34,h:54,color:player.color});
   }
 
-  function reset(){
-    meters=0;nextCP=500;score=0;pickup=null;obstacles=[];boosts=[];
-    player.lane=1; targetLane=1; laneVel=0; speed=50;lives=3;player.visible=true;respawn=false; tiltZero=null;
-    $("drvDist").textContent=0;$("drvScore").textContent=0;$("drvSpeed").textContent=speed;$("drvLives").textContent=lives;
-    $("drvGameOver").style.display="none"; dprScale();draw();
-  }
-
-  // ---- Engine sound (rev with speed) ----
+  // ENGINE SOUND (heavier)
   var engine=null;
   function engineStart(){
     try{
-      AC=AC||new (window.AudioContext||window.webkitAudioContext)();
-      if(AC.state==="suspended"){ AC.resume(); }
-      var osc=AC.createOscillator(); osc.type="sawtooth";
-      var lp=AC.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1200;
-      var g=AC.createGain(); g.gain.value=0.0;
-      osc.connect(lp); lp.connect(g); g.connect(AC.destination);
-      osc.start();
-      engine={osc:osc, g:g};
+      var ac=safeAC(); if(ac.state==="suspended"){ ac.resume(); }
+      var o1=ac.createOscillator(); o1.type="sawtooth";
+      var o2=ac.createOscillator(); o2.type="square"; // sub
+      var g=ac.createGain(); g.gain.value=0.0;
+      var lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1000;
+      o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(ac.destination);
+      o1.start(); o2.start();
+      engine={o1:o1,o2:o2,g:g,lp:lp};
     }catch(e){ engine=null; }
   }
-  function engineStop(){ try{ if(engine){ engine.osc.stop(); engine.g.disconnect(); engine=null; } }catch(e){} }
+  function engineStop(){ try{ if(engine){ engine.o1.stop(); engine.o2.stop(); engine.g.disconnect(); engine=null; } }catch(e){} }
   function engineUpdate(){
     if(!engine||!AC) return;
-    var f = 80 + speed*2.2;                 // 80–> ~630 Hz (at 250 m/s)
-    var vol = 0.02 + Math.min(0.1, speed/250*0.08);
-    engine.osc.frequency.setTargetAtTime(f, AC.currentTime, 0.05);
+    var f = 60 + speed*1.6;          // heavier base
+    var vol = (running? 0.05 + Math.min(0.12, speed/MAX_SPEED*0.12) : 0.0);
+    engine.o1.frequency.setTargetAtTime(f, AC.currentTime, 0.05);
+    engine.o2.frequency.setTargetAtTime(f/2, AC.currentTime, 0.05);
     engine.g.gain.setTargetAtTime(vol, AC.currentTime, 0.05);
   }
 
+  // GAME LOOP
   function update(ts){
-    if(!running){last=ts;return;}
+    if(!running){ last=ts; engineUpdate(); return; }
     var dt=(ts-last)/1000; last=ts;
 
-    // spring-damper lateral motion towards targetLane
-    if(tiltEnabled){
-      // map gamma (-30..30 deg) to delta around lane 1
-      var t = 1 + Math.max(-1, Math.min(1, (tiltGamma/30))); // [-1..1] range -> lanes
-      targetLane = Math.max(0, Math.min(2, t));
-    }
-    var a = STIFF*(targetLane - player.lane) - DAMP*laneVel; // acceleration
-    laneVel += a*dt; player.lane += laneVel*dt;
-    // clamp and damp when hitting edges
-    if(player.lane<0){player.lane=0; laneVel=0;} if(player.lane>2){player.lane=2; laneVel=0;}
+    // stage timer
+    timeLeft = Math.max(0, STAGE_TIME - (ts - stageStart)/1000); $("drvTime").textContent=Math.ceil(timeLeft);
+    if(timeLeft<=0){ nextStageQuiz(); return; }
 
-    pxPerSec = pxBase * (speed/50);
+    // inputs: tilt steering adjusts target (gentle)
+    if(tiltEnabled){ var t = 2 + Math.max(-2, Math.min(2, (tiltGamma/15))); targetLane = Math.max(0, Math.min(lanes-1, t)); }
+
+    // oil slip
+    if(slipTime>0){ slipTime-=dt; laneVel += (slipDir*0.8)*dt; }
+
+    // spring-damper to target lane
+    var a = STIFF*(targetLane - player.lane) - DAMP*laneVel; laneVel += a*dt; player.lane += laneVel*dt;
+    if(player.lane<0){player.lane=0; laneVel=0} if(player.lane>lanes-1){player.lane=lanes-1; laneVel=0}
+
+    // scroll ground
+    var pxPerSec = pxBase * (speed/50);
     for(var i=0;i<dashes.length;i++){dashes[i].y+=pxPerSec*dt; if(dashes[i].y>H)dashes[i].y-=H;}
     meters += speed*dt; $("drvDist").textContent=Math.floor(meters); $("drvSpeed").textContent=Math.floor(speed);
 
-    if(!pickup && Math.random()<0.010){pickup={lane:Math.floor(Math.random()*lanes),y:-60};}
-    if(Math.random()<0.018){obstacles.push({lane:Math.floor(Math.random()*lanes),y:-30,type:Math.random()<0.6?"cone":"car"});}
-    if(Math.random()<0.012){boosts.push({lane:Math.floor(Math.random()*lanes),y:-40});}
+    // SPAWN: cluster obstacles leaving at least 1 free lane
+    if(Math.random()<OB_CLUSTER_P){
+      var y0 = -40; var lanesFree=[0,1,2,3,4];
+      var count = 1 + Math.floor(Math.random()*3); // 1–3 vehicles in a row
+      if(count >= lanes) count = lanes-1;
+      for(var c=0;c<count;c++){
+        var li = lanesFree.splice(Math.floor(Math.random()*lanesFree.length),1)[0];
+        var vt = VEH_TYPES[Math.floor(Math.random()*VEH_TYPES.length)];
+        obstacles.push({lane:li, y:y0, vt:vt, vf:vt.vf});
+      }
+    }
+    if(Math.random()<BOOST_P){ boosts.push({lane:Math.floor(Math.random()*lanes), y:-40}); }
+    if(Math.random()<OIL_P){ oils.push({lane:Math.floor(Math.random()*lanes), y:-30}); }
 
-    if(pickup){pickup.y+=pxPerSec*0.9*dt; if(pickup.y>H+60)pickup=null;}
-    for(i=obstacles.length-1;i>=0;i--){obstacles[i].y+=pxPerSec*dt; if(obstacles[i].y>H+40)obstacles.splice(i,1);}
-    for(i=boosts.length-1;i>=0;i--){boosts[i].y+=pxPerSec*dt; if(boosts[i].y>H+40)boosts.splice(i,1);}
+    // Move objects
+    for(var i=obstacles.length-1;i>=0;i--){var ob=obstacles[i]; ob.y += pxPerSec*ob.vf*dt; if(ob.y>H+80) obstacles.splice(i,1);}
+    for(i=boosts.length-1;i>=0;i--){boosts[i].y += pxPerSec*dt; if(boosts[i].y>H+40) boosts.splice(i,1);}
+    for(i=oils.length-1;i>=0;i--){oils[i].y += pxPerSec*dt; if(oils[i].y>H+40) oils.splice(i,1);}
 
-    // collisions (use x-distance instead of lane equality)
-    var step=(laneX[1]-laneX[0]), px = laneX[0] + step*player.lane;
+    // collisions
+    var step=(laneX[1]-laneX[0]), px=laneX[0] + step*player.lane;
     var XTH=24, YTH=40;
     if(!respawn){
-      if(pickup && Math.abs((laneX[pickup.lane])-px)<XTH && Math.abs(pickup.y-player.y)<YTH){running=false; showQuestion(true); pickup=null;}
-      for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(Math.abs(laneX[ob2.lane]-px)<XTH && Math.abs(ob2.y-player.y)<YTH){crash(); obstacles.splice(i,1); break;}}
-      for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(Math.abs(laneX[b.lane]-px)<XTH && Math.abs(b.y-player.y)<YTH){boosts.splice(i,1); speed=Math.min(250, speed+50); $("drvSpeed").textContent=Math.floor(speed); toast("⚡ Speed +50 → "+Math.floor(speed)+" m/s"); beep("ok"); }}
+      // obstacles (vehicles)
+      for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(Math.abs(laneX[ob2.lane]-px)<(ob2.vt.w/2+XTH) && Math.abs(ob2.y-player.y)<(ob2.vt.h/2+YTH)){ crash(); obstacles.splice(i,1); break;}}
+      // boost
+      for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(Math.abs(laneX[b.lane]-px)<XTH && Math.abs(b.y-player.y)<YTH){ boosts.splice(i,1); speed=Math.min(MAX_SPEED, speed+25); toast("⚡ +25 m/s → "+Math.floor(speed)); beep("ok"); }}
+      // oil
+      for(i=oils.length-1;i>=0;i--){var o=oils[i]; if(Math.abs(laneX[o.lane]-px)<XTH && Math.abs(o.y-player.y)<YTH){ oils.splice(i,1); slipTime=1.0; slipDir = Math.random()<0.5? -1:1; toast("🛢️ Oil!"); }}
     }
 
-    if(meters>=nextCP){running=false;showQuestion(false);nextCP+=500;}
     engineUpdate();
     draw(); requestAnimationFrame(update);
   }
 
   function crash(){
-    lives--; $("drvLives").textContent=lives; thumbsDown("Crashed! −1 life");
-    player.visible=false; respawn=true; speed=Math.max(50, speed-50);
+    lives--; $("drvLives").textContent=lives; player.visible=false; respawn=true; engineStop(); crashSound();
+    speed=Math.max(MIN_SPEED, speed-40);
     if(lives<=0){ gameOver(); return; }
     if(respawnTimer) clearTimeout(respawnTimer);
     respawnTimer=setTimeout(function(){ player.visible=true; respawn=false; }, 1000);
   }
 
   function gameOver(){
-    running=false; player.visible=false; $("drvGameOver").style.display="flex"; engineStop();
+    running=false; $("drvGameOver").style.display="flex"; engineStop();
     STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash();
   }
 
-  function showQuestion(bonus){
-    $("drvOverlay").style.display="flex";
-    var q=MCQ[Math.floor(Math.random()*MCQ.length)];
-    document.documentElement.style.setProperty("--theme", CAT_COLORS[q.cat]||"#8a5cff");
-    $("drvQ").innerHTML="<div class='pill' style='margin-bottom:6px;display:inline-flex;gap:8px;align-items:center'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>"+q.q;
-    var box=$("drvOpts"); box.innerHTML="";
-    q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt){
-      var btn=document.createElement("button"); btn.className="btn secondary"; btn.textContent=opt;
-      btn.onclick=function(){
-        if(opt===q.correct){ $("drvOverlay").style.display="none"; score+=bonus?200:100; $("drvScore").textContent=score; confetti(bonus?"+Bonus!":"Correct!");
-          STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash(); run();
-        }else{ thumbsDown("Incorrect — try again"); }
-      };
-      box.appendChild(btn);
+  // ===== Stage/Quiz =====
+  function startStage(idx){
+    stageIdx = idx % STAGES.length;
+    $("drvStageName").textContent = STAGES[stageIdx].name;
+    stageStart = performance.now(); timeLeft = STAGE_TIME;
+  }
+  function nextStageQuiz(){
+    running=false; engineStop(); // pause motion & audio
+    askStageQuestions(3, function(){ // after 3 Qs, go to next stage
+      stageIdx = (stageIdx+1) % STAGES.length;
+      startStage(stageIdx); run();
     });
   }
+  function askStageQuestions(n, done){
+    var overlay=$("drvOverlay"); overlay.style.display="flex";
+    var asked=0, points=0;
+    function askOne(){
+      if(asked>=n){ overlay.style.display="none"; confetti("Stage complete! +"+points+" pts"); if(typeof done==="function") done(); return; }
+      var q=MCQ[Math.floor(Math.random()*MCQ.length)];
+      document.documentElement.style.setProperty("--theme", CAT_COLORS[q.cat]||"#8a5cff");
+      $("drvQ").innerHTML="<div class='pill' style='margin-bottom:6px;display:inline-flex;gap:8px;align-items:center'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>"+q.q;
+      var box=$("drvOpts"); box.innerHTML="";
+      q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt){
+        var btn=document.createElement("button"); btn.className="btn secondary"; btn.textContent=opt;
+        btn.onclick=function(){
+          if(opt===q.correct){ points+=150; $("drvScore").textContent = (score+=150); confetti("Correct!"); }
+          else{ toast("Answer: "+q.correct); }
+          asked++; askOne();
+        };
+        box.appendChild(btn);
+      });
+    }
+    askOne();
+  }
 
-  // Discrete controls nudge target lane, smooth physics handles the slide
+  // CONTROLS
   function left(){ targetLane=Math.max(0, targetLane-1); beep("open"); }
-  function right(){ targetLane=Math.min(2, targetLane+1); beep("open"); }
+  function right(){ targetLane=Math.min(lanes-1, targetLane+1); beep("open"); }
 
-  $("drvLeft").addEventListener("touchstart",function(e){e.preventDefault();left();});
-  $("drvRight").addEventListener("touchstart",function(e){e.preventDefault();right();});
-  $("drvLeft").addEventListener("click",left); $("drvRight").addEventListener("click",right);
+  // Pedals (press & hold)
+  function hold(el, on, off){
+    var tid=null, active=false, rep=function(){ on(); tid=requestAnimationFrame(rep); };
+    function down(e){ e.preventDefault(); if(active) return; active=true; on(); tid=requestAnimationFrame(rep); }
+    function up(){ if(!active) return; active=false; cancelAnimationFrame(tid); if(off) off(); }
+    el.addEventListener("touchstart",down,{passive:false}); el.addEventListener("mousedown",down);
+    ["touchend","touchcancel","mouseup","mouseleave"].forEach(function(evt){ el.addEventListener(evt,up); });
+  }
+  hold($("pedalAccel"), function(){ if(running){ speed=Math.min(MAX_SPEED, speed+80/60); }}, null);
+  hold($("pedalBrake"), function(){ if(running){ speed=Math.max(MIN_SPEED, speed-120/60); }}, null);
 
-  // swipe on canvas
+  // swipe and canvas tap left/right
   cvs.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;});
   cvs.addEventListener("touchend",function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(dx<-20)left();else if(dx>20)right();sx=null;});
 
-  function run(){running=true; last=performance.now(); engineStart(); requestAnimationFrame(update);}
-  function pause(){running=false; engineStop();}
-  $("drvStart").onclick=function(){ reset(); enableTiltIfPossible(); run(); };
+  // PUBLIC controls
+  function run(){ $("drvGameOver").style.display="none"; running=true; paused=false; last=performance.now(); engineStart(); requestAnimationFrame(update); }
+  function pause(){ running=false; paused=true; engineStop(); }
+
+  // Buttons
+  $("drvStart").onclick=function(){ reset(); enableTilt(); startStage(0); run(); };
   $("drvPause").onclick=pause;
+
+  // RESET
+  function reset(){
+    meters=0; score=0; $("drvScore").textContent=0; $("drvDist").textContent=0; $("drvLives").textContent=(lives=3);
+    pickup=null; obstacles=[]; boosts=[]; oils=[]; player.lane=2; targetLane=2; laneVel=0; speed=50; slipTime=0; slipDir=0; tiltZero=null;
+    $("drvTime").textContent=STAGE_TIME; $("drvStageName").textContent="—";
+    $("drvGameOver").style.display="none"; dprScale(); draw(); engineStop();
+  }
 
   dprScale(); reset();
   return {pause:pause};
