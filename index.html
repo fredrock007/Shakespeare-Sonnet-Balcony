@@ -19,215 +19,112 @@
     --accent4:#fca311;
     --good:#2ecc71;
     --bad:#ff4d6d;
-    --theme:#8a5cff; /* category theme (Millionaire & overlays) */
+    --theme:#8a5cff;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#000}
 
-  /* ===== Futuristic 3D background ===== */
-  .bg3d{
-    position:fixed; inset:0; z-index:-2; overflow:hidden; perspective:1200px;
-    background:
-      radial-gradient(1200px 600px at 10% -10%, #102153 0, #0c1736 35%, #070b1a 65%, #040713 100%),
-      #040713;
-  }
-  .bg3d::before{
-    content:""; position:absolute; inset:-20vh -20vw; z-index:-2;
-    background:
-      repeating-linear-gradient( to right, rgba(0,245,212,.08) 0 1px, transparent 1px 60px),
-      repeating-linear-gradient( to bottom, rgba(138,92,255,.07) 0 1px, transparent 1px 60px);
-    transform:rotateX(60deg) translateZ(-200px) translateY(15vh);
-    filter:drop-shadow(0 0 18px rgba(0,245,212,.15));
-  }
-  .stars{
-    position:absolute; inset:0; z-index:-1; pointer-events:none;
-    background:
-      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.28), transparent 40%),
-      radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,.18), transparent 40%),
-      radial-gradient(2px 2px at 40% 80%, rgba(255,255,255,.20), transparent 40%);
-    animation: twinkle 6s linear infinite alternate;
-  }
-  @keyframes twinkle{ to{ filter:brightness(1.3)} }
+  .bg3d{position:fixed; inset:0; z-index:-2; overflow:hidden; perspective:1200px;
+    background:radial-gradient(1200px 600px at 10% -10%, #102153 0, #0c1736 35%, #070b1a 65%, #040713 100%), #040713;}
+  .bg3d::before{content:""; position:absolute; inset:-20vh -20vw; z-index:-2;
+    background:repeating-linear-gradient(to right, rgba(0,245,212,.08) 0 1px, transparent 1px 60px),
+               repeating-linear-gradient(to bottom, rgba(138,92,255,.07) 0 1px, transparent 1px 60px);
+    transform:rotateX(60deg) translateZ(-200px) translateY(15vh); filter:drop-shadow(0 0 18px rgba(0,245,212,.15));}
+  .stars{position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.28), transparent 40%),
+               radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,.18), transparent 40%),
+               radial-gradient(2px 2px at 40% 80%, rgba(255,255,255,.20), transparent 40%);
+    animation: twinkle 6s linear infinite alternate;}
+  @keyframes twinkle{to{filter:brightness(1.3)}}
 
-  /* ===== Shell / header (hologram) ===== */
   .wrap{max-width:1220px;margin:0 auto;padding:18px}
-  header{
-    position:relative; display:flex; align-items:center; gap:12px; margin-bottom:16px;
-    transform:perspective(1200px) rotateX(.6deg) translateZ(0);
-  }
-  .holo{
-    position:absolute; inset:-14px -14px auto -14px; height:76px; z-index:-1;
+  header{position:relative; display:flex; align-items:center; gap:12px; margin-bottom:16px;
+    transform:perspective(1200px) rotateX(.6deg);}
+  .holo{position:absolute; inset:-14px -14px auto -14px; height:76px; z-index:-1;
     background:linear-gradient(90deg, rgba(0,245,212,.14), rgba(138,92,255,.14) 40%, rgba(255,94,87,.14) 80%);
-    border:1px solid rgba(255,255,255,.14); border-radius:16px;
-    box-shadow:
-      inset 0 0 40px rgba(0,245,212,.08),
-      inset 0 0 60px rgba(138,92,255,.08),
-      0 10px 40px rgba(0,0,0,.45);
-    filter:saturate(1.05);
-  }
+    border:1px solid rgba(255,255,255,.14); border-radius:16px; box-shadow: inset 0 0 40px rgba(0,245,212,.08), inset 0 0 60px rgba(138,92,255,.08), 0 10px 40px rgba(0,0,0,.45);}
   .brand{font-weight:900;font-size:24px; letter-spacing:.2px}
   .neon{background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent; text-shadow:0 0 12px rgba(0,245,212,.25)}
   .badge{background:linear-gradient(90deg,var(--accent3),var(--accent2));padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.18); box-shadow:0 8px 26px rgba(138,92,255,.25)}
-  .tabs{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px; transform-style:preserve-3d}
-  .tab-btn{
-    border:1px solid rgba(255,255,255,.12); padding:10px 14px; border-radius:14px;
-    background:linear-gradient(180deg,#121a38,#0d1430);
-    color:#e7f2ff; cursor:pointer; font-weight:700;
-    box-shadow: 0 12px 0 rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.35);
-    transform:translateZ(8px);
-  }
-  .tab-btn:active{ transform:translateY(2px) translateZ(6px) }
-  .tab-btn.active{
-    color:#061314; background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);
-    box-shadow: 0 12px 0 rgba(0,0,0,.25), 0 0 40px rgba(0,245,212,.35);
-  }
+  .tabs{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px}
+  .tab-btn{border:1px solid rgba(255,255,255,.12); padding:10px 14px; border-radius:14px;background:linear-gradient(180deg,#121a38,#0d1430);color:#e7f2ff; cursor:pointer; font-weight:700; box-shadow:0 12px 0 rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.35)}
+  .tab-btn.active{color:#061314; background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%); box-shadow: 0 12px 0 rgba(0,0,0,.25), 0 0 40px rgba(0,245,212,.35)}
   .ghost{background:transparent;border:1px solid rgba(255,255,255,.2)}
 
-  /* ===== Cards with “deep glass” look ===== */
-  .card{
-    position:relative; background:var(--panel);
-    border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:16px;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.05),
-      0 18px 36px rgba(0,0,0,.45),
-      0 0 60px rgba(138,92,255,.06);
-    transform:perspective(1000px) rotateX(.4deg) translateZ(0);
-  }
-  .card::after{
-    content:""; position:absolute; inset:-2px; border-radius:22px;
-    background:linear-gradient(180deg, rgba(255,255,255,.05), transparent 40%, rgba(0,245,212,.06));
-    pointer-events:none; filter:blur(6px);
-  }
-
+  .card{position:relative; background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:16px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 18px 36px rgba(0,0,0,.45), 0 0 60px rgba(138,92,255,.06);}
   .flex{display:flex;gap:16px;flex-wrap:wrap}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grow{flex:1 1 360px}
   .muted{color:var(--muted)} .big{font-size:18px}
   .grid-2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
   @media (max-width:980px){.grid-2{grid-template-columns:1fr}}
   .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   @media (max-width:900px){.statgrid{grid-template-columns:repeat(2,1fr)}}
-  .stat{background:linear-gradient(180deg,#101837,#0c1330);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px;
-    box-shadow: inset 0 0 20px rgba(0,245,212,.05), 0 14px 26px rgba(0,0,0,.45)}
+  .stat{background:linear-gradient(180deg,#101837,#0c1330);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px}
   .stat h4{margin:0 0 6px 0;font-size:12px;color:#bcd1ff}.stat .v{font-size:24px;font-weight:900}
-
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#101a34;border:1px solid rgba(255,255,255,.12);color:#a8bfdd;font-size:12px; box-shadow:inset 0 0 10px rgba(0,245,212,.06)}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#101a34;border:1px solid rgba(255,255,255,.12);color:#a8bfdd;font-size:12px}
   .btn{border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:800;color:#061314;background:linear-gradient(180deg,var(--accent) 0,var(--accent3) 100%);box-shadow:0 10px 26px rgba(138,92,255,.28)}
   .btn.secondary{color:#cfe7ff;background:linear-gradient(180deg,#1b2546 0,#121c3a 100%);border:1px solid rgba(255,255,255,.12)}
   .btn.warn{color:#130a00;background:linear-gradient(180deg,#ffd166 0,var(--accent4) 100%)}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
 
-  /* ===== Hangman ===== */
-  .hm-title{font-weight:800;margin:0 0 8px 0}
   canvas{background:linear-gradient(180deg,#0c1228,#0a0f21);border:1px solid rgba(255,255,255,.12);border-radius:16px;max-width:100%}
-  .slots{letter-spacing:.28em;font-size:26px;margin:10px 0 6px;white-space:pre}
+  .slots{letter-spacing:.28em;font-size:26px;margin:10px 0 6px}
   .kbd{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:12px}
-  .key{background:linear-gradient(180deg,#131e41,#101936);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 0;text-align:center;font-weight:700;cursor:pointer;color:#cfe7ff; box-shadow:0 6px 16px rgba(0,0,0,.35)}
-  .key.used{opacity:.35;pointer-events:none}
-  .hint{background:linear-gradient(180deg,#0f1837,#0b1230);border:1px solid rgba(255,255,255,.12);padding:10px;border-radius:10px}
+  .key{background:linear-gradient(180deg,#131e41,#101936);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 0;text-align:center;font-weight:700;cursor:pointer;color:#cfe7ff}
 
-  /* ===== 30 Seconds ===== */
-  input[type="text"]{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px; box-shadow:inset 0 0 18px rgba(138,92,255,.08)}
+  input[type="text"]{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#0c1530,#0a1126);color:#e6eef5;font-size:16px}
   .def-box{font-size:18px;line-height:1.45}.hourglass{width:58px;height:90px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0)}
 
-  /* ===== Millionaire (category theming) ===== */
-  #million{border:1px solid rgba(255,255,255,.12); border-radius:18px; background:linear-gradient(180deg,#0f1836,#0b1230);
-    box-shadow: inset 0 0 40px rgba(255,255,255,.04), 0 20px 44px rgba(0,0,0,.5)}
+  #million{border:1px solid rgba(255,255,255,.12); border-radius:18px; background:linear-gradient(180deg,#0f1836,#0b1230)}
   #million.theming{box-shadow:0 0 0 3px var(--theme) inset, 0 0 32px var(--theme)}
-  .mil-cat{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg,#0f1837,#0b1230); filter:drop-shadow(0 0 6px var(--theme))}
+  .mil-cat{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg,#0f1837,#0b1230)}
   .mil-dot{width:10px;height:10px;border-radius:50%}
-
   .ladder{list-style:none;padding:0;margin:0;display:flex;flex-direction:column-reverse;gap:6px}
-  .ladder li{padding:8px 10px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:linear-gradient(180deg,#0f1836,#0b1230);font-weight:700;display:flex;justify-content:space-between; box-shadow:inset 0 0 10px rgba(255,255,255,.04)}
-  .ladder li.active{background:linear-gradient(90deg,rgba(0,245,212,.35),rgba(138,92,255,.35));border-color:var(--accent);color:#e9fcff}
+  .ladder li{padding:8px 10px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:linear-gradient(180deg,#0f1836,#0b1230);font-weight:700;display:flex;justify-content:space-between}
+  .ladder li.active{background:linear-gradient(90deg,rgba(0,245,212,.35),rgba(138,92,255,.35));border-color:var(--accent)}
   .opt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-  .opt button{padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.14);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-weight:800;cursor:pointer; box-shadow:0 10px 24px rgba(0,0,0,.4)}
+  .opt button{padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.14);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-weight:800;cursor:pointer}
 
-  /* ===== Road Rage ===== */
   .driver-wrap{display:grid;grid-template-columns:1fr;gap:10px}
   .driver-controls{display:flex;gap:10px;justify-content:center}
-  .ctrl{width:120px;height:120px;border-radius:18px;border:2px solid rgba(255,255,255,.14);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-size:22px;font-weight:900;touch-action:none; box-shadow:0 12px 24px rgba(0,0,0,.45)}
-  .ctrl:active{transform:scale(.98)}
-  @media (max-width:600px){.ctrl{width:100px;height:100px;font-size:20px}}
+  .ctrl{width:120px;height:120px;border-radius:18px;border:2px solid rgba(255,255,255,.14);background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-size:22px;font-weight:900;touch-action:none}
   .hud{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .overlayQ{position:absolute;inset:0;background:rgba(7,11,26,.8);display:none;align-items:center;justify-content:center;z-index:50}
-  .overlayCard{max-width:560px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .overlayCard{max-width:560px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px}
   .overlayCard .opt{grid-template-columns:1fr}
   .gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,0,0,.65);z-index:60;color:#ff1e1e;font-weight:900;font-size:44px;text-shadow:0 0 22px #300}
 
-  /* ===== Study ===== */
   .subtabs{display:flex;gap:8px;margin-bottom:10px}
-  .sub-btn{border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:#cfe7ff;cursor:pointer; box-shadow:0 8px 18px rgba(0,0,0,.35)}
-  .sub-btn.active{color:#061314;background:linear-gradient(180deg,var(--accent2),var(--accent3));font-weight:800;box-shadow:0 0 18px rgba(255,94,87,.22)}
+  .sub-btn{border:1px solid rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#121a38,#0d1430);color:#cfe7ff;cursor:pointer}
   table{width:100%;border-collapse:collapse}
   th,td{border:1px solid rgba(255,255,255,.12);padding:8px;vertical-align:top}
   th{background:linear-gradient(180deg,#0f1837,#0b1230)}
 
-  /* ===== Toast / Confetti ===== */
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.14);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none;z-index:150; box-shadow:0 10px 26px rgba(0,0,0,.5)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.14);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none;z-index:150}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
   .confetti-piece{position:fixed;top:0;left:0;width:8px;height:14px;opacity:.9;pointer-events:none;border-radius:2px}
 
-  /* ===== Snappy fade for main tab sections ===== */
   section{opacity:1; transition:opacity .28s ease;}
 
-  /* ===== Splash logo overlay ===== */
-  .splash{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-    background:linear-gradient(180deg,rgba(5,8,20,.72),rgba(4,7,19,.82));
-    backdrop-filter: blur(4px);
-    z-index:200;
-  }
-  .logo3d{
-    position:relative;
-    padding:24px 28px;
-    border-radius:22px;
-    transform:perspective(1000px) rotateX(10deg);
-    background:radial-gradient(120px 80px at 50% 0%, rgba(255,70,70,.18), transparent 60%);
-    box-shadow:
-      inset 0 0 40px rgba(255,80,60,.18),
-      0 30px 60px rgba(0,0,0,.6);
-  }
-  .logo3d h1{
-    margin:0;
-    font-size: clamp(22px, 6vw, 46px);
-    letter-spacing: 2px;
-    font-weight: 1000;
-    text-transform: uppercase;
-    background:linear-gradient(180deg,#ff2b2b,#ff6a00 60%, #ffd166 95%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow:
-      0 0 12px rgba(255,40,40,.5),
-      0 0 30px rgba(255,90,0,.35),
-      0 8px 18px rgba(0,0,0,.6);
-    animation:pulseGlow .9s ease-in-out 0s 3;
-  }
-  .emoji-cloud{
-    position:absolute; inset:-22px -26px; pointer-events:none; filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));
-  }
-  .emoji{position:absolute; font-size:clamp(18px,4vw,32px)}
-  .e1{top:-10px;left:-6px; transform:rotate(-12deg)}
-  .e2{top:-8px;right:-8px; transform:rotate(12deg)}
-  .e3{bottom:-8px;left:-10px; transform:rotate(8deg)}
-  .e4{bottom:-12px;right:-6px; transform:rotate(-6deg)}
-
-  @keyframes pulseGlow{
-    0%{transform:scale(1) translateZ(0); text-shadow:0 0 10px rgba(255,40,40,.45), 0 0 24px rgba(255,90,0,.25), 0 8px 18px rgba(0,0,0,.6);}
-    50%{transform:scale(1.06) translateZ(24px); text-shadow:0 0 16px rgba(255,60,60,.65), 0 0 44px rgba(255,120,0,.45), 0 16px 26px rgba(0,0,0,.7);}
-    100%{transform:scale(1) translateZ(0); text-shadow:0 0 10px rgba(255,40,40,.45), 0 0 24px rgba(255,90,0,.25), 0 8px 18px rgba(0,0,0,.6);}
-  }
+  /* Splash logo overlay */
+  .splash{position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,rgba(5,8,20,.72),rgba(4,7,19,.82)); backdrop-filter: blur(4px); z-index:200;}
+  .logo3d{position:relative; padding:24px 28px; border-radius:22px; transform:perspective(1000px) rotateX(10deg);
+    background:radial-gradient(120px 80px at 50% 0%, rgba(255,70,70,.18), transparent 60%); box-shadow: inset 0 0 40px rgba(255,80,60,.18), 0 30px 60px rgba(0,0,0,.6)}
+  .logo3d h1{margin:0; font-size: clamp(22px, 6vw, 46px); letter-spacing: 2px; font-weight: 1000; text-transform: uppercase;
+    background:linear-gradient(180deg,#ff2b2b,#ff6a00 60%, #ffd166 95%); -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 12px rgba(255,40,40,.5),0 0 30px rgba(255,90,0,.35),0 8px 18px rgba(0,0,0,.6); animation:pulseGlow .9s ease-in-out 0s 3}
+  .emoji-cloud{position:absolute; inset:-22px -26px; pointer-events:none; filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
+  .emoji{position:absolute; font-size:clamp(18px,4vw,32px)} .e1{top:-10px;left:-6px; transform:rotate(-12deg)} .e2{top:-8px;right:-8px; transform:rotate(12deg)} .e3{bottom:-8px;left:-10px; transform:rotate(8deg)} .e4{bottom:-12px;right:-6px; transform:rotate(-6deg)}
+  @keyframes pulseGlow{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
 </style>
 </head>
 <body>
 <div class="bg3d"><div class="stars"></div></div>
 
-<!-- Splash Overlay -->
+<!-- Splash -->
 <div id="splash" class="splash" aria-hidden="true">
   <div class="logo3d">
-    <div class="emoji-cloud">
-      <div class="emoji e1">📚</div>
-      <div class="emoji e2">📚</div>
-      <div class="emoji e3">📚</div>
-      <div class="emoji e4">📚</div>
-    </div>
+    <div class="emoji-cloud"><div class="emoji e1">📚</div><div class="emoji e2">📚</div><div class="emoji e3">📚</div><div class="emoji e4">📚</div></div>
     <h1>MR SAMUELS ENGLISH HL</h1>
   </div>
 </div>
@@ -389,7 +286,7 @@
     <div id="lotf" style="display:none">
       <div class="row">
         <button class="btn secondary" id="lotfAll">All</button>
-        <button class="btn secondary" id="lotfPlot">Plot</</button>
+        <button class="btn secondary" id="lotfPlot">Plot</button>
         <button class="btn secondary" id="lotfThemes">Themes</button>
         <button class="btn secondary" id="lotfChars">Characters</button>
         <button class="btn secondary" id="lotfSymbol">Symbolism</button>
@@ -402,16 +299,13 @@
       <div class="card" style="margin-bottom:10px">
         <div class="big"><b>Shakespeare Study Pack</b></div>
       </div>
-
-      <!-- Brief historical/context notes -->
       <div class="card" style="margin-bottom:10px">
         <div class="pill" style="margin-bottom:6px">Background & History</div>
         <ul style="margin:6px 0 0 18px">
-          <li><b>Sonnet 18</b> likely composed in the 1590s and printed in the <i>1609 Quarto</i>. It belongs to the “Fair Youth” sequence (Sonnets 1–126) and uses the English sonnet rhyme scheme <b>ABAB CDCD EFEF GG</b> in <i>iambic pentameter</i>. The closing couplet claims poetry grants <i>immortality</i> to beauty.</li>
-          <li><b>Romeo & Juliet — Balcony scene</b> (Act 2 Scene 2), probably written c.1595. Traditionally staged with a raised window or gallery; thematically it opposes <i>private love</i> and <i>public identity/name</i> and establishes the lovers’ decision to risk secrecy and speed.</li>
+          <li><b>Sonnet 18</b>: 1590s; printed 1609 Quarto; English sonnet scheme <b>ABAB CDCD EFEF GG</b>. Part of the “Fair Youth” sequence. The couplet asserts the poem preserves beauty beyond time.</li>
+          <li><b>Romeo & Juliet Balcony</b>: c.1595. Staged with gallery/window; sets up the lovers’ decision to pursue love privately despite the feud and danger.</li>
         </ul>
       </div>
-
       <div id="shQA" style="max-height:26vh; overflow:auto; margin-bottom:10px;"></div>
       <h3>MCQ Practice</h3>
       <div id="shMCQ" style="max-height:24vh; overflow:auto; margin-bottom:10px;"></div>
@@ -463,101 +357,62 @@ function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");s
 function confetti(msg){for(var i=0;i<40;i++){var p=document.createElement("div");p.className="confetti-piece";p.style.background=["#00f5d4","#8a5cff","#ff5e57","#fca311","#2ecc71"][Math.floor(Math.random()*5)];p.style.left=(50+Math.random()*40-20)+"%";p.style.top="60%";p.style.transition="transform 1s ease-out, opacity 1.2s";document.body.appendChild(p);(function(p){setTimeout(function(){var dx=(Math.random()*2-1)*200,dy=-(200+Math.random()*300);p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)";p.style.opacity=0;},10);setTimeout(function(){p.remove();},1200);})(p);}toast("🎉 "+msg);beep("win");}
 function thumbsDown(msg){toast("👎 "+(msg||"Try again"));beep("wrong");}
 
-var splash=$("splash"), splashTimer=null, splashBusy=false;
+var splash=$("splash");
 function showSplash(cb){
-  // only for game/study tabs; CB called after ~2.2s
-  if(splashBusy){ if(typeof cb==="function") setTimeout(cb, 2200); return; }
-  splashBusy=true;
   splash.style.display="flex";
-  // restart animation by forcing reflow
   var h=splash.querySelector("h1"); h.style.animation="none"; void h.offsetWidth; h.style.animation="";
-  setTimeout(function(){
-    splash.style.display="none";
-    splashBusy=false;
-    if(typeof cb==="function") cb();
-  }, 2200);
+  setTimeout(function(){ splash.style.display="none"; if(typeof cb==="function") cb(); }, 2200);
 }
 
-/* ===== Categories / Data ===== */
-var CAT_COLORS={
-  "Sonnet 18":"#ff4d6d",
-  "Romeo & Juliet – Balcony":"#fca311",
-  "Lord of the Flies":"#2ecc71",
-  "Literary Devices":"#8a5cff",
-  "Parts of Speech":"#4da3ff"
-};
+/* ===== Data ===== */
+var CAT_COLORS={"Sonnet 18":"#ff4d6d","Romeo & Juliet – Balcony":"#fca311","Lord of the Flies":"#2ecc71","Literary Devices":"#8a5cff","Parts of Speech":"#4da3ff"};
 
-var TERMS=[
- {w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
- {w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
- {w:"metaphor",d:"Direct comparison without 'like' or 'as'.",e:"'Eye of heaven' is a metaphor for the sun."},
- {w:"personification",d:"Human traits to non-human things.",e:"'Death brag' personifies death."},
- {w:"oxymoron",d:"Contradictory terms together.",e:"'Brawling love' in Romeo and Juliet."},
- {w:"soliloquy",d:"Speech revealing inner thoughts.",e:"Juliet’s Act 3 soliloquy shows her anxiety."},
- {w:"dramatic irony",d:"Audience knows more than characters.",e:"We know Juliet isn’t dead; Romeo doesn’t."},
- {w:"symbolism",d:"Objects/actions representing ideas.",e:"The conch symbolises order."},
- {w:"microcosm",d:"Small system mirroring a larger one.",e:"The island is a microcosm of society."}
-];
+var TERMS=[{w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},{w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},{w:"metaphor",d:"Direct comparison without 'like' or 'as'.",e:"'Eye of heaven' is a metaphor for the sun."},{w:"personification",d:"Human traits to non-human things.",e:"'Death brag' personifies death."},{w:"oxymoron",d:"Contradictory terms together.",e:"'Brawling love' in Romeo and Juliet."},{w:"soliloquy",d:"Speech revealing inner thoughts.",e:"Juliet’s Act 3 soliloquy shows her anxiety."},{w:"dramatic irony",d:"Audience knows more than characters.",e:"We know Juliet isn’t dead; Romeo doesn’t."},{w:"symbolism",d:"Objects/actions representing ideas.",e:"The conch symbolises order."},{w:"microcosm",d:"Small system mirroring a larger one.",e:"The island is a microcosm of society."}];
 
-var LOTF_NOTES=[
- {type:"Plot",text:"British schoolboys stranded on an island; Ralph elected; Jack hunts; fear and savagery rise; Simon and Piggy die; rescue with a naval officer."},
- {type:"Themes",text:"Civilisation vs Savagery; Loss of Innocence; Power; Fear and the 'Beast'."},
- {type:"Characters",text:"Ralph (order/rescue), Piggy (reason), Jack (authoritarian), Simon (spiritual good), Roger (sadism)."},
- {type:"Symbolism",text:"Conch (order), Signal Fire (hope), Glasses (science), Painted Faces (anonymity), Lord of the Flies (evil within)."}
-];
+var LOTF_NOTES=[{type:"Plot",text:"British schoolboys stranded on an island; Ralph elected; Jack hunts; fear and savagery rise; Simon and Piggy die; rescue with a naval officer."},{type:"Themes",text:"Civilisation vs Savagery; Loss of Innocence; Power; Fear and the 'Beast'."},{type:"Characters",text:"Ralph (order/rescue), Piggy (reason), Jack (authoritarian), Simon (spiritual good), Roger (sadism)."},
+{type:"Symbolism",text:"Conch (order), Signal Fire (hope), Glasses (science), Painted Faces (anonymity), Lord of the Flies (evil within)."}];
 
-/* ===== NEW Shakespeare content (similar skills, not identical to test) ===== */
-var SHAKESPEARE_QA=[
-  {section:"POETRY — Sonnet 18 (Concept & Craft)", items:[
-    {q:"What quality of a 'summer’s day' does the speaker find unreliable, and how does the poem counter that weakness?", a:"Weather is changeable—too hot, windy, or brief; the poem’s 'eternal lines' offer lasting perfection beyond seasonal change."},
-    {q:"Identify the metrical pattern and explain how it supports the poem’s voice.", a:"Iambic pentameter; the heartbeat-like rhythm gives a steady, dignified tone that suits praise and confidence."},
-    {q:"How does the poem use contrast before and after line 9?", a:"The octave lists flaws of summer; the sestet turns to the 'eternal summer' of the beloved preserved by verse."},
-    {q:"Explain how the couplet acts as an argument.", a:"It claims the poem itself guarantees life to the beloved—so long as it is read, beauty 'lives'."}
-  ]},
-  {section:"DRAMA — Romeo & Juliet (Balcony Scene: Language & Choice)", items:[
-    {q:"Why does Juliet question the value of names, and what does this suggest about social identity?", a:"She argues a name is a label, not essence; love should outrank family identities, challenging the feud’s authority."},
-    {q:"How does dramatic irony operate in the scene even before tragedy unfolds?", a:"The audience senses the risk of secrecy and haste; we foresee danger though the lovers speak with hope."},
-    {q:"Quote or paraphrase one line that reveals Romeo’s impulsive nature and explain it.", a:"E.g., 'I’ll be new baptised'; he is willing to abandon his name at once, showing impetuous commitment."},
-    {q:"What practical obstacles does the scene highlight (beyond emotions)?", a:"Physical danger in the orchard, family surveillance, and the problem of arranging marriage without consent."}
-  ]}
-];
+var SHAKESPEARE_QA=[{section:"POETRY — Sonnet 18 (Concept & Craft)", items:[
+  {q:"What quality of a 'summer’s day' does the speaker find unreliable, and how does the poem counter that weakness?", a:"Weather is changeable—too hot, windy, or brief; the poem’s 'eternal lines' offer lasting perfection beyond seasonal change."},
+  {q:"Identify the metrical pattern and explain how it supports the poem’s voice.", a:"Iambic pentameter; the steady beat suits praise and confidence."},
+  {q:"How does the poem use contrast before and after line 9?", a:"The octave lists flaws of summer; the sestet turns to the 'eternal summer' preserved by verse."},
+  {q:"Explain how the couplet acts as an argument.", a:"It claims the poem itself guarantees life to the beloved—so long as it is read, beauty 'lives'."}
+]},{section:"DRAMA — Romeo & Juliet (Balcony Scene: Language & Choice)", items:[
+  {q:"Why does Juliet question the value of names, and what does this suggest about social identity?", a:"She argues a name is a label, not essence; love should outrank family identities, challenging the feud’s authority."},
+  {q:"How does dramatic irony operate in the scene even before tragedy unfolds?", a:"The audience senses the risk of secrecy and haste; we foresee danger though the lovers speak with hope."},
+  {q:"Quote or paraphrase one line that reveals Romeo’s impulsive nature and explain it.", a:"E.g., 'I’ll be new baptised'; he is willing to abandon his name immediately, showing impetuous commitment."},
+  {q:"What practical obstacles does the scene highlight (beyond emotions)?", a:"Physical danger in the orchard, family surveillance, and arranging marriage without parental consent."}
+]}];
 
-/* Short Answer (refreshed) */
-var SHAKESPEARE_SA = [
-  { section: "Sonnet 18 — Technique Focus", items: [
-    {q:"Give the full rhyme scheme and name one effect of the final couplet.", a:"ABAB CDCD EFEF GG; the couplet clinches the claim of poetic immortality."},
-    {q:"Choose one personification from the poem and explain its function.", a:"'Death brag' gives Death a boastful role, making the triumph of poetry more dramatic."},
-    {q:"Why is the comparison to a summer’s day ultimately rejected?", a:"Summer is less temperate and too short; the beloved exceeds nature’s variability."}
-  ]},
-  { section: "Balcony Scene — Meaning & Stagecraft", items: [
-    {q:"How could staging emphasise secrecy in this scene?", a:"Use shadowed lighting, high window, and hushed delivery to show risk and privacy."},
-    {q:"What does the exchange reveal about Juliet’s maturity?", a:"She is cautious and practical—asks about intention and marriage—contrasting with Romeo’s speed."}
-  ]}
-];
+var SHAKESPEARE_SA=[{ section: "Sonnet 18 — Technique Focus", items:[
+  {q:"Give the full rhyme scheme and name one effect of the final couplet.", a:"ABAB CDCD EFEF GG; the couplet clinches the claim of poetic immortality."},
+  {q:"Choose one personification from the poem and explain its function.", a:"'Death brag' gives Death a boastful role, making the triumph of poetry more dramatic."},
+  {q:"Why is the comparison to a summer’s day ultimately rejected?", a:"Summer is less temperate and too short; the beloved exceeds nature’s variability."}
+]},{ section: "Balcony Scene — Meaning & Stagecraft", items:[
+  {q:"How could staging emphasise secrecy in this scene?", a:"Use shadowed lighting, high window, and hushed delivery to show risk and privacy."},
+  {q:"What does the exchange reveal about Juliet’s maturity?", a:"She is cautious and practical—asks about intention and marriage—contrasting with Romeo’s speed."}
+]}];
 
-/* MCQ bank (unchanged): used in games + Study card */
-var MCQ = [
-  {cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
-  {cat:"Sonnet 18",q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
-  {cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
-  {cat:"Sonnet 18",q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
-  {cat:"Romeo & Juliet – Balcony",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
-  {cat:"Romeo & Juliet – Balcony",q:"Juliet’s central conflict is with…",options:["Family identity","Money","Fame","Travel"],correct:"Family identity"},
-  {cat:"Romeo & Juliet – Balcony",q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"},
-  {cat:"Lord of the Flies",q:"What does the conch symbolise?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
-  {cat:"Lord of the Flies",q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
-  {cat:"Lord of the Flies",q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
-  {cat:"Lord of the Flies",q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
-  {cat:"Lord of the Flies",q:"The 'beast' ultimately represents…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
-  {cat:"Lord of the Flies",q:"Why do the boys paint their faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
-  {cat:"Literary Devices",q:"A 14-line poem with a set rhyme scheme is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
-  {cat:"Literary Devices",q:"'Brawling love' is an example of…",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
-  {cat:"Literary Devices",q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"},
-  {cat:"Parts of Speech",q:"In 'She quickly ran', 'quickly' is an…",options:["Adverb","Adjective","Preposition","Interjection"],correct:"Adverb"}
-];
+var MCQ=[{cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
+{cat:"Sonnet 18",q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
+{cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
+{cat:"Sonnet 18",q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
+{cat:"Romeo & Juliet – Balcony",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
+{cat:"Romeo & Juliet – Balcony",q:"Juliet’s central conflict is with…",options:["Family identity","Money","Fame","Travel"],correct:"Family identity"},
+{cat:"Romeo & Juliet – Balcony",q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"},
+{cat:"Lord of the Flies",q:"What does the conch symbolise?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
+{cat:"Lord of the Flies",q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
+{cat:"Lord of the Flies",q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
+{cat:"Lord of the Flies",q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
+{cat:"Lord of the Flies",q:"The 'beast' ultimately represents…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
+{cat:"Lord of the Flies",q:"Why do the boys paint their faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
+{cat:"Literary Devices",q:"A 14-line poem with a set rhyme scheme is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
+{cat:"Literary Devices",q:"'Brawling love' is an example of…",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
+{cat:"Literary Devices",q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"},
+{cat:"Parts of Speech",q:"In 'She quickly ran', 'quickly' is an…",options:["Adverb","Adjective","Preposition","Interjection"],correct:"Adverb"}];
 
-/* ===== Stats (local device) ===== */
-var KEY="g10_hub_v10";
+/* ===== Stats ===== */
+var KEY="g10_hub_v11";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
@@ -569,194 +424,84 @@ function refreshDash(){ $("s_merits").textContent=STATS.merits; $("s_hm_wins").t
   $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
 } refreshDash();
 
-/* ===== Tabs with splash + snappy fade ===== */
+/* ===== Tabs + Splash ===== */
 var gameTabs=new Set(["hangman","seconds","million","driver","study"]);
 document.querySelectorAll(".tab-btn").forEach(function(b){
   b.addEventListener("click",function(){
-    // Tab visual state
     document.querySelectorAll(".tab-btn").forEach(function(x){x.classList.remove("active");});
     b.classList.add("active");
-
-    var target = b.getAttribute("data-tab");
-    var next = $(target);
-    var secs = document.querySelectorAll("section");
-    var current = Array.from(secs).find(function(s){ return s.style.display !== "none"; });
-
-    if(current === next) return;
-
-    // Pause Road Rage when leaving it
-    if(target!=="driver"){ if(window.RoadRage && RoadRage.pause) RoadRage.pause(); }
-
-    // Fade out current first
-    if(current){
-      current.style.opacity = 1;
-      current.style.opacity = 0;
-      setTimeout(function(){ current.style.display = "none"; }, 300);
-    }
-
-    // For game/study tabs show splash before reveal
-    var reveal = function(){
-      next.style.display = "";
-      next.style.opacity = 0;
-      requestAnimationFrame(function(){ next.style.opacity = 1; });
-      beep("open");
-    };
-
-    if(gameTabs.has(target)){
-      showSplash(reveal);
-    }else{
-      reveal();
-    }
+    var target=b.getAttribute("data-tab"), next=$(target);
+    var current=Array.from(document.querySelectorAll("section")).find(function(s){return s.style.display!=="none";});
+    if(current===next) return;
+    if(current){ current.style.opacity=0; setTimeout(function(){current.style.display="none";},300); }
+    var show=function(){ next.style.display=""; next.style.opacity=0; requestAnimationFrame(function(){ next.style.opacity=1;}); };
+    if(gameTabs.has(target)){ showSplash(show); } else { show(); }
+    if(target!=="driver" && window.RoadRage && RoadRage.pause) RoadRage.pause();
   });
 });
-
-document.querySelectorAll(".sub-btn").forEach(function(b){
-  b.addEventListener("click",function(){
-    document.querySelectorAll(".sub-btn").forEach(function(x){x.classList.remove("active");});
-    b.classList.add("active");
-    var t=b.getAttribute("data-sub");
-    ["studyVocab","lotf","shakespeare"].forEach(function(id){$(id).style.display=(id===t)?"":"none";});
-  });
-});
-
-/* ===== Hangman ===== */
-var hmWord="",hmMask=[],hmLives=6,hmUsed={},hmHint="",hmWins=0;
-var hcv=$("hmCanvas"),hctx=hcv.getContext("2d");
-function hmGallows(){hctx.clearRect(0,0,hcv.width,hcv.height);hctx.strokeStyle="#cfe7ff";hctx.lineWidth=4;
-  hctx.beginPath();hctx.moveTo(40,250);hctx.lineTo(200,250);hctx.stroke();
-  hctx.beginPath();hctx.moveTo(80,250);hctx.lineTo(80,50);hctx.lineTo(260,50);hctx.lineTo(260,80);hctx.stroke();
-  hctx.beginPath();hctx.moveTo(260,80);hctx.lineTo(260,105);hctx.stroke();}
-function hmPart(n){hctx.strokeStyle="#fca311";hctx.lineWidth=4;
-  if(n===1){hctx.beginPath();hctx.arc(260,120,16,0,Math.PI*2);hctx.stroke();}
-  if(n===2){hctx.beginPath();hctx.moveTo(260,136);hctx.lineTo(260,182);hctx.stroke();}
-  if(n===3){hctx.beginPath();hctx.moveTo(260,146);hctx.lineTo(238,166);hctx.stroke();}
-  if(n===4){hctx.beginPath();hctx.moveTo(260,146);hctx.lineTo(282,166);hctx.stroke();}
-  if(n===5){hctx.beginPath();hctx.moveTo(260,182);hctx.lineTo(245,212);hctx.stroke();}
-  if(n===6){hctx.beginPath();hctx.moveTo(260,182);hctx.lineTo(275,212);hctx.stroke();}}
-function hmDraw(m){hmGallows();for(var i=1;i<=m&&i<=6;i++)hmPart(i);}
-function hmKeyboard(){var kb=$("keyboard");kb.innerHTML="";"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(ch){var b=document.createElement("button");b.className="key";b.textContent=ch;b.onclick=function(){hmGuess(ch)};kb.appendChild(b);});}
-function hmNew(){var pick=TERMS[Math.floor(Math.random()*TERMS.length)];hmWord=pick.w.toUpperCase();hmHint=pick.d;
-  hmMask=hmWord.split("").map(function(c){return /[A-Z]/.test(c)?"_":c;}); hmLives=6; hmUsed={};
-  $("slots").textContent=hmMask.join(" "); $("lives").textContent=hmLives; $("used").textContent="Used: —";
-  $("hint").style.display="none"; $("hint").textContent="Hint: "+hmHint; $("result").textContent=""; 
-  document.querySelectorAll(".key").forEach(function(k){k.classList.remove("used");}); hmDraw(0);
-}
-function hmReveal(){ $("slots").textContent=hmWord.split("").join(" "); $("result").innerHTML="Answer: <b>"+hmWord+"</b>";}
-function hmGuess(L){ if(hmLives<=0 || hmUsed[L])return; hmUsed[L]=1;
-  document.querySelectorAll(".key").forEach(function(k){ if(k.textContent===L)k.classList.add("used");});
-  $("used").textContent="Used: "+Object.keys(hmUsed).join(" ");
-  if(hmWord.indexOf(L)>-1){ for(var i=0;i<hmWord.length;i++){ if(hmWord[i]===L) hmMask[i]=L; }
-    $("slots").textContent=hmMask.join(" "); beep("ok");
-    if(hmMask.join("").indexOf("_")===-1){ $("result").innerHTML="<span class='good'>Great! You solved it.</span>";
-      hmWins++; $("wins").textContent=hmWins; STATS.hangman.wins++; saveStats(); refreshDash(); confetti("Hangman solved!"); }
-  }else{ hmLives--; $("lives").textContent=hmLives; hmDraw(6-hmLives); if(hmLives<=0){$("result").innerHTML="<span class='bad'>Out of lives!</span> The word was <b>"+hmWord+"</b>";}
-    else {thumbsDown("Wrong letter"); }}
-}
-hmKeyboard(); hmNew(); $("btnHint").onclick=function(){var el=$("hint"); el.style.display=el.style.display==="none"?"":"none";};
-$("btnNew").onclick=hmNew; $("btnReveal").onclick=hmReveal;
-
-/* ===== 30 Seconds ===== */
-var secActive=false,secTime=30,secTimer=null,secScore=0,secQueue=[],secCurrent=null,secStart=null;
-function hg(){var HG=60,prog=1-(secTime/30),topH=(1-prog)*HG,bottomH=prog*HG;
-  $("hgTop").setAttribute("height",topH.toFixed(2)); $("hgBottom").setAttribute("y",(140-bottomH).toFixed(2)); $("hgBottom").setAttribute("height",bottomH.toFixed(2));
-  var s=$("hgStream"); if(secActive&&secTime>0&&secTime<30){var len=8+34*prog; s.setAttribute("y",(80-len).toFixed(2)); s.setAttribute("height",len.toFixed(2)); s.setAttribute("visibility","visible");}
-  else s.setAttribute("visibility","hidden"); }
-function secReset(){secActive=false;secTime=30;secScore=0;secQueue=TERMS.slice();$("secScore").textContent=0;$("secFeedback").textContent="";$("defBox").innerHTML="Press <b>Start</b> to begin."; $("secInput").disabled=true; $("secSkip").disabled=true; $("secGive").disabled=true; hg();}
-function secNext(){ if(secQueue.length===0)secQueue=TERMS.slice(); secCurrent=secQueue[Math.floor(Math.random()*secQueue.length)];
-  $("defBox").innerHTML="<b>Definition:</b> "+secCurrent.d; $("secInput").value=""; $("secInput").focus(); secStart=Date.now(); }
-function secStartRound(){ if(secActive)return; secReset(); secActive=true; $("secInput").disabled=false; $("secSkip").disabled=false; $("secGive").disabled=false; secNext();
-  secTimer=setInterval(function(){secTime--; if(secTime<=0){clearInterval(secTimer); secActive=false; $("secFeedback").innerHTML="⏱️ Round over. Score <b>"+secScore+"</b>."; beep("time");} hg();},1000);}
-$("secStart").onclick=secStartRound; $("secSkip").onclick=function(){if(secActive)secNext();}; $("secGive").onclick=function(){if(secActive){$("secLast").innerHTML="Answer: <b>"+secCurrent.w+"</b>"; secNext();}};
-$("secInput").addEventListener("keydown",function(e){ if(e.key==="Enter" && secActive){ var g=this.value.trim().toLowerCase();
-  if(g===secCurrent.w.toLowerCase()){secScore++;$("secScore").textContent=secScore; STATS.seconds.total++; var t=Date.now()-secStart; if(!STATS.seconds.fastest||t<STATS.seconds.fastest)STATS.seconds.fastest=t; saveStats(); refreshDash(); confetti("Correct!"); secNext();}
-  else{ thumbsDown("Incorrect"); }}}); secReset();
-
-/* ===== Millionaire ===== */
-var ladder=["R 1 000 000","R 500 000","R 250 000","R 125 000","R 64 000","R 32 000","R 16 000","R 8 000","R 4 000","R 2 000","R 1 000","R 500","R 300","R 200","R 100"];
-function buildLadder(){var ul=$("milLadder");ul.innerHTML="";for(var i=0;i<ladder.length;i++){var li=document.createElement("li");li.innerHTML="<span>"+(ladder.length-i)+"</span><span>"+ladder[i]+"</span>";ul.appendChild(li);} }
-buildLadder();
-var milIndex=0,milSet=[],milUsed5050=false,milUsedSkip=false,milActive=false, milCat="";
-function setLadderActive(){var items=[].slice.call($("milLadder").children);items.forEach(function(li){li.classList.remove("active")});var pos=ladder.length-milIndex;if(items[pos-1])items[pos-1].classList.add("active");}
-function applyTheme(cat){ milCat=cat||"—"; $("milCat").textContent=milCat; var col=CAT_COLORS[milCat]||"#8a5cff"; document.documentElement.style.setProperty("--theme",col); $("milDot").style.background=col; }
-function milPrepare(){milIndex=0;milSet=MCQ.slice().sort(function(){return Math.random()-0.5;}).slice(0,15);milUsed5050=false;milUsedSkip=false;milActive=true;$("milStep").textContent="1";$("milFeedback").textContent="";$("mil5050").disabled=false;$("milSkip").disabled=false;applyTheme(milSet[0].cat);fanfare();milRender();}
-function milRender(){var q=milSet[milIndex]; if(q.cat!==milCat) applyTheme(q.cat);
-  $("milQ").innerHTML=q.q; var w=$("milOpts"); w.innerHTML="";
-  q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt,i){var b=document.createElement("button");b.dataset.opt=opt;b.innerHTML="<span style='opacity:.8'>"+String.fromCharCode(65+i)+")</span> "+opt;b.onclick=function(){milCheck(opt,b)};w.appendChild(b);});
-  setLadderActive();
-}
-function milCheck(choice,btn){var q=milSet[milIndex],buttons=[].slice.call($("milOpts").querySelectorAll("button"));buttons.forEach(function(b){b.disabled=true;});
-  STATS.million.answered++; if(choice===q.correct){STATS.million.correct++; btn.style.borderColor= "#2ecc71"; confetti("Correct!");
-    milIndex++; STATS.million.best=Math.max(STATS.million.best,milIndex); saveStats(); refreshDash();
-    if(milIndex>=milSet.length){$("milFeedback").innerHTML="🏆 <b>Well done!</b>"; milActive=false; return;}
-    $("milStep").textContent=String(milIndex+1); setTimeout(milRender,380);
-  }else{ btn.style.borderColor="#ff4d6d"; thumbsDown("Incorrect"); var cbtn=buttons.filter(function(b){return b.dataset.opt===q.correct;})[0]; if(cbtn)cbtn.style.borderColor="#2ecc71";
-    $("milFeedback").innerHTML="Category: <b>"+q.cat+"</b> — Answer: <b>"+q.correct+"</b>"; milActive=false; saveStats(); refreshDash();
-  }}
-$("milStart").onclick=milPrepare;
-$("mil5050").onclick=function(){if(milUsed5050)return;milUsed5050=true;this.disabled=true;var q=milSet[milIndex],buttons=[].slice.call($("milOpts").querySelectorAll("button"));buttons.filter(function(b){return b.dataset.opt!==q.correct;}).sort(function(){return Math.random()-0.5;}).slice(0,2).forEach(function(b){b.disabled=true;b.style.opacity=.4;});};
-$("milSkip").onclick=function(){if(milUsedSkip)return;milUsedSkip=true;this.disabled=true;milIndex++;STATS.million.best=Math.max(STATS.million.best,milIndex);saveStats();refreshDash();if(milIndex>=milSet.length){$("milFeedback").innerHTML="You skipped to the end.";milActive=false;}else{$("milStep").textContent=String(milIndex+1);milRender();}};
-$("milQuit").onclick=function(){milActive=false;$("milFeedback").textContent="Game ended.";};
 
 /* ===== Study builders ===== */
 function buildStudy(){var tb=$("studyTable").querySelector("tbody");tb.innerHTML="";TERMS.forEach(function(t){var tr=document.createElement("tr");tr.innerHTML="<td><b>"+t.w+"</b></td><td>"+t.d+"</td><td><em>"+t.e+"</em></td>";tb.appendChild(tr);});}
 function filterStudy(){var q=$("studySearch").value.toLowerCase();[].slice.call($("studyTable").querySelectorAll("tbody tr")).forEach(function(r){r.style.display=r.textContent.toLowerCase().indexOf(q)>-1?"":"none";});}
 $("studySearch").addEventListener("input",filterStudy); $("studyReset").onclick=function(){ $("studySearch").value=""; filterStudy();}; $("studyPrint").onclick=function(){window.print();}; buildStudy();
 
-function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(function(n){return !filter||filter==="All"||n.type===filter;}).forEach(function(n){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
+function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(function(n){return !filter||filter==="All"||n.type===filter;}).forEach(function(n){var card=document.createElement("div");card.className="card";card.style;marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
 $("lotfAll").onclick=function(){lotfRender("All")}; $("lotfPlot").onclick=function(){lotfRender("Plot")}; $("lotfThemes").onclick=function(){lotfRender("Themes")}; $("lotfChars").onclick=function(){lotfRender("Characters")}; $("lotfSymbol").onclick=function(){lotfRender("Symbolism")}; $("lotfPrint").onclick=function(){window.print();}; lotfRender("All");
 
-/* Build NEW Shakespeare study panels */
-function buildShQA(){
-  var wrap=$("shQA");wrap.innerHTML="";
-  SHAKESPEARE_QA.forEach(function(sec){
-    var h=document.createElement("h3");h.textContent=sec.section;wrap.appendChild(h);
-    sec.items.forEach(function(it){
-      var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";
-      card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";
-      var btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa");
-      btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
-      wrap.appendChild(card);
-    });
-  });
-}
-function buildShMCQ(){
-  var box=$("shMCQ");box.innerHTML="";
-  MCQ.filter(function(q){return q.cat.indexOf("Lord of the Flies")===-1 || true;}).forEach(function(q,i){
-    var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";
-    var opts=q.options.map(function(o,ix){return "<div>"+String.fromCharCode(65+ix)+") "+o+"</div>";}).join("");
-    var tag="<div class='pill' style='display:inline-flex;gap:8px;align-items:center;margin-bottom:6px'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>";
-    card.innerHTML= tag+"<div><b>Q"+(i+1)+". "+q.q+"</b></div><div style='margin-top:6px'>"+opts+"</div><div class='ans' style='display:none;margin-top:6px'><b>Answer:</b> "+q.correct+"</div><div class='row' style='margin-top:8px'><button class='btn secondary showAns'>Show Answer</button></div>";
-    var btn=card.querySelector(".showAns"), ans=card.querySelector(".ans");
-    btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
-    box.appendChild(card);
-  });
-}
-function buildShSA(){
-  var box=$("shSA"); box.innerHTML="";
-  SHAKESPEARE_SA.forEach(function(sec){
-    var tag=document.createElement("div"); tag.className="pill"; tag.style.margin="6px 0"; tag.textContent=sec.section; box.appendChild(tag);
-    sec.items.forEach(function(it){
-      var card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";
-      card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";
-      var btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa");
-      btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});
-      box.appendChild(card);
-    });
-  });
-}
+/* Shakespeare panels */
+function buildShQA(){var wrap=$("shQA");wrap.innerHTML="";SHAKESPEARE_QA.forEach(function(sec){var h=document.createElement("h3");h.textContent=sec.section;wrap.appendChild(h);sec.items.forEach(function(it){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";var btn=card.querySelector(".btnShow"),ans=card.querySelector(".qa");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});wrap.appendChild(card);});});}
+function buildShMCQ(){var box=$("shMCQ");box.innerHTML="";MCQ.forEach(function(q,i){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";var opts=q.options.map(function(o,ix){return "<div>"+String.fromCharCode(65+ix)+") "+o+"</div>";}).join("");var tag="<div class='pill' style='display:inline-flex;gap:8px;align-items:center;margin-bottom:6px'><span style='width:10px;height:10px;border-radius:50%;background:"+(CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>";card.innerHTML=tag+"<div><b>Q"+(i+1)+". "+q.q+"</b></div><div style='margin-top:6px'>"+opts+"</div><div class='ans' style='display:none;margin-top:6px'><b>Answer:</b> "+q.correct+"</div><div class='row' style='margin-top:8px'><button class='btn secondary showAns'>Show Answer</button></div>";var btn=card.querySelector(".showAns"),ans=card.querySelector(".ans");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});box.appendChild(card);});}
+function buildShSA(){var box=$("shSA"); box.innerHTML="";SHAKESPEARE_SA.forEach(function(sec){var tag=document.createElement("div"); tag.className="pill"; tag.style.margin="6px 0"; tag.textContent=sec.section; box.appendChild(tag);sec.items.forEach(function(it){var card=document.createElement("div"); card.className="card"; card.style.marginBottom="10px";card.innerHTML="<div><b>"+it.q+"</b></div><div class='qa' style='display:none;margin-top:6px'>"+it.a+"</div><div class='row' style='margin-top:8px'><button class='btn secondary btnShow'>Show Answer</button></div>";var btn=card.querySelector(".btnShow"), ans=card.querySelector(".qa");btn.addEventListener("click",function(){var vis=ans.style.display!=="none";ans.style.display=vis?"none":"block";btn.textContent=vis?"Show Answer":"Hide Answer";});box.appendChild(card);});});}
 $("shExpandAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans, #shSA .qa")).forEach(function(a){a.style.display="block"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns, #shSA .btnShow")).forEach(function(b){b.textContent="Hide Answer"});};
 $("shCollapseAll").onclick=function(){[].slice.call(document.querySelectorAll("#shQA .qa, #shMCQ .ans, #shSA .qa")).forEach(function(a){a.style.display="none"});[].slice.call(document.querySelectorAll("#shQA .btnShow, #shMCQ .showAns, #shSA .btnShow")).forEach(function(b){b.textContent="Show Answer"});};
 $("shPrint").onclick=function(){window.print();};
 buildShQA(); buildShMCQ(); buildShSA();
 
-/* ===== ROAD RAGE (3 lanes, responsive) ===== */
+/* ===== ROAD RAGE with Tilt + Smooth Physics + Engine Sound ===== */
 var RoadRage=(function(){
   var cvs=$("drvCanvas"), ctx=cvs.getContext("2d"), DPR=1, W=360, H=540;
   var lanes=3, roadMargin=0.24, laneX=[], dashes=[], pxBase=220, pxPerSec=220;
+
+  // Physics state
   var running=false, last=0, meters=0, speed=50, nextCP=500, score=0;
   var pickup=null, obstacles=[], boosts=[];
   var lives=3, respawn=false, respawnTimer=null;
-  var player={lane:1,y:0,color:"#00f5d4",visible:true};
+
+  // Smooth lateral motion (lane as float 0..2)
+  var player={lane:1, y:0, color:"#00f5d4", visible:true};
+  var targetLane=1, laneVel=0;           // velocity along lane index
+  var STIFF=10, DAMP=6;                  // spring-damper constants (tuned for “Road Fighter” feel)
+
+  // Input (buttons, swipe, keyboard, tilt)
+  var sx=null;
+  var tiltEnabled=false, tiltGamma=0, tiltZero=null; // degrees; gamma: left(-) / right(+)
+  function enableTiltIfPossible(){
+    try{
+      if(typeof DeviceOrientationEvent !== "undefined"){
+        if(DeviceOrientationEvent.requestPermission){ // iOS-style
+          DeviceOrientationEvent.requestPermission().then(function(state){
+            if(state==="granted"){window.addEventListener("deviceorientation", onOrientation, true); tiltEnabled=true;}
+          }).catch(function(){/* ignore */});
+        }else{
+          window.addEventListener("deviceorientation", onOrientation, true);
+          tiltEnabled=true;
+        }
+      }
+    }catch(e){}
+  }
+  function onOrientation(e){
+    if(typeof e.gamma==="number"){ 
+      if(tiltZero===null) tiltZero=e.gamma;           // calibrate first value as center
+      tiltGamma = e.gamma - tiltZero;                 // relative tilt
+    }
+  }
+
+  // Keyboard
+  document.addEventListener("keydown",function(e){
+    if(!running) return;
+    if(e.key==="ArrowLeft"){ left(); }
+    if(e.key==="ArrowRight"){ right(); }
+  });
 
   function dprScale(){
     var vw=window.innerWidth, vh=window.innerHeight;
@@ -765,13 +510,11 @@ var RoadRage=(function(){
     var cssW = Math.floor(cssH * (2/3));
     cssW = Math.min(cssW, Math.floor(vw*0.94));
     cssH = Math.min(cssH, Math.floor(cssW*1.5));
-
     cvs.style.width=cssW+"px"; cvs.style.height=cssH+"px";
     DPR = window.devicePixelRatio || 1;
     W = cssW; H = cssH;
     cvs.width=Math.floor(cssW*DPR); cvs.height=Math.floor(cssH*DPR);
     ctx.setTransform(DPR,0,0,DPR,0,0);
-
     var left=W*roadMargin, right=W*(1-roadMargin), inner=right-left;
     laneX=[]; for(var i=0;i<lanes;i++){ laneX.push(left+inner*((i+0.5)/lanes)); }
     dashes=[]; for(var y=0;y<H;y+=60){dashes.push({y:y});}
@@ -796,18 +539,55 @@ var RoadRage=(function(){
     for(i=0;i<obstacles.length;i++){var ob=obstacles[i];if(ob.type==="cone")drawCone(laneX[ob.lane],ob.y);else drawCar(laneX[ob.lane],ob.y,"#ffffff");}
     for(i=0;i<boosts.length;i++){drawBoost(laneX[boosts[i].lane],boosts[i].y);}
     if(pickup){drawCar(laneX[pickup.lane], pickup.y, "#9ad0ff");}
-    if(player.visible) drawCar(laneX[player.lane],player.y,player.color);
+    // convert fractional lane -> x
+    var step=(laneX[1]-laneX[0]); var px = laneX[0] + step*player.lane;
+    if(player.visible) drawCar(px,player.y,player.color);
   }
 
   function reset(){
-    meters=0;nextCP=500;score=0;pickup=null;obstacles=[];boosts=[];player.lane=1;speed=50;lives=3;player.visible=true;respawn=false;
+    meters=0;nextCP=500;score=0;pickup=null;obstacles=[];boosts=[];
+    player.lane=1; targetLane=1; laneVel=0; speed=50;lives=3;player.visible=true;respawn=false; tiltZero=null;
     $("drvDist").textContent=0;$("drvScore").textContent=0;$("drvSpeed").textContent=speed;$("drvLives").textContent=lives;
     $("drvGameOver").style.display="none"; dprScale();draw();
+  }
+
+  // ---- Engine sound (rev with speed) ----
+  var engine=null;
+  function engineStart(){
+    try{
+      AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+      if(AC.state==="suspended"){ AC.resume(); }
+      var osc=AC.createOscillator(); osc.type="sawtooth";
+      var lp=AC.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1200;
+      var g=AC.createGain(); g.gain.value=0.0;
+      osc.connect(lp); lp.connect(g); g.connect(AC.destination);
+      osc.start();
+      engine={osc:osc, g:g};
+    }catch(e){ engine=null; }
+  }
+  function engineStop(){ try{ if(engine){ engine.osc.stop(); engine.g.disconnect(); engine=null; } }catch(e){} }
+  function engineUpdate(){
+    if(!engine||!AC) return;
+    var f = 80 + speed*2.2;                 // 80–> ~630 Hz (at 250 m/s)
+    var vol = 0.02 + Math.min(0.1, speed/250*0.08);
+    engine.osc.frequency.setTargetAtTime(f, AC.currentTime, 0.05);
+    engine.g.gain.setTargetAtTime(vol, AC.currentTime, 0.05);
   }
 
   function update(ts){
     if(!running){last=ts;return;}
     var dt=(ts-last)/1000; last=ts;
+
+    // spring-damper lateral motion towards targetLane
+    if(tiltEnabled){
+      // map gamma (-30..30 deg) to delta around lane 1
+      var t = 1 + Math.max(-1, Math.min(1, (tiltGamma/30))); // [-1..1] range -> lanes
+      targetLane = Math.max(0, Math.min(2, t));
+    }
+    var a = STIFF*(targetLane - player.lane) - DAMP*laneVel; // acceleration
+    laneVel += a*dt; player.lane += laneVel*dt;
+    // clamp and damp when hitting edges
+    if(player.lane<0){player.lane=0; laneVel=0;} if(player.lane>2){player.lane=2; laneVel=0;}
 
     pxPerSec = pxBase * (speed/50);
     for(var i=0;i<dashes.length;i++){dashes[i].y+=pxPerSec*dt; if(dashes[i].y>H)dashes[i].y-=H;}
@@ -821,13 +601,17 @@ var RoadRage=(function(){
     for(i=obstacles.length-1;i>=0;i--){obstacles[i].y+=pxPerSec*dt; if(obstacles[i].y>H+40)obstacles.splice(i,1);}
     for(i=boosts.length-1;i>=0;i--){boosts[i].y+=pxPerSec*dt; if(boosts[i].y>H+40)boosts.splice(i,1);}
 
+    // collisions (use x-distance instead of lane equality)
+    var step=(laneX[1]-laneX[0]), px = laneX[0] + step*player.lane;
+    var XTH=24, YTH=40;
     if(!respawn){
-      if(pickup && pickup.lane===player.lane && Math.abs(pickup.y-player.y)<40){running=false; showQuestion(true); pickup=null;}
-      for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(ob2.lane===player.lane && Math.abs(ob2.y-player.y)<40){crash(); obstacles.splice(i,1); break;}}
-      for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(b.lane===player.lane && Math.abs(b.y-player.y)<40){boosts.splice(i,1); speed=Math.min(250, speed+50); $("drvSpeed").textContent=Math.floor(speed); toast("⚡ Speed +50 → "+Math.floor(speed)+" m/s"); beep("ok"); }}
+      if(pickup && Math.abs((laneX[pickup.lane])-px)<XTH && Math.abs(pickup.y-player.y)<YTH){running=false; showQuestion(true); pickup=null;}
+      for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(Math.abs(laneX[ob2.lane]-px)<XTH && Math.abs(ob2.y-player.y)<YTH){crash(); obstacles.splice(i,1); break;}}
+      for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(Math.abs(laneX[b.lane]-px)<XTH && Math.abs(b.y-player.y)<YTH){boosts.splice(i,1); speed=Math.min(250, speed+50); $("drvSpeed").textContent=Math.floor(speed); toast("⚡ Speed +50 → "+Math.floor(speed)+" m/s"); beep("ok"); }}
     }
 
     if(meters>=nextCP){running=false;showQuestion(false);nextCP+=500;}
+    engineUpdate();
     draw(); requestAnimationFrame(update);
   }
 
@@ -840,12 +624,12 @@ var RoadRage=(function(){
   }
 
   function gameOver(){
-    running=false; player.visible=false; $("drvGameOver").style.display="flex";
+    running=false; player.visible=false; $("drvGameOver").style.display="flex"; engineStop();
     STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash();
   }
 
   function showQuestion(bonus){
-    var overlay=$("drvOverlay"); overlay.style.display="flex";
+    $("drvOverlay").style.display="flex";
     var q=MCQ[Math.floor(Math.random()*MCQ.length)];
     document.documentElement.style.setProperty("--theme", CAT_COLORS[q.cat]||"#8a5cff");
     $("drvQ").innerHTML="<div class='pill' style='margin-bottom:6px;display:inline-flex;gap:8px;align-items:center'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>"+q.q;
@@ -853,7 +637,7 @@ var RoadRage=(function(){
     q.options.slice().sort(function(){return Math.random()-0.5;}).forEach(function(opt){
       var btn=document.createElement("button"); btn.className="btn secondary"; btn.textContent=opt;
       btn.onclick=function(){
-        if(opt===q.correct){ overlay.style.display="none"; score+=bonus?200:100; $("drvScore").textContent=score; confetti(bonus?"+Bonus!":"Correct!");
+        if(opt===q.correct){ $("drvOverlay").style.display="none"; score+=bonus?200:100; $("drvScore").textContent=score; confetti(bonus?"+Bonus!":"Correct!");
           STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash(); run();
         }else{ thumbsDown("Incorrect — try again"); }
       };
@@ -861,16 +645,23 @@ var RoadRage=(function(){
     });
   }
 
-  function left(){player.lane=Math.max(0,player.lane-1);draw();beep("open");}
-  function right(){player.lane=Math.min(2,player.lane+1);draw();beep("open");}
-  $("drvLeft").addEventListener("touchstart",function(e){e.preventDefault();left();}); $("drvRight").addEventListener("touchstart",function(e){e.preventDefault();right();});
+  // Discrete controls nudge target lane, smooth physics handles the slide
+  function left(){ targetLane=Math.max(0, targetLane-1); beep("open"); }
+  function right(){ targetLane=Math.min(2, targetLane+1); beep("open"); }
+
+  $("drvLeft").addEventListener("touchstart",function(e){e.preventDefault();left();});
+  $("drvRight").addEventListener("touchstart",function(e){e.preventDefault();right();});
   $("drvLeft").addEventListener("click",left); $("drvRight").addEventListener("click",right);
-  var sx=null; cvs.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;});
+
+  // swipe on canvas
+  cvs.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;});
   cvs.addEventListener("touchend",function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(dx<-20)left();else if(dx>20)right();sx=null;});
 
-  function run(){running=true;last=performance.now();requestAnimationFrame(update);}
-  function pause(){running=false;}
-  $("drvStart").onclick=function(){reset();run();}; $("drvPause").onclick=pause;
+  function run(){running=true; last=performance.now(); engineStart(); requestAnimationFrame(update);}
+  function pause(){running=false; engineStop();}
+  $("drvStart").onclick=function(){ reset(); enableTiltIfPossible(); run(); };
+  $("drvPause").onclick=pause;
+
   dprScale(); reset();
   return {pause:pause};
 })();
