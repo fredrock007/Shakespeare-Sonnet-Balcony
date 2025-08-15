@@ -62,7 +62,7 @@
 
   canvas{background:linear-gradient(180deg,#0c1228,#0a0f21);border:1px solid rgba(255,255,255,.12);border-radius:16px;max-width:100%}
 
-  /* Splash must not block clicks when hidden */
+  /* Splash */
   .splash{display:none; pointer-events:none; position:fixed; inset:0; align-items:center; justify-content:center;
     background:linear-gradient(180deg,rgba(5,8,20,.72),rgba(4,7,19,.82)); backdrop-filter: blur(4px); z-index:200;}
   .splash.show{display:flex; pointer-events:auto;}
@@ -86,6 +86,7 @@
   .overlayCard{max-width:620px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px}
   .overlayCard .opt{display:grid;grid-template-columns:1fr;gap:10px}
   .gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,0,0,.65);z-index:60;color:#ff1e1e;font-weight:900;font-size:44px;text-shadow:0 0 22px #300}
+  .countdown{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:55;color:#fff;font-weight:1000;font-size:64px;text-shadow:0 0 16px #000}
 
   .driver-controls{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
   .pedal{flex:1;min-width:140px;height:140px;border-radius:18px;border:2px solid rgba(255,255,255,.14);
@@ -234,10 +235,13 @@
       <span class="pill">Time Left: <b id="drvTime">100</b>s</span>
       <span class="pill">Distance: <b id="drvDist">0</b> m</span>
       <span class="pill">Speed: <b id="drvSpeed">50</b> m/s</span>
-      <span class="pill">Score: <b id="drvScore">0</b></span>
+      <span class="pill">Gear: <b id="drvGear">1</b></span>
+      <span class="pill">Ammo: <b id="drvAmmo">0</b></span>
       <span class="pill">Lives: <b id="drvLives">3</b></span>
       <button id="drvStart" class="btn">Start Run</button>
       <button id="drvPause" class="btn secondary">Pause</button>
+      <button id="drvAutoToggle" class="btn secondary">Auto Shift: ON</button>
+      <button id="btnFire" class="btn warn">🔫 Fire</button>
     </div>
     <div class="gauges">
       <div class="gauge" id="speedGauge" aria-label="Speed"><div class="fill" id="speedFill"></div></div>
@@ -252,6 +256,7 @@
         </div>
       </div>
       <div id="drvGameOver" class="gameOver">GAME OVER</div>
+      <div id="drvCountdown" class="countdown">3</div>
     </div>
     <div class="driver-controls">
       <button id="pedalAccel" class="pedal">⏫<br/><small>ACCELERATOR</small></button>
@@ -329,16 +334,26 @@ var AC;
 function safeAC(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();}catch(e){} return AC;}
 function tone(f,d,type,g){try{var ac=safeAC(), o=ac.createOscillator(), v=ac.createGain(); o.type=type||"sine"; o.frequency.value=f; o.connect(v); v.connect(ac.destination);
   var t=ac.currentTime; v.gain.setValueAtTime(0.0001,t); v.gain.exponentialRampToValueAtTime(g||0.2,t+0.01); v.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.2)); o.start(t); o.stop(t+(d||0.2)+.02);}catch(e){}}
-function crashSound(){ try{var ac=safeAC(), dur=.28, b=ac.createBuffer(1, ac.sampleRate*dur, ac.sampleRate), d=b.getChannelData(0);
-  for(var i=0;i<d.length;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.8);} var s=ac.createBufferSource(); s.buffer=b; var g=ac.createGain(); g.gain.value=.28;
-  var lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=800; s.connect(lp); lp.connect(g); g.connect(ac.destination); s.start(); }catch(e){}}
+function crashSound(){ try{var ac=safeAC(), t=ac.currentTime;
+  // Big noise burst
+  var n=ac.createBufferSource(), buf=ac.createBuffer(1, ac.sampleRate*.5, ac.sampleRate), d=buf.getChannelData(0);
+  for(var i=0;i<d.length;i++){var k=i/d.length; d[i]=(Math.random()*2-1)*Math.pow(1-k,1.2);}
+  n.buffer=buf; var ng=ac.createGain(); ng.gain.value=.55;
+  var lp=ac.createBiquadFilter(); lp.type="bandpass"; lp.frequency.value=600; lp.Q.value=0.6;
+  n.connect(lp); lp.connect(ng); ng.connect(ac.destination);
+  n.start(t);
+  // Low thump
+  var o=ac.createOscillator(), g=ac.createGain(); o.type="sine"; o.frequency.setValueAtTime(90,t); o.frequency.exponentialRampToValueAtTime(40,t+.25);
+  g.gain.setValueAtTime(.6,t); g.gain.exponentialRampToValueAtTime(0.0001,t+.35); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+.4);
+}catch(e){}}
 function ignitionSound(){ try{var ac=safeAC(), t=ac.currentTime, o=ac.createOscillator(), g=ac.createGain(); o.type="triangle"; o.frequency.setValueAtTime(120,t);
-  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.22,t+.06); g.gain.exponentialRampToValueAtTime(0.0001,t+.6);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.25,t+.06); g.gain.exponentialRampToValueAtTime(0.0001,t+.6);
   o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+.7);}catch(e){}}
-function fanfare(){ try{var ac=safeAC(), t=ac.currentTime, seq=[[392,.16],[523,.16],[659,.16],[784,.28],[0,.08],[784,.16],[659,.16],[523,.16],[392,.28]];
-  for(var i=0,at=t;i<seq.length;i++){var s=seq[i]; if(s[0]){var o=ac.createOscillator(), g=ac.createGain(); o.type="triangle"; o.frequency.value=s[0];
-    o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(0.0001,at); g.gain.exponentialRampToValueAtTime(0.22,at+0.01); g.gain.exponentialRampToValueAtTime(0.0001,at+s[1]);
-    o.start(at); o.stop(at+s[1]+.02);} at+=s[1];}}catch(e){}}
+function rotorSound(dur){ try{var ac=safeAC(), t=ac.currentTime, o=ac.createOscillator(), trem=ac.createOscillator(), g=ac.createGain(); o.type="square"; o.frequency.value=45; trem.frequency.value=8;
+  var tg=ac.createGain(); tg.gain.value=.4; trem.connect(tg.gain); o.connect(g); g.connect(ac.destination); tg.connect(g.gain); g.gain.value=.12; o.start(t); trem.start(t); o.stop(t+dur); trem.stop(t+dur);}catch(e){}}
+function droneSound(dur){ try{var ac=safeAC(), t=ac.currentTime, o=ac.createOscillator(), g=ac.createGain(); o.type="sawtooth"; o.frequency.value=110;
+  g.gain.setValueAtTime(0.06,t); g.gain.linearRampToValueAtTime(0.02,t+dur); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur);}catch(e){}}
+function popSound(){ tone(880,.08,"triangle",.2); }
 function beep(){tone(520,.1,"sine",.12)}
 addEventListener("click",function(e){var el=e.target;if(el.closest&&(el.closest("button")||el.closest(".tab-btn")||el.closest(".sub-btn"))) beep();});
 function toast(msg){var t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show");},1200);}
@@ -347,7 +362,7 @@ function confetti(msg){for(var i=0;i<40;i++){var p=document.createElement("div")
   (function(p){setTimeout(function(){var dx=(Math.random()*2-1)*200,dy=-(200+Math.random()*300);p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)";p.style.opacity=0;},10);
     setTimeout(function(){p.remove();},1200);})(p);} toast("🎉 "+(msg||"Nice!"));}
 
-/* ================= Shared Data ================= */
+/* ================= Shared Data (trimmed for brevity) ================= */
 var CAT_COLORS={"Sonnet 18":"#ff4d6d","Romeo & Juliet – Balcony":"#fca311","Lord of the Flies":"#2ecc71","Literary Devices":"#8a5cff","Parts of Speech":"#4da3ff"};
 var TERMS=[{w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shakespeare’s Sonnet 18 is a sonnet in iambic pentameter."},
   {w:"iambic pentameter",d:"A rhythm of five iambs per line.",e:"'Shall I compare thee' scans in iambic pentameter."},
@@ -359,7 +374,6 @@ var TERMS=[{w:"sonnet",d:"A 14-line poem with a specific rhyme scheme.",e:"Shake
   {w:"symbolism",d:"Objects/actions representing ideas.",e:"The conch symbolises order."},
   {w:"microcosm",d:"Small system mirroring a larger one.",e:"The island is a microcosm of society."}
 ];
-/* MCQs used by Millionaire and Road Rage quizzes */
 var MCQ_ALL=[
   {cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
   {cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
@@ -372,8 +386,8 @@ var MCQ_ALL=[
   {cat:"Parts of Speech",q:"In 'She quickly ran', 'quickly' is an…",options:["Adverb","Adjective","Preposition","Interjection"],correct:"Adverb"}
 ];
 
-/* ================= Stats ================= */
-var KEY="g10_hub_v13";
+/* ================= Stats (local) ================= */
+var KEY="g10_hub_v14";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
@@ -385,7 +399,7 @@ function refreshDash(){ $("s_merits").textContent=STATS.merits; $("s_hm_wins").t
   $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
 } refreshDash();
 
-/* ================= Study Builders ================= */
+/* ================= Study (same as previous) ================= */
 function buildStudy(){
   var tb=$("studyTable")?$("studyTable").querySelector("tbody"):null;
   if(!tb) return; tb.innerHTML="";
@@ -410,7 +424,7 @@ if($("lotfAll")){$("lotfAll").onclick=function(){lotfRender("All")};$("lotfPlot"
 $("lotfThemes").onclick=function(){lotfRender("Themes")};$("lotfChars").onclick=function(){lotfRender("Characters")};$("lotfSymbol").onclick=function(){lotfRender("Symbolism")};
 $("lotfPrint").onclick=function(){window.print();};lotfRender("All");}
 
-/* Shakespeare content */
+/* Shakespeare content (trimmed) */
 var SH_QA=[{section:"Sonnet 18 — Meaning & Craft",items:[
   {q:"Why is a 'summer’s day' an imperfect comparison?",a:"Summer is variable—too hot, windy, brief—so the poem turns to 'eternal lines' as the truer measure."},
   {q:"Name the metre and explain its effect.",a:"Iambic pentameter; gives controlled, confident praise."},
@@ -461,7 +475,7 @@ if($("shPrint")){$("shPrint").onclick=function(){window.print();};}
   });}
 })();
 
-/* ================= Hangman ================= */
+/* ================= Hangman (unchanged core) ================= */
 (function(){
   var words=[{w:"sonnet",h:"14-line poem"}, {w:"metaphor",h:"Direct comparison"}, {w:"oxymoron",h:"Contradictory terms"},
              {w:"iambic",h:"Two-syllable foot"}, {w:"juliet",h:"Balcony speaker"}, {w:"conch",h:"LOTF symbol of order"},
@@ -469,15 +483,12 @@ if($("shPrint")){$("shPrint").onclick=function(){window.print();};}
   var secret="",display=[],used={},lives=6,wins=0,hint="";
   var cvs=$("hmCanvas"),ctx=cvs.getContext("2d");
   function pick(){var it=words[Math.floor(Math.random()*words.length)];secret=it.w.toUpperCase();hint=it.h;display=[];used={};for(var i=0;i<secret.length;i++){display.push(secret[i]===" "?" ":"_");} lives=6; $("lives").textContent=lives; $("result").textContent=""; $("hint").style.display="none"; $("slots").textContent=display.join(" "); $("used").textContent="Used: —"; draw(0);}
-  function draw(stage){
+  function draw(){
     ctx.clearRect(0,0,cvs.width,cvs.height);
     ctx.strokeStyle="#cfe7ff"; ctx.lineWidth=3;
-    // gallows
     ctx.beginPath(); ctx.moveTo(40,250); ctx.lineTo(150,250); ctx.moveTo(70,250); ctx.lineTo(70,50); ctx.lineTo(200,50); ctx.lineTo(200,80); ctx.stroke();
     var wrong=6-lives;
-    if(wrong>0){ // head
-      ctx.beginPath(); ctx.arc(200,100,20,0,Math.PI*2); ctx.stroke();
-    }
+    if(wrong>0){ ctx.beginPath(); ctx.arc(200,100,20,0,Math.PI*2); ctx.stroke(); }
     if(wrong>1){ ctx.beginPath(); ctx.moveTo(200,120); ctx.lineTo(200,180); ctx.stroke(); }
     if(wrong>2){ ctx.beginPath(); ctx.moveTo(200,135); ctx.lineTo(175,155); ctx.stroke(); }
     if(wrong>3){ ctx.beginPath(); ctx.moveTo(200,135); ctx.lineTo(225,155); ctx.stroke(); }
@@ -501,7 +512,7 @@ if($("shPrint")){$("shPrint").onclick=function(){window.print();};}
   kb(); pick();
 })();
 
-/* ================= 30 Seconds ================= */
+/* ================= 30 Seconds (unchanged core) ================= */
 (function(){
   var timer=null, remain=30, running=false, score=0, total=STATS.seconds.total||0, fastest=STATS.seconds.fastest;
   var current=null;
@@ -516,7 +527,7 @@ if($("shPrint")){$("shPrint").onclick=function(){window.print();};}
   $("secInput").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var val=this.value.trim().toLowerCase(); if(!current) return; if(val===current.w.toLowerCase()){ score++; total++; $("secScore").textContent=score; $("secTotal").textContent=total; confetti("+1"); choose(); } else { toast("Nope — try again"); } }});
 })();
 
-/* ================= Millionaire ================= */
+/* ================= Millionaire (unchanged UI, themed) ================= */
 (function(){
   var ladder=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
   var step=0, used=[], q=null, cat="—";
@@ -530,38 +541,47 @@ if($("shPrint")){$("shPrint").onclick=function(){window.print();};}
   $("mil5050").onclick=function(){ if(!q) return; var opts=[].slice.call($("milOpts").querySelectorAll("button")); var wrong=opts.filter(function(b){return b.textContent!==q.correct}); for(var i=0;i<wrong.length && i<2;i++){wrong[i].disabled=true; wrong[i].style.opacity=.5;} };
   $("milSkip").onclick=function(){ showQ(); };
   $("milQuit").onclick=function(){ step=0; setActive(step); toast("Quit. Walk away."); };
-  $("milStart").onclick=function(){ fanfare(); step=0; setActive(step); showQ(); };
+  $("milStart").onclick=function(){ /* theme sting */ (function(){try{var ac=safeAC(),t=ac.currentTime,seq=[[294,.12],[392,.12],[523,.12],[784,.24],[0,.06],[784,.12],[523,.12],[392,.12],[294,.24]]; for(var i=0,a=t;i<seq.length;i++){var s=seq[i]; if(s[0]){var o=ac.createOscillator(), g=ac.createGain(); o.type="triangle"; o.frequency.value=s[0]; o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(0.0001,a); g.gain.exponentialRampToValueAtTime(0.22,a+0.01); g.gain.exponentialRampToValueAtTime(0.0001,a+s[1]); o.start(a); o.stop(a+s[1]+.02);} a+=s[1];}}catch(e){}})(); step=0; setActive(step); showQ(); };
   buildLadder(); setActive(0);
 })();
 
-/* ================= Road Rage (5 lanes, nitro, gauges, pedals + steer) ================= */
+/* ================= Road Rage — big upgrade ================= */
 var RoadRage=(function(){
   var cvs=$("drvCanvas"), ctx=cvs.getContext("2d");
   var DPR=1, W=360, H=540;
   var lanes=5, roadMargin=0.16;
   var STAGE_TIME=100;
-  var MAX_SPEED=250, NITRO_MAX=320, NITRO_MIN=260, MIN_SPEED=30;
+  var MAX_SPEED=250, NITRO_MAX=340, NITRO_MIN=260, MIN_SPEED=30;
   var ACCEL_RATE=70, DRAG_RATE=14, BRAKE_RATE=140;
-  var OB_CLUSTER_P=0.0036, BOOST_P=0.002, OIL_P=0.0025;
+  var OB_CLUSTER_P=0.0036, BOOST_P=0.002, OIL_P=0.0025, AMMO_P=0.0015, POLICE_P=0.0006;
+  var AERIAL_MIN=40, AERIAL_MAX=60; // seconds
+
+  // time of day cycle (seconds full loop)
+  var DAYLEN=120, tod=0; // 0..1
 
   var VEH_TYPES=[{t:"car",w:34,h:52,color:"#ffffff",vf:1.00},{t:"bus",w:44,h:80,color:"#ffd166",vf:0.90},
     {t:"truck",w:44,h:74,color:"#9ad0ff",vf:0.95},{t:"bike",w:24,h:44,color:"#a4ff9a",vf:0.80},
     {t:"super",w:36,h:48,color:"#ff5e57",vf:1.15},{t:"moto",w:18,h:36,color:"#ffb3c1",vf:1.10}];
-  var STAGES=[{name:"Mountainous",road:"#11243f",dash:"#fca311",sky:"#041225"},{name:"Farmland",road:"#0e2a1c",dash:"#b7e07e",sky:"#02150b"},
-    {name:"Dirt Road",road:"#3b2a16",dash:"#e1b382",sky:"#120a04"},{name:"City",road:"#1a1f2c",dash:"#9ad0ff",sky:"#0b0d16"},
-    {name:"Suburbs",road:"#1c2631",dash:"#bcd1ff",sky:"#0c1420"},{name:"Ghetto",road:"#2a1c24",dash:"#ff8aa1",sky:"#12070c"},
-    {name:"Futuristic",road:"#101c36",dash:"#00f5d4",sky:"#030b1a"}];
+  var STAGES=[{name:"Mountainous",road:"#11243f",dash:"#fca311"},{name:"Farmland",road:"#0e2a1c",dash:"#b7e07e"},
+    {name:"Dirt Road",road:"#3b2a16",dash:"#e1b382"},{name:"City",road:"#1a1f2c",dash:"#9ad0ff"},
+    {name:"Suburbs",road:"#1c2631",dash:"#bcd1ff"},{name:"Ghetto",road:"#2a1c24",dash:"#ff8aa1"},
+    {name:"Futuristic",road:"#101c36",dash:"#00f5d4"}];
 
   var laneX=[], dashes=[], pxBase=220;
   var running=false, paused=false, last=0, meters=0, speed=50, score=0;
   var stageIdx=0, stageStartT=0, timeLeft=STAGE_TIME;
-  var obstacles=[], boosts=[], oils=[];
-  var lives=3, respawn=false, reStartBoost=0;
+  var obstacles=[], boosts=[], oils=[], pickups=[], bullets=[], smokes=[], skids=[], aerials=[];
+  var nextAerial=10; // schedule
+  var lives=3, respawn=false, countdown=0;
   var player={lane:2,y:0,color:"#00f5d4",visible:true};
   var targetLane=2, laneVel=0, STIFF=12, DAMP=7;
+  var ammo=0;
 
   // Nitro
   var nitro=false, nitroTime=0, nitroPrevSpeed=50;
+
+  // Auto shift
+  var autoOn=true, targetSpeed=110, gear=1;
 
   // Input
   var accelHeld=false, brakeHeld=false;
@@ -576,7 +596,7 @@ var RoadRage=(function(){
   function engineStop(){ try{ if(engine){ engine.o1.stop(); engine.o2.stop(); engine.g.disconnect(); engine=null; } }catch(e){} }
   function engineUpdate(){ if(!engine||!AC) { updateGauges(); return; }
     var cap = nitro?NITRO_MAX:MAX_SPEED;
-    var targetVol = (running? (0.05 + Math.min(0.13, (nitro?0.16:0.12) * speed/cap)) : 0.0);
+    var targetVol = (running? (0.05 + Math.min(0.17, (nitro?0.18:0.14) * speed/cap)) : 0.0); // heavier tone
     var f = 60 + (nitro?1.9:1.6) * speed;
     engine.o1.frequency.setTargetAtTime(f, AC.currentTime, 0.05);
     engine.o2.frequency.setTargetAtTime(f/2, AC.currentTime, 0.05);
@@ -587,6 +607,8 @@ var RoadRage=(function(){
   // Gauges
   function updateGauges(){ var cap = nitro?NITRO_MAX:MAX_SPEED; var pct = Math.min(100, 100*speed/cap);
     $("speedFill").style.width=pct+"%";
+    $("drvGear").textContent=gear;
+    $("drvAmmo").textContent=ammo;
     if(nitro){ $("nitroGauge").style.display="block"; $("nitroFill").style.width=(100*nitroTime/7).toFixed(1)+"%"; }
     else{ $("nitroGauge").style.display="none"; }
   }
@@ -604,32 +626,99 @@ var RoadRage=(function(){
     dashes=[]; for(var y=0;y<H;y+=60){dashes.push({y:y});} pxBase=H/2.6; player.y=Math.floor(H*0.86); draw(); }
   addEventListener("resize",dprScale); addEventListener("orientationchange",function(){setTimeout(dprScale,200);});
 
-  // Drawing
+  /* --- Drawing Helpers --- */
   function rr(x,y,w,h,r){if(r>w/2)r=w/2;if(r>h/2)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
   function drawVehicle(cx,cy,vt){var w=vt.w,h=vt.h,x=cx-w/2,y=cy-h/2;ctx.fillStyle=vt.color;ctx.strokeStyle="#233";ctx.lineWidth=2;rr(x,y,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle="#071018";rr(x+6,y+6,w-12,14,4);ctx.fill();}
   function drawOil(cx,cy){ctx.fillStyle="#111";ctx.beginPath();ctx.ellipse(cx,cy,14,8,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#222";ctx.stroke();}
   function drawNitroPickup(cx,cy){ctx.fillStyle="#ff6a00";ctx.beginPath();ctx.arc(cx,cy,12,0,Math.PI*2);ctx.fill();ctx.fillStyle="#061314";ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("N",cx,cy+1);}
+  function drawAmmoPickup(cx,cy){ctx.fillStyle="#00e1ff";ctx.beginPath();ctx.rect(cx-10,cy-10,20,20);ctx.fill();ctx.fillStyle="#061314";ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("A",cx,cy+1);}
   function drawFlames(cx,cy){var t=performance.now()/100;var j=6+Math.sin(t)*2;ctx.save();ctx.globalCompositeOperation="lighter";
     for(var i=-1;i<=1;i++){ctx.fillStyle="rgba(255,90,0,.85)";ctx.beginPath();ctx.moveTo(cx+(i*10),cy+30);ctx.lineTo(cx+(i*10)-j,cy+55+j);ctx.lineTo(cx+(i*10)+j,cy+55+j);ctx.closePath();ctx.fill();
       ctx.fillStyle="rgba(255,200,0,.9)";ctx.beginPath();ctx.moveTo(cx+(i*10),cy+32);ctx.lineTo(cx+(i*10)-j*.6,cy+50+j*.6);ctx.lineTo(cx+(i*10)+j*.6,cy+50+j*.6);ctx.closePath();ctx.fill();}
     ctx.restore();}
+  function drawSkids(){ctx.strokeStyle="rgba(10,10,10,.55)";ctx.lineWidth=4;ctx.lineCap="round";
+    for(var i=skids.length-1;i>=0;i--){var s=skids[i]; s.life-=0.02; if(s.life<=0){skids.splice(i,1);continue;}
+      ctx.globalAlpha=Math.max(0.1,s.life); ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(s.x2,s.y2); ctx.stroke(); ctx.globalAlpha=1;}
+  }
+  function drawBullet(b){ctx.fillStyle="#ffd166"; ctx.beginPath(); ctx.rect(b.x-2,b.y-10,4,10); ctx.fill();}
+  function drawSmoke(s){ctx.save(); ctx.globalAlpha=s.life; ctx.fillStyle="rgba(120,120,120,.9)"; ctx.beginPath(); ctx.arc(s.x,s.y,12*(1-s.life*.2),0,Math.PI*2); ctx.fill(); ctx.restore(); }
+  function drawSunMoon(){
+    // interpolate sky between day and night
+    var day="#79c8ff", night="#030b1a";
+    function mix(c1,c2,t){function h2i(h){return parseInt(h,16)} var r=h2i(c1.substr(1,2)),g=h2i(c1.substr(3,2)),b=h2i(c1.substr(5,2));
+      var r2=h2i(c2.substr(1,2)),g2=h2i(c2.substr(3,2)),b2=h2i(c2.substr(5,2));
+      var rr=Math.round(r+(r2-r)*t).toString(16).padStart(2,"0"), gg=Math.round(g+(g2-g)*t).toString(16).padStart(2,"0"), bb=Math.round(b+(b2-b)*t).toString(16).padStart(2,"0");
+      return "#"+rr+gg+bb;}
+    var t = (Math.sin((tod*2*Math.PI)-Math.PI/2)+1)/2; // 0 at night, 1 at day
+    var sky=mix(night,day,t);
+    ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+    // sun and moon path
+    var cx=W*0.5, ay=H*0.12, rx=W*0.42;
+    var ang = tod*2*Math.PI; // 0..2pi
+    var sx = cx + Math.cos(ang)*rx, sy = ay + Math.sin(ang)*60;
+    var mx = cx + Math.cos(ang+Math.PI)*rx, my = ay + Math.sin(ang+Math.PI)*60;
+    // Sun when day-ish, moon when night-ish (both faint)
+    ctx.globalAlpha=Math.max(.15,t); ctx.fillStyle="#ffd166"; ctx.beginPath(); ctx.arc(sx,sy,14,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=Math.max(.15,1-t); ctx.fillStyle="#e6f0ff"; ctx.beginPath(); ctx.arc(mx,my,12,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+  }
 
   function stageTheme(){return STAGES[stageIdx%STAGES.length];}
   function draw(){
     var th=stageTheme();
     ctx.save();
+    // sky & sun/moon
+    drawSunMoon();
+    // road
     if(nitro){var m=2+Math.max(0,speed-MAX_SPEED)/10;ctx.translate((Math.random()-0.5)*m,(Math.random()-0.5)*m);}
-    ctx.fillStyle=th.sky;ctx.fillRect(0,0,W,H);
     var left=W*roadMargin,right=W*(1-roadMargin);ctx.fillStyle=th.road;ctx.fillRect(left,0,right-left,H);
     ctx.strokeStyle="#cfe7ff";ctx.setLineDash([12,12]);ctx.lineWidth=2;for(var i=1;i<lanes;i++){var x=left+(right-left)*i/lanes;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}ctx.setLineDash([]);
     ctx.strokeStyle=th.dash;ctx.lineWidth=6;for(var k=0;k<dashes.length;k++){ctx.beginPath();ctx.moveTo(left+20,dashes[k].y);ctx.lineTo(right-20,dashes[k].y);ctx.stroke();}
+
+    // old skids
+    drawSkids();
+
+    // hazards / pickups
     for(k=0;k<oils.length;k++)drawOil(laneX[oils[k].lane],oils[k].y);
     for(k=0;k<boosts.length;k++)drawNitroPickup(laneX[boosts[k].lane],boosts[k].y);
-    for(k=0;k<obstacles.length;k++){var ob=obstacles[k];drawVehicle(laneX[ob.lane],ob.y,ob.vt);}
-    var step=(laneX[1]-laneX[0]), px=laneX[0]+step*player.lane; if(player.visible){ if(nitro) drawFlames(px,player.y); drawVehicle(px,player.y,{w:34,h:54,color:player.color}); }
+    for(k=0;k<pickups.length;k++){var p=pickups[k]; if(p.kind==="ammo") drawAmmoPickup(laneX[p.lane],p.y);}
+
+    // obstacles (incl police)
+    for(k=0;k<obstacles.length;k++){
+      var ob=obstacles[k];
+      drawVehicle(ob.x?ob.x:laneX[ob.lane],ob.y,ob.vt);
+      if(ob.isPolice){
+        // flashers
+        ctx.fillStyle="#ff2b2b"; ctx.beginPath(); ctx.arc((ob.x||laneX[ob.lane])-8, ob.y- ob.vt.h/2 + 6, 4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle="#66a8ff"; ctx.beginPath(); ctx.arc((ob.x||laneX[ob.lane])+8, ob.y- ob.vt.h/2 + 6, 4, 0, Math.PI*2); ctx.fill();
+      }
+    }
+
+    // bullets & smoke
+    for(k=0;k<bullets.length;k++) drawBullet(bullets[k]);
+    for(k=0;k<smokes.length;k++) drawSmoke(smokes[k]);
+
+    // aerials
+    for(k=0;k<aerials.length;k++){
+      var a=aerials[k];
+      if(a.type==="heli"){
+        ctx.fillStyle="#bcd1ff"; rr(a.x-20,a.y-8,40,16,6); ctx.fill();
+        ctx.fillStyle="#cfe7ff"; ctx.fillRect(a.x-26,a.y-14,52,3); // rotor
+      } else {
+        ctx.fillStyle="#9ad0ff"; rr(a.x-10,a.y-6,20,12,4); ctx.fill(); ctx.fillRect(a.x-18,a.y-1,36,2); ctx.fillRect(a.x-12,a.y-8,24,2);
+      }
+    }
+
+    // player
+    var step=(laneX[1]-laneX[0]), px=laneX[0]+step*player.lane;
+    if(player.visible){
+      if(nitro) drawFlames(px,player.y);
+      drawVehicle(px,player.y,{w:34,h:54,color:player.color});
+    }
     ctx.restore();
   }
 
+  /* --- Game Flow --- */
   function startStage(idx){ stageIdx=idx%STAGES.length; $("drvStageName").textContent=STAGES[stageIdx].name; stageStartT=performance.now(); timeLeft=STAGE_TIME; }
   function nextStageQuiz(){
     running=false; engineStop();
@@ -651,46 +740,132 @@ var RoadRage=(function(){
 
   function startNitro(){ if(!nitro){ nitroPrevSpeed=speed; } nitro=true; nitroTime=7.0; if(speed<NITRO_MIN) speed=NITRO_MIN; $("nitroGauge").style.display="block"; }
 
+  function spawnAerial(){
+    var t = (Math.random()*(AERIAL_MAX-AERIAL_MIN)+AERIAL_MIN); nextAerial=t;
+    var type = Math.random()<0.6 ? "heli" : "drone";
+    var dir = Math.random()<0.5 ? 1 : -1;
+    var y = 60 + Math.random()*40, x = dir<0 ? W+40 : -40, vx = dir* (40 + Math.random()*40);
+    aerials.push({type:type,x:x,y:y,vx:vx,life: t});
+    // sounds last roughly travel time
+    if(type==="heli") rotorSound(Math.min(6, Math.abs((W+80)/vx)));
+    else droneSound(Math.min(4, Math.abs((W+80)/vx)));
+  }
+
+  function countdownOverlay(cb){
+    var cd=$("drvCountdown"); cd.style.display="flex"; var n=3;
+    player.visible=true; // show car during countdown (fix for “disappears”)
+    function tick(){
+      cd.textContent = (n>0? n : "GO");
+      if(n<0){ cd.style.display="none"; if(cb) cb(); return; }
+      n--; setTimeout(tick, n>=0? 700 : 500);
+    } tick();
+  }
+
   function update(ts){
     if(!running){ last=ts; engineUpdate(); return; }
     var dt=(ts-last)/1000; last=ts;
 
+    // time of day
+    tod += dt/DAYLEN; if(tod>1) tod-=1;
+
+    // countdown freeze (after crash)
+    if(countdown>0){ countdown-=dt; engineUpdate(); draw(); requestAnimationFrame(update); return; }
+
+    // stage timer
     timeLeft=Math.max(0, STAGE_TIME - (ts - stageStartT)/1000); $("drvTime").textContent=Math.ceil(timeLeft);
     if(timeLeft<=0){ nextStageQuiz(); return; }
 
+    // tilt steering
     if(tiltEnabled){ var t=2 + Math.max(-2, Math.min(2, (tiltGamma/15))); targetLane=Math.max(0, Math.min(lanes-1, t)); }
 
+    // Auto shift target
+    if(autoOn && !brakeHeld){ targetSpeed = Math.min(MAX_SPEED, targetSpeed + 12*dt); } // ramps up by itself
+    // Gears from speed
+    gear = 1 + Math.min(5, Math.floor((speed-30)/40)); if(gear<1) gear=1;
+
+    // speed integrate
     var cap = nitro?NITRO_MAX:MAX_SPEED;
-    if(accelHeld){ speed=Math.min(cap, speed + ACCEL_RATE*dt); }
-    else if(brakeHeld){ speed=Math.max(MIN_SPEED, speed - BRAKE_RATE*dt); }
-    else{ speed=Math.max(MIN_SPEED, speed - DRAG_RATE*dt); }
+    if(accelHeld||autoOn){ speed=Math.min(cap, speed + ACCEL_RATE*dt* (accelHeld?1:0.4)); } // auto adds gentle accel
+    if(brakeHeld){ speed=Math.max(MIN_SPEED, speed - BRAKE_RATE*dt); }
+    // drag toward target (autothrottle)
+    if(autoOn && speed<targetSpeed) speed=Math.min(targetSpeed, speed + (ACCEL_RATE*0.5)*dt);
+    if(!accelHeld && !autoOn && !brakeHeld){ speed=Math.max(MIN_SPEED, speed - DRAG_RATE*dt); }
 
     if(nitro){ nitroTime-=dt; if(nitroTime<=0){ nitro=false; $("nitroGauge").style.display="none"; } }
     else{ if(speed>nitroPrevSpeed){ speed=Math.max(nitroPrevSpeed, speed - (DRAG_RATE*2)*dt); } }
 
-    if(reStartBoost>0){ reStartBoost-=dt; speed=Math.min(speed + (ACCEL_RATE*.6)*dt, Math.max(MIN_SPEED+20, speed)); }
-
-    var a=12*(targetLane - player.lane) - 7*laneVel; laneVel+=a*dt; player.lane+=laneVel*dt;
+    // lateral physics
+    var a=12*(targetLane - player.lane) - 7*laneVel; laneVel+=a*dt; var prevLane=player.lane; player.lane+=laneVel*dt;
     if(player.lane<0){player.lane=0; laneVel=0;} if(player.lane>lanes-1){player.lane=lanes-1; laneVel=0;}
+    // skids if turning fast at high speed
+    var step=(laneX[1]-laneX[0]), px=laneX[0]+step*player.lane;
+    if(Math.abs(laneVel)>1.8 && speed>0.75*MAX_SPEED){ skids.push({x1:px-10,y1:player.y+24,x2:px+10,y2:player.y+28,life:1}); }
 
-    var pxPerSec=(H/2.6)*(speed/50); for(var i=0;i<dashes.length;i++){dashes[i].y+=pxPerSec*dt; if(dashes[i].y>H)dashes[i].y-=H;}
+    // scroll
+    var pxPerSec=(H/2.6)*(speed/50); var i;
+    for(i=0;i<dashes.length;i++){dashes[i].y+=pxPerSec*dt; if(dashes[i].y>H)dashes[i].y-=H;}
     meters+=speed*dt; $("drvDist").textContent=Math.floor(meters); $("drvSpeed").textContent=Math.floor(speed);
 
-    if(Math.random()<OB_CLUSTER_P){ var y0=-40, free=[0,1,2,3,4], count=1+Math.floor(Math.random()*3); if(count>=lanes) count=lanes-1;
+    // spawns cluster (always at least one lane free)
+    if(Math.random()<OB_CLUSTER_P){
+      var y0=-40, free=[0,1,2,3,4], count=1+Math.floor(Math.random()*3); if(count>=lanes) count=lanes-1;
       for(i=0;i<count;i++){ var li=free.splice(Math.floor(Math.random()*free.length),1)[0]; var vt=VEH_TYPES[Math.floor(Math.random()*VEH_TYPES.length)];
-        obstacles.push({lane:li,y:y0,vt:vt,vf:vt.vf}); } }
+        obstacles.push({lane:li,y:y0,vt:vt,vf:vt.vf}); }
+    }
+    // occasional police with random lane changes
+    if(Math.random()<POLICE_P){
+      var liP=Math.floor(Math.random()*lanes), vtP=VEH_TYPES[0];
+      obstacles.push({isPolice:true,lane:liP,y:-60,vt:vtP,vf:1.05, laneTimer:1.4, x:null, target:liP});
+    }
+
     if(Math.random()<BOOST_P){ boosts.push({lane:Math.floor(Math.random()*lanes),y:-40}); }
     if(Math.random()<OIL_P){ oils.push({lane:Math.floor(Math.random()*lanes),y:-30}); }
+    if(Math.random()<AMMO_P){ pickups.push({kind:"ammo", lane:Math.floor(Math.random()*lanes), y:-30}); }
 
-    for(i=obstacles.length-1;i>=0;i--){var ob=obstacles[i]; ob.y+=pxPerSec*ob.vf*dt; if(ob.y>H+80)obstacles.splice(i,1);}
-    for(i=boosts.length-1;i>=0;i--){boosts[i].y+=pxPerSec*dt; if(boosts[i].y>H+40)boosts.splice(i,1);}
-    for(i=oils.length-1;i>=0;i--){oils[i].y+=pxPerSec*dt; if(oils[i].y>H+40)oils.splice(i,1);}
+    // aerials schedule
+    nextAerial-=dt; if(nextAerial<=0){ spawnAerial(); }
 
-    var step=(laneX[1]-laneX[0]), px=laneX[0]+step*player.lane; var XTH=24, YTH=40;
+    // move objects
+    for(i=obstacles.length-1;i>=0;i--){
+      var ob=obstacles[i];
+      // police wander
+      if(ob.isPolice){
+        ob.laneTimer -= dt; if(ob.laneTimer<=0){ ob.target = Math.max(0, Math.min(lanes-1, ob.lane + (Math.random()<.5?-1:1))); ob.laneTimer = 1 + Math.random()*1.4; }
+        // slide x toward target lane
+        var tx = laneX[ob.target], ox = (ob.x==null? laneX[ob.lane] : ob.x); ob.x = ox + (tx-ox)*0.06; if(Math.abs(ob.x - tx)<1){ ob.lane=ob.target; }
+      }
+      ob.y += pxPerSec*ob.vf*dt; if(ob.y>H+80) obstacles.splice(i,1);
+    }
+    for(i=boosts.length-1;i>=0;i--){ boosts[i].y += pxPerSec*dt; if(boosts[i].y>H+40) boosts.splice(i,1); }
+    for(i=oils.length-1;i>=0;i--){ oils[i].y += pxPerSec*dt; if(oils[i].y>H+40) oils.splice(i,1); }
+    for(i=pickups.length-1;i>=0;i--){ pickups[i].y += pxPerSec*dt; if(pickups[i].y>H+40) pickups.splice(i,1); }
+
+    // bullets
+    for(i=bullets.length-1;i>=0;i--){ var b=bullets[i]; b.y -= 420*dt; if(b.y<-20){bullets.splice(i,1); continue;}
+      // hit test
+      var hitIdx=-1;
+      for(var j=0;j<obstacles.length;j++){
+        var ob3=obstacles[j], cx=(ob3.x?ob3.x:laneX[ob3.lane]), cy=ob3.y, w=ob3.vt.w, h=ob3.vt.h;
+        if(Math.abs(cx-b.x)<w/2 && Math.abs(cy-b.y)<h/2){ hitIdx=j; break; }
+      }
+      if(hitIdx>=0){ var ob4=obstacles.splice(hitIdx,1)[0]; smokes.push({x:(ob4.x?ob4.x:laneX[ob4.lane]), y:ob4.y, life:1}); bullets.splice(i,1); popSound(); }
+    }
+    for(i=smokes.length-1;i>=0;i--){ smokes[i].life -= dt; if(smokes[i].life<=0) smokes.splice(i,1); }
+
+    // aerials
+    for(i=aerials.length-1;i>=0;i--){ var a=aerials[i]; a.x += a.vx*dt; a.life-=dt; if(a.x<-80 || a.x>W+80){ aerials.splice(i,1); } }
+
+    // Collisions
+    var XTH=24, YTH=40, pxNow=laneX[0]+(laneX[1]-laneX[0])*player.lane;
     if(!respawn){
-      for(i=obstacles.length-1;i>=0;i--){var ob2=obstacles[i]; if(Math.abs(laneX[ob2.lane]-px)<(ob2.vt.w/2+XTH)&&Math.abs(ob2.y-player.y)<(ob2.vt.h/2+YTH)){ crash(); obstacles.splice(i,1); break; } }
-      for(i=boosts.length-1;i>=0;i--){var b=boosts[i]; if(Math.abs(laneX[b.lane]-px)<XTH && Math.abs(b.y-player.y)<YTH){ boosts.splice(i,1); startNitro(); toast("🔥 NITRO!"); } }
-      for(i=oils.length-1;i>=0;i--){var o=oils[i]; if(Math.abs(laneX[o.lane]-px)<XTH && Math.abs(o.y-player.y)<YTH){ oils.splice(i,1); laneVel+=(Math.random()<.5?-1:1)*2.2; toast("🛢️ Oil!"); } }
+      // obstacles
+      for(i=obstacles.length-1;i>=0;i--){ var ob2=obstacles[i], ox=(ob2.x?ob2.x:laneX[ob2.lane]); if(Math.abs(ox-pxNow)<(ob2.vt.w/2+XTH)&&Math.abs(ob2.y-player.y)<(ob2.vt.h/2+YTH)){ crash(); obstacles.splice(i,1); break; } }
+      // nitro
+      for(i=boosts.length-1;i>=0;i--){ var b2=boosts[i]; if(Math.abs(laneX[b2.lane]-pxNow)<XTH && Math.abs(b2.y-player.y)<YTH){ boosts.splice(i,1); startNitro(); toast("🔥 NITRO!"); } }
+      // oil
+      for(i=oils.length-1;i>=0;i--){ var o=oils[i]; if(Math.abs(laneX[o.lane]-pxNow)<XTH && Math.abs(o.y-player.y)<YTH){ oils.splice(i,1); laneVel+=(Math.random()<.5?-1:1)*2.2; toast("🛢️ Oil!"); } }
+      // ammo
+      for(i=pickups.length-1;i>=0;i--){ var p=pickups[i]; if(Math.abs(laneX[p.lane]-pxNow)<XTH && Math.abs(p.y-player.y)<YTH){ pickups.splice(i,1); ammo+=3; $("drvAmmo").textContent=ammo; toast("🔫 +3 ammo"); } }
     }
 
     engineUpdate(); draw(); requestAnimationFrame(update);
@@ -699,7 +874,9 @@ var RoadRage=(function(){
   function crash(){
     lives--; $("drvLives").textContent=lives; player.visible=false; respawn=true; engineStop(); crashSound();
     if(lives<=0){ gameOver(); return; }
-    setTimeout(function(){ player.visible=true; respawn=false; ignitionSound(); engineStart(); reStartBoost=1.2; }, 900);
+    // prepare respawn: show car and countdown overlay, freeze for ~3s
+    player.visible=true; countdown=3.0;
+    countdownOverlay(function(){ respawn=false; ignitionSound(); engineStart(); /* little auto boost */ targetSpeed=Math.max(targetSpeed, MIN_SPEED+40); });
   }
   function gameOver(){ running=false; $("drvGameOver").style.display="flex"; engineStop(); STATS.driver.bestMeters=Math.max(STATS.driver.bestMeters,Math.floor(meters)); saveStats(); refreshDash(); }
 
@@ -726,20 +903,32 @@ var RoadRage=(function(){
   holdRepeat($("btnRight"), right);
 
   // keyboard
-  window.addEventListener("keydown",function(e){ if(e.key==="ArrowLeft"){e.preventDefault(); left();} if(e.key==="ArrowRight"){e.preventDefault(); right();} });
+  window.addEventListener("keydown",function(e){ if(e.key==="ArrowLeft"){e.preventDefault(); left();} if(e.key==="ArrowRight"){e.preventDefault(); right();} if(e.key===" "){ e.preventDefault(); fire(); } });
 
   // swipe
   var sx=null; cvs.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;});
   cvs.addEventListener("touchend",function(e){ if(sx===null)return; var dx=e.changedTouches[0].clientX-sx; if(dx<-20)left(); else if(dx>20)right(); sx=null; });
 
+  // Fire
+  function fire(){
+    if(ammo<=0) { toast("No ammo"); return; }
+    var step=(laneX[1]-laneX[0]), px=laneX[0]+step*player.lane;
+    bullets.push({x:px, y:player.y-30});
+    ammo--; $("drvAmmo").textContent=ammo;
+  }
+  $("btnFire").onclick=fire;
+
+  // Auto toggle
+  $("drvAutoToggle").onclick=function(){ autoOn=!autoOn; this.textContent="Auto Shift: "+(autoOn?"ON":"OFF"); };
+
   $("drvStart").onclick=function(){ reset(); enableTilt(); startStage(0); run(); };
   $("drvPause").onclick=function(){ running=false; paused=true; engineStop(); };
 
   function run(){ $("drvGameOver").style.display="none"; running=true; paused=false; last=performance.now(); engineStart(); requestAnimationFrame(update); }
-  function reset(){ meters=0; score=0; $("drvScore").textContent=0; $("drvDist").textContent=0; $("drvLives").textContent=(lives=3);
-    obstacles=[]; boosts=[]; oils=[]; player.lane=2; targetLane=2; laneVel=0; speed=50; nitro=false; nitroTime=0; $("nitroGauge").style.display="none";
-    accelHeld=false; brakeHeld=false; reStartBoost=0; tiltZero=null; $("drvTime").textContent=STAGE_TIME; $("drvStageName").textContent="—";
-    $("drvGameOver").style.display="none"; dprScale(); draw(); engineStop(); updateGauges();}
+  function reset(){ meters=0; score=0; $("drvScore").textContent=0; $("drvDist").textContent=0; $("drvLives").textContent=(lives=3); $("drvAmmo").textContent=(ammo=0);
+    obstacles=[]; boosts=[]; oils=[]; pickups=[]; bullets=[]; smokes=[]; skids=[]; aerials=[]; player.lane=2; targetLane=2; laneVel=0; speed=50; nitro=false; nitroTime=0; $("nitroGauge").style.display="none";
+    accelHeld=false; brakeHeld=false; tiltZero=null; $("drvTime").textContent=STAGE_TIME; $("drvStageName").textContent="—"; $("drvGameOver").style.display="none"; autoOn=true; targetSpeed=110; gear=1; nextAerial=10; tod=Math.random();
+    dprScale(); draw(); engineStop(); updateGauges();}
   dprScale(); reset();
   return {pause:function(){running=false; engineStop();}};
 })();
@@ -771,7 +960,7 @@ var RoadRage=(function(){
   else { document.addEventListener('DOMContentLoaded', safeInit); }
 })();
 
-/* ============== Little extras ============== */
+/* ============== Tiny extras ============== */
 document.querySelector('.brand').addEventListener('click', function(){ document.getElementById('splash').classList.add('show'); setTimeout(function(){document.getElementById('splash').classList.remove('show');},1600);});
 </script>
 </body>
