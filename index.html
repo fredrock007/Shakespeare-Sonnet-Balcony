@@ -168,10 +168,70 @@
 
   /* ===== Snappy fade for main tab sections ===== */
   section{opacity:1; transition:opacity .28s ease;}
+
+  /* ===== Splash logo overlay ===== */
+  .splash{
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,rgba(5,8,20,.72),rgba(4,7,19,.82));
+    backdrop-filter: blur(4px);
+    z-index:200;
+  }
+  .logo3d{
+    position:relative;
+    padding:24px 28px;
+    border-radius:22px;
+    transform:perspective(1000px) rotateX(10deg);
+    background:radial-gradient(120px 80px at 50% 0%, rgba(255,70,70,.18), transparent 60%);
+    box-shadow:
+      inset 0 0 40px rgba(255,80,60,.18),
+      0 30px 60px rgba(0,0,0,.6);
+  }
+  .logo3d h1{
+    margin:0;
+    font-size: clamp(22px, 6vw, 46px);
+    letter-spacing: 2px;
+    font-weight: 1000;
+    text-transform: uppercase;
+    background:linear-gradient(180deg,#ff2b2b,#ff6a00 60%, #ffd166 95%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:
+      0 0 12px rgba(255,40,40,.5),
+      0 0 30px rgba(255,90,0,.35),
+      0 8px 18px rgba(0,0,0,.6);
+    animation:pulseGlow .9s ease-in-out 0s 3;
+  }
+  .emoji-cloud{
+    position:absolute; inset:-22px -26px; pointer-events:none; filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));
+  }
+  .emoji{position:absolute; font-size:clamp(18px,4vw,32px)}
+  .e1{top:-10px;left:-6px; transform:rotate(-12deg)}
+  .e2{top:-8px;right:-8px; transform:rotate(12deg)}
+  .e3{bottom:-8px;left:-10px; transform:rotate(8deg)}
+  .e4{bottom:-12px;right:-6px; transform:rotate(-6deg)}
+
+  @keyframes pulseGlow{
+    0%{transform:scale(1) translateZ(0); text-shadow:0 0 10px rgba(255,40,40,.45), 0 0 24px rgba(255,90,0,.25), 0 8px 18px rgba(0,0,0,.6);}
+    50%{transform:scale(1.06) translateZ(24px); text-shadow:0 0 16px rgba(255,60,60,.65), 0 0 44px rgba(255,120,0,.45), 0 16px 26px rgba(0,0,0,.7);}
+    100%{transform:scale(1) translateZ(0); text-shadow:0 0 10px rgba(255,40,40,.45), 0 0 24px rgba(255,90,0,.25), 0 8px 18px rgba(0,0,0,.6);}
+  }
 </style>
 </head>
 <body>
 <div class="bg3d"><div class="stars"></div></div>
+
+<!-- Splash Overlay -->
+<div id="splash" class="splash" aria-hidden="true">
+  <div class="logo3d">
+    <div class="emoji-cloud">
+      <div class="emoji e1">📚</div>
+      <div class="emoji e2">📚</div>
+      <div class="emoji e3">📚</div>
+      <div class="emoji e4">📚</div>
+    </div>
+    <h1>MR SAMUELS ENGLISH HL</h1>
+  </div>
+</div>
+
 <div class="wrap">
   <div class="holo"></div>
   <header>
@@ -329,7 +389,7 @@
     <div id="lotf" style="display:none">
       <div class="row">
         <button class="btn secondary" id="lotfAll">All</button>
-        <button class="btn secondary" id="lotfPlot">Plot</button>
+        <button class="btn secondary" id="lotfPlot">Plot</</button>
         <button class="btn secondary" id="lotfThemes">Themes</button>
         <button class="btn secondary" id="lotfChars">Characters</button>
         <button class="btn secondary" id="lotfSymbol">Symbolism</button>
@@ -342,6 +402,16 @@
       <div class="card" style="margin-bottom:10px">
         <div class="big"><b>Shakespeare Study Pack</b></div>
       </div>
+
+      <!-- Brief historical/context notes -->
+      <div class="card" style="margin-bottom:10px">
+        <div class="pill" style="margin-bottom:6px">Background & History</div>
+        <ul style="margin:6px 0 0 18px">
+          <li><b>Sonnet 18</b> likely composed in the 1590s and printed in the <i>1609 Quarto</i>. It belongs to the “Fair Youth” sequence (Sonnets 1–126) and uses the English sonnet rhyme scheme <b>ABAB CDCD EFEF GG</b> in <i>iambic pentameter</i>. The closing couplet claims poetry grants <i>immortality</i> to beauty.</li>
+          <li><b>Romeo & Juliet — Balcony scene</b> (Act 2 Scene 2), probably written c.1595. Traditionally staged with a raised window or gallery; thematically it opposes <i>private love</i> and <i>public identity/name</i> and establishes the lovers’ decision to risk secrecy and speed.</li>
+        </ul>
+      </div>
+
       <div id="shQA" style="max-height:26vh; overflow:auto; margin-bottom:10px;"></div>
       <h3>MCQ Practice</h3>
       <div id="shMCQ" style="max-height:24vh; overflow:auto; margin-bottom:10px;"></div>
@@ -387,11 +457,26 @@ function beep(kind){var m={ui:[420,0.09,"sine",0.12],open:[560,0.12,"triangle",0
   var s=m[kind||"ui"]; tone(s[0],s[1],s[2],s[3]); }
 addEventListener("click",function(e){var el=e.target;if(el.closest&&(el.closest("button")||el.closest(".tab-btn")||el.closest(".sub-btn"))) beep("ui");});
 
-/* ===== Helpers ===== */
+/* ===== Helpers & Splash ===== */
 function $(id){return document.getElementById(id);}
 function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},1200);}
 function confetti(msg){for(var i=0;i<40;i++){var p=document.createElement("div");p.className="confetti-piece";p.style.background=["#00f5d4","#8a5cff","#ff5e57","#fca311","#2ecc71"][Math.floor(Math.random()*5)];p.style.left=(50+Math.random()*40-20)+"%";p.style.top="60%";p.style.transition="transform 1s ease-out, opacity 1.2s";document.body.appendChild(p);(function(p){setTimeout(function(){var dx=(Math.random()*2-1)*200,dy=-(200+Math.random()*300);p.style.transform="translate("+dx+"px,"+dy+"px) rotate("+Math.random()*360+"deg)";p.style.opacity=0;},10);setTimeout(function(){p.remove();},1200);})(p);}toast("🎉 "+msg);beep("win");}
 function thumbsDown(msg){toast("👎 "+(msg||"Try again"));beep("wrong");}
+
+var splash=$("splash"), splashTimer=null, splashBusy=false;
+function showSplash(cb){
+  // only for game/study tabs; CB called after ~2.2s
+  if(splashBusy){ if(typeof cb==="function") setTimeout(cb, 2200); return; }
+  splashBusy=true;
+  splash.style.display="flex";
+  // restart animation by forcing reflow
+  var h=splash.querySelector("h1"); h.style.animation="none"; void h.offsetWidth; h.style.animation="";
+  setTimeout(function(){
+    splash.style.display="none";
+    splashBusy=false;
+    if(typeof cb==="function") cb();
+  }, 2200);
+}
 
 /* ===== Categories / Data ===== */
 var CAT_COLORS={
@@ -421,63 +506,58 @@ var LOTF_NOTES=[
  {type:"Symbolism",text:"Conch (order), Signal Fire (hope), Glasses (science), Painted Faces (anonymity), Lord of the Flies (evil within)."}
 ];
 
-/* Short Answer (model answers) */
-var SHAKESPEARE_SA = [
-  { section: "SECTION A: POETRY — Sonnet 18", items: [
-    {q:"To whom is the speaker comparing the subject in line 1?", a:"A summer’s day."},
-    {q:"Identify and explain 'the eye of heaven'.", a:"Metaphor (and personification) for the sun; it can be too hot, showing summer’s flaws."},
-    {q:"Quote two consecutive words that show summer is temporary.", a:"“short date” (from 'summer’s lease hath all too short a date')."},
-    {q:"How does the poet immortalise the subject?", a:"Through 'eternal lines'; poetry preserves the beloved as long as it is read."}
+/* ===== NEW Shakespeare content (similar skills, not identical to test) ===== */
+var SHAKESPEARE_QA=[
+  {section:"POETRY — Sonnet 18 (Concept & Craft)", items:[
+    {q:"What quality of a 'summer’s day' does the speaker find unreliable, and how does the poem counter that weakness?", a:"Weather is changeable—too hot, windy, or brief; the poem’s 'eternal lines' offer lasting perfection beyond seasonal change."},
+    {q:"Identify the metrical pattern and explain how it supports the poem’s voice.", a:"Iambic pentameter; the heartbeat-like rhythm gives a steady, dignified tone that suits praise and confidence."},
+    {q:"How does the poem use contrast before and after line 9?", a:"The octave lists flaws of summer; the sestet turns to the 'eternal summer' of the beloved preserved by verse."},
+    {q:"Explain how the couplet acts as an argument.", a:"It claims the poem itself guarantees life to the beloved—so long as it is read, beauty 'lives'."}
   ]},
-  { section: "SECTION B: DRAMA — Romeo & Juliet (Balcony Scene)", items: [
-    {q:"Meaning of 'Wherefore art thou Romeo?'", a:"'Why must you be Romeo (a Montague)?' Not 'Where are you?'."},
-    {q:"What conflict does Juliet face here?", a:"Love versus family name/loyalty."},
-    {q:"'I'll be new baptised' — what does this reveal about Romeo?", a:"Impulsive and willing to change identity for love."}
-  ]},
-  { section: "SECTION B: DRAMA — Romeo & Juliet (Friar Laurence)", items: [
-    {q:"Why is the Friar surprised by Romeo’s request?", a:"Romeo rapidly shifts from Rosaline to Juliet; seems fickle."},
-    {q:"Is the Friar’s decision to help wise? Motivate.", a:"Arguably not; although he hopes to end the feud, the haste contributes to tragedy."}
+  {section:"DRAMA — Romeo & Juliet (Balcony Scene: Language & Choice)", items:[
+    {q:"Why does Juliet question the value of names, and what does this suggest about social identity?", a:"She argues a name is a label, not essence; love should outrank family identities, challenging the feud’s authority."},
+    {q:"How does dramatic irony operate in the scene even before tragedy unfolds?", a:"The audience senses the risk of secrecy and haste; we foresee danger though the lovers speak with hope."},
+    {q:"Quote or paraphrase one line that reveals Romeo’s impulsive nature and explain it.", a:"E.g., 'I’ll be new baptised'; he is willing to abandon his name at once, showing impetuous commitment."},
+    {q:"What practical obstacles does the scene highlight (beyond emotions)?", a:"Physical danger in the orchard, family surveillance, and the problem of arranging marriage without consent."}
   ]}
 ];
 
-/* Unified MCQ bank (category-tagged). Used by Millionaire + Road Rage + Study MCQ. */
+/* Short Answer (refreshed) */
+var SHAKESPEARE_SA = [
+  { section: "Sonnet 18 — Technique Focus", items: [
+    {q:"Give the full rhyme scheme and name one effect of the final couplet.", a:"ABAB CDCD EFEF GG; the couplet clinches the claim of poetic immortality."},
+    {q:"Choose one personification from the poem and explain its function.", a:"'Death brag' gives Death a boastful role, making the triumph of poetry more dramatic."},
+    {q:"Why is the comparison to a summer’s day ultimately rejected?", a:"Summer is less temperate and too short; the beloved exceeds nature’s variability."}
+  ]},
+  { section: "Balcony Scene — Meaning & Stagecraft", items: [
+    {q:"How could staging emphasise secrecy in this scene?", a:"Use shadowed lighting, high window, and hushed delivery to show risk and privacy."},
+    {q:"What does the exchange reveal about Juliet’s maturity?", a:"She is cautious and practical—asks about intention and marriage—contrasting with Romeo’s speed."}
+  ]}
+];
+
+/* MCQ bank (unchanged): used in games + Study card */
 var MCQ = [
-  /* Sonnet 18 */
   {cat:"Sonnet 18",q:"In Sonnet 18, the beloved is compared to a…",options:["Summer’s day","Winter’s night","Stormy sea","Rose"],correct:"Summer’s day"},
   {cat:"Sonnet 18",q:"'Summer’s lease' suggests summer is…",options:["Temporary","Perfect","Eternal","Rainy"],correct:"Temporary"},
   {cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Gods","Sky"],correct:"Sun"},
   {cat:"Sonnet 18",q:"The beloved’s beauty lives on through…",options:["Eternal lines","Painting","Statue","Diary"],correct:"Eternal lines"},
-
-  /* Romeo & Juliet – Balcony */
   {cat:"Romeo & Juliet – Balcony",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When are you coming?"],correct:"Why are you Romeo?"},
-  {cat:"Romeo & Juliet – Balcony",q:"Juliet’s central conflict is with…",options:["Family loyalty","Money","Fame","Travel"],correct:"Family loyalty"},
+  {cat:"Romeo & Juliet – Balcony",q:"Juliet’s central conflict is with…",options:["Family identity","Money","Fame","Travel"],correct:"Family identity"},
   {cat:"Romeo & Juliet – Balcony",q:"Friar warns sudden passions…",options:["Can end badly","Are best","Never change","Always last"],correct:"Can end badly"},
-
-  /* Lord of the Flies */
   {cat:"Lord of the Flies",q:"What does the conch symbolise?",options:["Order and speech","Wealth","Romance","Religion"],correct:"Order and speech"},
   {cat:"Lord of the Flies",q:"Who is elected leader first?",options:["Ralph","Jack","Piggy","Simon"],correct:"Ralph"},
   {cat:"Lord of the Flies",q:"Piggy’s glasses symbolise…",options:["Reason and science","Beauty","War","Tradition"],correct:"Reason and science"},
   {cat:"Lord of the Flies",q:"Who kills Piggy?",options:["Roger","Jack","Ralph","Officer"],correct:"Roger"},
   {cat:"Lord of the Flies",q:"The 'beast' ultimately represents…",options:["Inner savagery","A monster","A boar","A spirit"],correct:"Inner savagery"},
   {cat:"Lord of the Flies",q:"Why do the boys paint their faces?",options:["Anonymity/savagery","Warmth","Respect","Religion"],correct:"Anonymity/savagery"},
-  {cat:"Lord of the Flies",q:"Shattering the conch means…",options:["Collapse of order","More equality","Festival","Rescue"],correct:"Collapse of order"},
-  {cat:"Lord of the Flies",q:"What keeps hope of rescue alive?",options:["Signal fire","Hunting","Shelters","Chanting"],correct:"Signal fire"},
-  {cat:"Lord of the Flies",q:"Who represents spiritual goodness?",options:["Simon","Roger","Jack","Samneric"],correct:"Simon"},
-  {cat:"Lord of the Flies",q:"'Lord of the Flies' (pig’s head) symbolises…",options:["Evil within","Royalty","Salvation","Wealth"],correct:"Evil within"},
-
-  /* Literary Devices */
   {cat:"Literary Devices",q:"A 14-line poem with a set rhyme scheme is a…",options:["Sonnet","Ode","Elegy","Ballad"],correct:"Sonnet"},
-  {cat:"Literary Devices",q:"'Eye of heaven' is a…",options:["Metaphor","Simile","Onomatopoeia","Pun"],correct:"Metaphor"},
-  {cat:"Literary Devices",q:"'Brawling love' (R&J) is an example of…",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
+  {cat:"Literary Devices",q:"'Brawling love' is an example of…",options:["Oxymoron","Metaphor","Onomatopoeia","Pun"],correct:"Oxymoron"},
   {cat:"Literary Devices",q:"Iambic pentameter has…",options:["Five iambs","Three trochees","Seven feet","Free rhythm"],correct:"Five iambs"},
-
-  /* Parts of Speech */
-  {cat:"Parts of Speech",q:"In 'The bright sun smiles', the word 'bright' is a…",options:["Adjective","Adverb","Noun","Verb"],correct:"Adjective"},
   {cat:"Parts of Speech",q:"In 'She quickly ran', 'quickly' is an…",options:["Adverb","Adjective","Preposition","Interjection"],correct:"Adverb"}
 ];
 
 /* ===== Stats (local device) ===== */
-var KEY="g10_hub_v9";
+var KEY="g10_hub_v10";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
@@ -489,38 +569,47 @@ function refreshDash(){ $("s_merits").textContent=STATS.merits; $("s_hm_wins").t
   $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
 } refreshDash();
 
-/* ===== Tabs with snappy fade ===== */
+/* ===== Tabs with splash + snappy fade ===== */
+var gameTabs=new Set(["hangman","seconds","million","driver","study"]);
 document.querySelectorAll(".tab-btn").forEach(function(b){
   b.addEventListener("click",function(){
+    // Tab visual state
     document.querySelectorAll(".tab-btn").forEach(function(x){x.classList.remove("active");});
     b.classList.add("active");
 
     var target = b.getAttribute("data-tab");
     var next = $(target);
-
     var secs = document.querySelectorAll("section");
     var current = Array.from(secs).find(function(s){ return s.style.display !== "none"; });
 
     if(current === next) return;
 
-    next.style.display = "";
-    next.style.opacity = 0;
+    // Pause Road Rage when leaving it
+    if(target!=="driver"){ if(window.RoadRage && RoadRage.pause) RoadRage.pause(); }
 
+    // Fade out current first
     if(current){
       current.style.opacity = 1;
-      requestAnimationFrame(function(){
-        current.style.opacity = 0;
-        setTimeout(function(){ current.style.display = "none"; }, 300); // matches .28s CSS
-        requestAnimationFrame(function(){ next.style.opacity = 1; });
-      });
-    } else {
-      next.style.opacity = 1;
+      current.style.opacity = 0;
+      setTimeout(function(){ current.style.display = "none"; }, 300);
     }
 
-    if(target!=="driver"){RoadRage.pause();}
-    beep("open");
+    // For game/study tabs show splash before reveal
+    var reveal = function(){
+      next.style.display = "";
+      next.style.opacity = 0;
+      requestAnimationFrame(function(){ next.style.opacity = 1; });
+      beep("open");
+    };
+
+    if(gameTabs.has(target)){
+      showSplash(reveal);
+    }else{
+      reveal();
+    }
   });
 });
+
 document.querySelectorAll(".sub-btn").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll(".sub-btn").forEach(function(x){x.classList.remove("active");});
@@ -582,7 +671,7 @@ $("secInput").addEventListener("keydown",function(e){ if(e.key==="Enter" && secA
   if(g===secCurrent.w.toLowerCase()){secScore++;$("secScore").textContent=secScore; STATS.seconds.total++; var t=Date.now()-secStart; if(!STATS.seconds.fastest||t<STATS.seconds.fastest)STATS.seconds.fastest=t; saveStats(); refreshDash(); confetti("Correct!"); secNext();}
   else{ thumbsDown("Incorrect"); }}}); secReset();
 
-/* ===== Millionaire (category theming + fanfare) ===== */
+/* ===== Millionaire ===== */
 var ladder=["R 1 000 000","R 500 000","R 250 000","R 125 000","R 64 000","R 32 000","R 16 000","R 8 000","R 4 000","R 2 000","R 1 000","R 500","R 300","R 200","R 100"];
 function buildLadder(){var ul=$("milLadder");ul.innerHTML="";for(var i=0;i<ladder.length;i++){var li=document.createElement("li");li.innerHTML="<span>"+(ladder.length-i)+"</span><span>"+ladder[i]+"</span>";ul.appendChild(li);} }
 buildLadder();
@@ -616,22 +705,7 @@ $("studySearch").addEventListener("input",filterStudy); $("studyReset").onclick=
 function lotfRender(filter){var wrap=$("lotfList");wrap.innerHTML="";LOTF_NOTES.filter(function(n){return !filter||filter==="All"||n.type===filter;}).forEach(function(n){var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";card.innerHTML="<div class='pill' style='margin-bottom:6px'>"+n.type+"</div><div>"+n.text+"</div>";wrap.appendChild(card);});}
 $("lotfAll").onclick=function(){lotfRender("All")}; $("lotfPlot").onclick=function(){lotfRender("Plot")}; $("lotfThemes").onclick=function(){lotfRender("Themes")}; $("lotfChars").onclick=function(){lotfRender("Characters")}; $("lotfSymbol").onclick=function(){lotfRender("Symbolism")}; $("lotfPrint").onclick=function(){window.print();}; lotfRender("All");
 
-/* Shakespeare: Study Q&A + MCQ + Short Answer */
-var SHAKESPEARE_QA=[
- {section:"POETRY — Sonnet 18",items:[
-   {q:"What scene starts the poem?",a:"A summer’s day compared to the beloved."},
-   {q:"Identify 'the eye of heaven'.",a:"Metaphor/personification for the sun."},
-   {q:"Meaning of 'summer’s lease'?",a:"Summer is temporary; a fixed term that ends."},
-   {q:"What happens at the volta (line 9)?",a:"Turns to the beloved’s 'eternal summer' preserved by verse."},
-   {q:"Explain 'So long lives this…' in your own words.",a:"As long as the poem lasts, it keeps the beloved alive."}
- ]},
- {section:"DRAMA — Romeo & Juliet (Balcony/Theme)",items:[
-   {q:"Paraphrase 'Wherefore art thou Romeo?'",a:"Why must you be Romeo (a Montague) — not 'Where are you?'."},
-   {q:"What conflict drives the scene?",a:"Love versus family identity/feud."},
-   {q:"'I’ll be new baptised' shows what about Romeo?",a:"Impulsive, willing to change his name for love."},
-   {q:"How does the scene push the plot?",a:"Their decision for secret love speeds the tragedy."}
- ]}
-];
+/* Build NEW Shakespeare study panels */
 function buildShQA(){
   var wrap=$("shQA");wrap.innerHTML="";
   SHAKESPEARE_QA.forEach(function(sec){
@@ -647,7 +721,7 @@ function buildShQA(){
 }
 function buildShMCQ(){
   var box=$("shMCQ");box.innerHTML="";
-  MCQ.forEach(function(q,i){
+  MCQ.filter(function(q){return q.cat.indexOf("Lord of the Flies")===-1 || true;}).forEach(function(q,i){
     var card=document.createElement("div");card.className="card";card.style.marginBottom="10px";
     var opts=q.options.map(function(o,ix){return "<div>"+String.fromCharCode(65+ix)+") "+o+"</div>";}).join("");
     var tag="<div class='pill' style='display:inline-flex;gap:8px;align-items:center;margin-bottom:6px'><span style='width:10px;height:10px;border-radius:50%;background:"+ (CAT_COLORS[q.cat]||"#8a5cff")+"'></span>"+q.cat+"</div>";
@@ -675,7 +749,7 @@ $("shCollapseAll").onclick=function(){[].slice.call(document.querySelectorAll("#
 $("shPrint").onclick=function(){window.print();};
 buildShQA(); buildShMCQ(); buildShSA();
 
-/* ===== ROAD RAGE (3 lanes, lives, responsive canvas that always fits) ===== */
+/* ===== ROAD RAGE (3 lanes, responsive) ===== */
 var RoadRage=(function(){
   var cvs=$("drvCanvas"), ctx=cvs.getContext("2d"), DPR=1, W=360, H=540;
   var lanes=3, roadMargin=0.24, laneX=[], dashes=[], pxBase=220, pxPerSec=220;
@@ -684,7 +758,6 @@ var RoadRage=(function(){
   var lives=3, respawn=false, respawnTimer=null;
   var player={lane:1,y:0,color:"#00f5d4",visible:true};
 
-  /* === Size by viewport height first (fits LANDSCAPE) === */
   function dprScale(){
     var vw=window.innerWidth, vh=window.innerHeight;
     var maxH = Math.floor(vh*0.78);
