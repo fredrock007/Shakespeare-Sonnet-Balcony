@@ -131,8 +131,8 @@
   /* ===== Millionaire (category theming) ===== */
   #million{border:1px solid rgba(255,255,255,.12); border-radius:18px; background:linear-gradient(180deg,#0f1836,#0b1230);
     box-shadow: inset 0 0 40px rgba(255,255,255,.04), 0 20px 44px rgba(0,0,0,.5)}
-  #million.theming{box-shadow:0 0 0 3px var(--theme) inset, 0 0 32px color-mix(in srgb, var(--theme) 30%, transparent);}
-  .mil-cat{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg,#0f1837,#0b1230); box-shadow:inset 0 0 10px color-mix(in srgb, var(--theme) 28%, transparent)}
+  #million.theming{box-shadow:0 0 0 3px var(--theme) inset, 0 0 32px var(--theme)}
+  .mil-cat{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg,#0f1837,#0b1230); filter:drop-shadow(0 0 6px var(--theme))}
   .mil-dot{width:10px;height:10px;border-radius:50%}
 
   .ladder{list-style:none;padding:0;margin:0;display:flex;flex-direction:column-reverse;gap:6px}
@@ -165,6 +165,9 @@
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0d1640;border:1px solid rgba(255,255,255,.14);color:#dff3ff;padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none;z-index:150; box-shadow:0 10px 26px rgba(0,0,0,.5)}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
   .confetti-piece{position:fixed;top:0;left:0;width:8px;height:14px;opacity:.9;pointer-events:none;border-radius:2px}
+
+  /* ===== Snappy fade for main tab sections ===== */
+  section{opacity:1; transition:opacity .28s ease;}
 </style>
 </head>
 <body>
@@ -337,7 +340,7 @@
 
     <div id="shakespeare" style="display:none">
       <div class="card" style="margin-bottom:10px">
-        <div class="big"><b>Shakespeare Study Pack</b></b>.</div>
+        <div class="big"><b>Shakespeare Study Pack</b></div>
       </div>
       <div id="shQA" style="max-height:26vh; overflow:auto; margin-bottom:10px;"></div>
       <h3>MCQ Practice</h3>
@@ -474,7 +477,7 @@ var MCQ = [
 ];
 
 /* ===== Stats (local device) ===== */
-var KEY="g10_hub_v8";
+var KEY="g10_hub_v9";
 function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null}}
 function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 var STATS={merits:0,hangman:{wins:0},seconds:{fastest:null,total:0},million:{best:0,correct:0,answered:0},driver:{bestMeters:0}};
@@ -486,15 +489,35 @@ function refreshDash(){ $("s_merits").textContent=STATS.merits; $("s_hm_wins").t
   $("s_drv_best").textContent=STATS.driver.bestMeters+" m";
 } refreshDash();
 
-/* ===== Tabs ===== */
+/* ===== Tabs with snappy fade ===== */
 document.querySelectorAll(".tab-btn").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll(".tab-btn").forEach(function(x){x.classList.remove("active");});
     b.classList.add("active");
-    var t=b.getAttribute("data-tab");
-    document.querySelectorAll("section").forEach(function(s){s.style.display="none";});
-    $(t).style.display="";
-    if(t!=="driver"){RoadRage.pause();}
+
+    var target = b.getAttribute("data-tab");
+    var next = $(target);
+
+    var secs = document.querySelectorAll("section");
+    var current = Array.from(secs).find(function(s){ return s.style.display !== "none"; });
+
+    if(current === next) return;
+
+    next.style.display = "";
+    next.style.opacity = 0;
+
+    if(current){
+      current.style.opacity = 1;
+      requestAnimationFrame(function(){
+        current.style.opacity = 0;
+        setTimeout(function(){ current.style.display = "none"; }, 300); // matches .28s CSS
+        requestAnimationFrame(function(){ next.style.opacity = 1; });
+      });
+    } else {
+      next.style.opacity = 1;
+    }
+
+    if(target!=="driver"){RoadRage.pause();}
     beep("open");
   });
 });
@@ -661,15 +684,13 @@ var RoadRage=(function(){
   var lives=3, respawn=false, respawnTimer=null;
   var player={lane:1,y:0,color:"#00f5d4",visible:true};
 
-  /* === KEY CHANGE: Size by viewport height first (so it fits in LANDSCAPE) === */
+  /* === Size by viewport height first (fits LANDSCAPE) === */
   function dprScale(){
     var vw=window.innerWidth, vh=window.innerHeight;
-    var maxH = Math.floor(vh*0.78);           // cap height to 78% of viewport height
-    var cssH = Math.min(660, maxH);           // never taller than 660px
-    var cssW = Math.floor(cssH * (2/3));      // keep 2:3 aspect (W:H)
-    // Also cap width to viewport with some margin
+    var maxH = Math.floor(vh*0.78);
+    var cssH = Math.min(660, maxH);
+    var cssW = Math.floor(cssH * (2/3));
     cssW = Math.min(cssW, Math.floor(vw*0.94));
-    // If width was capped, recompute height from width to keep ratio
     cssH = Math.min(cssH, Math.floor(cssW*1.5));
 
     cvs.style.width=cssW+"px"; cvs.style.height=cssH+"px";
@@ -681,7 +702,7 @@ var RoadRage=(function(){
     var left=W*roadMargin, right=W*(1-roadMargin), inner=right-left;
     laneX=[]; for(var i=0;i<lanes;i++){ laneX.push(left+inner*((i+0.5)/lanes)); }
     dashes=[]; for(var y=0;y<H;y+=60){dashes.push({y:y});}
-    pxBase = H/2.6;                  // scale scroll speed with canvas height
+    pxBase = H/2.6;
     player.y=Math.floor(H*0.86);
     draw();
   }
