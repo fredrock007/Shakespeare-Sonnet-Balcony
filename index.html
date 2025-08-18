@@ -63,7 +63,6 @@
   canvas{background:linear-gradient(180deg,#0c1228,#0a0f21);border:1px solid rgba(255,255,255,.12);border-radius:16px;max-width:100%}
 
   /* ROAD RAGE controls & HUD */
-  .driver-wrap{display:grid;grid-template-columns:1fr;gap:10px}
   .hud{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .gauges{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px}
   .gauge{width:230px;height:14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:linear-gradient(180deg,#0f1836,#0b1230);position:relative;overflow:hidden}
@@ -73,15 +72,17 @@
   .overlayCard{max-width:620px;background:linear-gradient(180deg,#0f1837,#0b1230);border:2px solid var(--theme);border-radius:16px;padding:16px}
   .overlayCard .opt{display:grid;grid-template-columns:1fr;gap:10px}
   .gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,0,0,.65);z-index:60;color:#ff1e1e;font-weight:900;font-size:44px;text-shadow:0 0 22px #300}
-  .driver-controls{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
-  .pedal{flex:1;min-width:140px;height:140px;border-radius:18px;border:2px solid rgba(255,255,255,.14);
-    background:linear-gradient(180deg,#0d1736,#0b1230);color:#e7f2ff;font-size:20px;font-weight:900;touch-action:none;box-shadow:0 12px 24px rgba(0,0,0,.45)}
-  .pedal:active{transform:scale(.98)}
-  .steerBox{display:flex;gap:10px;justify-content:center}
-  .steer{width:120px;height:120px;border-radius:18px;border:2px solid rgba(255,255,255,.14);
-    background:linear-gradient(180deg,#10193a,#0d1633);color:#e6eef5;font-size:24px;font-weight:900;touch-action:none}
-  .steer:active{transform:scale(.98)}
-  @media (max-width:600px){.pedal{min-width:120px;height:120px}.steer{width:100px;height:100px;font-size:20px}}
+
+  /* On-canvas thumb controls */
+  .overlay-controls{ position:absolute; inset:0; z-index:14; pointer-events:none; }
+  .oc-left,.oc-right{ position:absolute; bottom:12px; display:flex; flex-direction:column; gap:12px; pointer-events:auto; }
+  .oc-left{ left:12px; } .oc-right{ right:12px; }
+  .oc-btn{ width:86px; height:86px; border-radius:16px; border:2px solid rgba(255,255,255,.14);
+           background:linear-gradient(180deg,#0d1736,#0b1230); color:#e7f2ff; font-weight:900;
+           box-shadow:0 10px 24px rgba(0,0,0,.45); touch-action:none; }
+  .oc-btn:active{ transform:scale(.98); }
+  @media (min-width:900px){ .oc-btn{ width:96px; height:96px; } }
+  @media (max-width:420px){ .oc-btn{ width:74px; height:74px; } }
 
   /* 30 Seconds */
   .def-box{background:linear-gradient(180deg,#0f1837,#0b1230);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px}
@@ -242,7 +243,7 @@
   <section id="driver" class="card" style="display:none">
     <div class="row hud" style="justify-content:space-between">
       <span class="pill">Stage: <b id="drvStageName">—</b></span>
-      <span class="pill">Time Left: <b id="drvTime">100</b>s</span>
+      <span class="pill">Time Left: <b id="drvTime">30</b>s</span>
       <span class="pill">Distance: <b id="drvDist">0</b> m</span>
       <span class="pill">Speed: <b id="drvSpeed">50</b> m/s</span>
       <span class="pill">Score: <b id="drvScore">0</b></span>
@@ -256,6 +257,19 @@
     </div>
     <div style="position:relative;display:flex;justify-content:center">
       <canvas id="drvCanvas" width="360" height="540" style="border-radius:16px;border:1px solid rgba(255,255,255,.14)"></canvas>
+
+      <!-- On-canvas thumb controls -->
+      <div class="overlay-controls" aria-hidden="false">
+        <div class="oc-left">
+          <button id="btnLeft"  class="steer oc-btn"  aria-label="Steer Left">⬅️</button>
+          <button id="btnRight" class="steer oc-btn"  aria-label="Steer Right">➡️</button>
+        </div>
+        <div class="oc-right">
+          <button id="pedalAccel" class="pedal oc-btn" aria-label="Accelerate">⏫</button>
+          <button id="pedalBrake" class="pedal oc-btn" aria-label="Brake">⏬</button>
+        </div>
+      </div>
+
       <div id="drvOverlay" class="overlayQ">
         <div class="overlayCard">
           <div class="big" id="drvQ">Question here</div>
@@ -264,26 +278,18 @@
       </div>
       <div id="drvGameOver" class="gameOver">GAME OVER</div>
     </div>
-    <div class="driver-controls">
-      <button id="pedalAccel" class="pedal">⏫<br/><small>ACCELERATOR</small></button>
-      <div class="steerBox">
-        <button id="btnLeft" class="steer">⬅️<br/><small>LEFT</small></button>
-        <button id="btnRight" class="steer">➡️<br/><small>RIGHT</small></button>
-      </div>
-      <button id="pedalBrake" class="pedal">⏬<br/><small>BRAKE</small></button>
-    </div>
   </section>
 
-  <!-- STUDY (placeholder, left minimal so it doesn’t block anything) -->
+  <!-- STUDY (minimal notes; games use their own banks) -->
   <section id="study" class="card" style="display:none">
     <div class="subtabs">
       <button class="sub-btn active" data-sub="studyVocab">Vocabulary</button>
       <button class="sub-btn" data-sub="lotf">Lord of the Flies</button>
       <button class="sub-btn" data-sub="shakespeare">Shakespeare</button>
     </div>
-    <div id="studyVocab">Sample terms are used in the games. (You can replace the banks in code.)</div>
-    <div id="lotf" style="display:none">Quick notes: civilization vs savagery; conch (order); pig’s head (evil); glasses (reason).</div>
-    <div id="shakespeare" style="display:none">Sonnet 18 & Balcony Scene overview; key metaphors; iambic pentameter; conflict of love vs family feud.</div>
+    <div id="studyVocab">Sample terms are used in the games. (You can expand the banks in code.)</div>
+    <div id="lotf" style="display:none">Notes: civilization vs savagery; conch (order); pig’s head (evil); glasses (reason).</div>
+    <div id="shakespeare" style="display:none">Sonnet 18 & Balcony Scene overview; key metaphors; iambic pentameter; conflict of love vs family identity.</div>
   </section>
 </div>
 
@@ -396,22 +402,22 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
     ctx.strokeStyle="#cfe7ff"; ctx.lineWidth=4;
     // gallows
     ctx.beginPath();
-    ctx.moveTo(40,270); ctx.lineTo(140,270); // base
-    ctx.moveTo(90,270); ctx.lineTo(90,60);  // pole
-    ctx.lineTo(240,60); // beam
-    ctx.lineTo(240,90); // rope
+    ctx.moveTo(40,270); ctx.lineTo(140,270);
+    ctx.moveTo(90,270); ctx.lineTo(90,60);
+    ctx.lineTo(240,60);
+    ctx.lineTo(240,90);
     ctx.stroke();
     // title
     ctx.fillStyle="#cfe7ff"; ctx.font="bold 16px Arial"; ctx.fillText("Mr Samuels - Grade 10 HL Hangman", 12, 24);
   }
   function drawMan(m){
     ctx.strokeStyle="#ff6a00"; ctx.lineWidth=4;
-    if(m>0){ ctx.beginPath(); ctx.arc(240,110,20,0,Math.PI*2); ctx.stroke(); }                 // head
-    if(m>1){ ctx.beginPath(); ctx.moveTo(240,130); ctx.lineTo(240,180); ctx.stroke(); }       // body
-    if(m>2){ ctx.beginPath(); ctx.moveTo(240,140); ctx.lineTo(215,165); ctx.stroke(); }       // L arm
-    if(m>3){ ctx.beginPath(); ctx.moveTo(240,140); ctx.lineTo(265,165); ctx.stroke(); }       // R arm
-    if(m>4){ ctx.beginPath(); ctx.moveTo(240,180); ctx.lineTo(220,215); ctx.stroke(); }       // L leg
-    if(m>5){ ctx.beginPath(); ctx.moveTo(240,180); ctx.lineTo(260,215); ctx.stroke(); }       // R leg
+    if(m>0){ ctx.beginPath(); ctx.arc(240,110,20,0,Math.PI*2); ctx.stroke(); }
+    if(m>1){ ctx.beginPath(); ctx.moveTo(240,130); ctx.lineTo(240,180); ctx.stroke(); }
+    if(m>2){ ctx.beginPath(); ctx.moveTo(240,140); ctx.lineTo(215,165); ctx.stroke(); }
+    if(m>3){ ctx.beginPath(); ctx.moveTo(240,140); ctx.lineTo(265,165); ctx.stroke(); }
+    if(m>4){ ctx.beginPath(); ctx.moveTo(240,180); ctx.lineTo(220,215); ctx.stroke(); }
+    if(m>5){ ctx.beginPath(); ctx.moveTo(240,180); ctx.lineTo(260,215); ctx.stroke(); }
   }
   function pick(){ current = words[Math.floor(Math.random()*words.length)]; lives=6; used=[]; won=lost=false;
     revealed = current.w.split("").map(ch => (ch===" "?" ": "_")); render(); }
@@ -430,12 +436,11 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
     for(let i=0;i<current.w.length;i++){
       if(current.w[i]===ch){ revealed[i]=ch; good=true; }
     }
-    if(good){ pop(); if(revealed.join("")===current.w){ won=true; confetti(); STATS.hmWins=(STATS.hmWins|0)+1; saveObj(STORE_KEY,STATS); refreshDash(); } }
+    if(good){ pop(); confetti(35); if(revealed.join("")===current.w){ won=true; STATS.hmWins=(STATS.hmWins|0)+1; saveObj(STORE_KEY,STATS); refreshDash(); } }
     else{ beep(); lives--; if(lives<=0){ lost=true; crashSound(); } }
     render();
   }
 
-  // keyboard
   (function buildKeys(){
     const k=$("hmKeys"); k.innerHTML="";
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(ch=>{
@@ -466,15 +471,15 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
     {w:"SYMBOLISM", d:"Objects stand for ideas."},
     {w:"TRAGEDY", d:"Play genre of Romeo & Juliet."}
   ];
-  let round=false, time=30, timer=null, current=null, score=0, total=STATS.secTotal|0;
+  let round=false, time=30, timer=null, current=null, score=0;
   const inp=$("secInput");
 
   function pick(){ current = bank[Math.floor(Math.random()*bank.length)]; $("secDef").textContent=current.d; inp.value=""; }
   function setHourglass(t){
     const hTop=$("hgTop"), hBot=$("hgBottom"), stream=$("hgStream");
     const frac=(30-t)/30; const topH=60*(1-frac), botH=60*frac;
-    hTop.setAttribute("y", 20+(60-topH)); hTop.setAttribute("height", topH<0?0:topH);
-    hBot.setAttribute("y", 140-botH); hBot.setAttribute("height", botH<0?0:botH);
+    hTop.setAttribute("y", 20+(60-topH)); hTop.setAttribute("height", Math.max(0, topH));
+    hBot.setAttribute("y", 140-botH); hBot.setAttribute("height", Math.max(0, botH));
     if(t<30 && t>0){ stream.setAttribute("visibility","visible"); stream.setAttribute("height", Math.max(0, 60*(1-Math.abs(15-t)/15))); }
     else{ stream.setAttribute("visibility","hidden"); stream.setAttribute("height", 0); }
     $("secTime").textContent = Math.ceil(t);
@@ -488,13 +493,12 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
   }
   function stop(t0){
     clearInterval(timer); round=false; $("secSkip").disabled=true; $("secGive").disabled=true; $("secDef").textContent="Time! Score: "+score;
-    STATS.secTotal=(STATS.secTotal|0)+score;
     const elapsed=(performance.now()-t0)/1000;
     if(score>0){ STATS.secFast = STATS.secFast? Math.min(STATS.secFast, elapsed/score) : (elapsed/score); }
-    saveObj(STORE_KEY,STATS); refreshDash();
+    STATS.secTotal=(STATS.secTotal|0)+score; saveObj(STORE_KEY,STATS); refreshDash();
   }
   function correct(){
-    pop(); confetti(35); score++; $("secScore").textContent=score;
+    pop(); confetti(30); score++; $("secScore").textContent=score;
     $("secFeedback").textContent="✅ Correct: "+current.w; $("secLast").textContent="+"+current.w.length+" letters";
     pick();
   }
@@ -531,27 +535,16 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
     {c:"Literary Devices",q:"'Whispering winds' is an example of…",o:["Personification","Metaphor","Hyperbole","Euphemism"],a:"Personification"},
     {c:"Parts of Speech",q:"'Quickly' is usually a(n)…",o:["Adverb","Adjective","Noun","Preposition"],a:"Adverb"},
     {c:"Poetry Forms",q:"Shakespeare’s sonnets are mostly written in…",o:["Iambic pentameter","Trochaic trimeter","Free verse","Haiku"],a:"Iambic pentameter"},
-    // add a bunch more for variety
     {c:"Sonnet 18",q:"'Summer's lease hath all too short a date' means summer is…",o:["Brief","Endless","Harsh","Perfect"],a:"Brief"},
     {c:"Balcony Scene",q:"Juliet worries about Romeo because he is…",o:["In the Capulet garden","Late for the wedding","Going to war","Leaving Verona"],a:"In the Capulet garden"},
     {c:"Lord of the Flies",q:"The 'beast' on the mountain is actually…",o:["A dead parachutist","A bear","A witch","A demon"],a:"A dead parachutist"},
     {c:"Literary Devices",q:"'She is the sun' is…",o:["Metaphor","Simile","Oxymoron","Pun"],a:"Metaphor"},
     {c:"Parts of Speech",q:"In 'they run fast', 'run' is…",o:["Verb","Noun","Adjective","Adverb"],a:"Verb"},
-    {c:"Poetry Forms",q:"A 14-line poem is a…",o:["Sonnet","Elegy","Ode","Ballad"],a:"Sonnets".slice(0,6)}, // "Sonnet"
+    {c:"Poetry Forms",q:"A 14-line poem is a…",o:["Sonnet","Elegy","Ode","Ballad"],a:"Sonnet"},
     {c:"Sonnet 18",q:"'Nor shall death brag thou wander’st in his shade' means the beloved will…",o:["Live in verse","Die young","Be forgotten","Sleep"],a:"Live in verse"},
     {c:"Balcony Scene",q:"Romeo hears Juliet before she…",o:["Sees him","Leaves","Falls","Calls Nurse"],a:"Sees him"},
     {c:"Lord of the Flies",q:"Jack primarily represents…",o:["Savagery","Reason","Law","Mercy"],a:"Savagery"},
-    {c:"Literary Devices",q:"'As brave as a lion' is…",o:["Simile","Metaphor","Euphemism","Allusion"],a:"Simile"},
-    {c:"Parts of Speech",q:"A word that names a person/place/thing is…",o:["Noun","Verb","Adverb","Conjunction"],a:"Noun"},
-    {c:"Poetry Forms",q:"Unstressed–stressed pattern is called…",o:["Iamb","Trochee","Dactyl","Spondee"],a:"Iamb"},
-    {c:"Sonnet 18",q:"'And every fair from fair sometime declines' refers to…",o:["Decay","Growth","War","Peace"],a:"Decay"},
-    {c:"Balcony Scene",q:"The scene mainly explores…",o:["Love vs social identity","Politics","Friendship","Greed"],a:"Love vs social identity"},
-    {c:"Lord of the Flies",q:"The signal fire symbolises…",o:["Hope of rescue","War","Fear","Wealth"],a:"Hope of rescue"},
-    {c:"Literary Devices",q:"An indirect reference to another work is…",o:["Allusion","Irony","Hyperbole","Pun"],a:"Allusion"},
-    {c:"Parts of Speech",q:"'And', 'but', 'or' are…",o:["Conjunctions","Articles","Pronouns","Interjections"],a:"Conjunctions"},
-    {c:"Poetry Forms",q:"The rhyme scheme of a Shakespearean sonnet ends with a…",o:["Rhyming couplet","Sestet","Tercet","Octave"],a:"Rhyming couplet"},
-    {c:"Sonnet 18",q:"'Thy eternal summer shall not fade' suggests…",o:["Enduring beauty","Autumn","Darkness","Jealousy"],a:"Enduring beauty"},
-    {c:"Balcony Scene",q:"Juliet proposes they…",o:["Change names","Fight","Run away now","Tell parents"],a:"Change names"}
+    {c:"Literary Devices",q:"'As brave as a lion' is…",o:["Simile","Metaphor","Euphemism","Allusion"],a:"Simile"}
   ];
   const ladder=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
   let step=1, usedIdx=[], cur=null, lifeline5050=true, lifelineSkip=true;
@@ -588,13 +581,13 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
     });
     $("milStep").textContent=step;
   }
-  function check(opt,btn){
+  function check(opt){
     STATS.milAnswered=(STATS.milAnswered|0)+1;
     if(opt===cur.a){
       STATS.milCorrect=(STATS.milCorrect|0)+1; pop(); confetti(40);
       $("milFeedback").textContent="✅ Correct!";
       step++;
-      if(step===8){ addMerits(1); }           // halfway
+      if(step===8){ addMerits(1); }
       if(step>15){ addMerits(2); toast("🏆 Millionaire!"); }
       STATS.milBest=Math.max(STATS.milBest|0, Math.min(step-1,15));
       saveObj(STORE_KEY,STATS); refreshDash();
@@ -618,14 +611,14 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
   drawLadder();
 })();
 
-/* -------------------- ROAD RAGE (fixed build, hooks best distance to dashboard) -------------------- */
+/* -------------------- ROAD RAGE (30s stages, on-canvas controls) -------------------- */
 var RoadRage=(function(){
   const cvs=$("drvCanvas"), ctx=cvs.getContext("2d");
   let DPR=1, W=360, H=540;
 
   // Config
   const lanes=5, roadMargin=0.16;
-  const STAGE_TIME=100;
+  const STAGE_TIME=30;                 // << 30 SECONDS PER STAGE
   const MAX_SPEED=250, NITRO_MAX=320, NITRO_MIN=260, MIN_SPEED=30;
   const ACCEL_RATE=70, DRAG_RATE=14, BRAKE_RATE=140;
   const OB_CLUSTER_P=0.0036, BOOST_P=0.002, OIL_P=0.0025;
@@ -648,7 +641,7 @@ var RoadRage=(function(){
     {name:"Futuristic", road:"#101c36", dash:"#00f5d4", sky:"#030b1a"}
   ];
 
-  // State (single source of truth)
+  // State
   let laneX=[], dashes=[];
   let running=false, last=0, meters=0, speed=50, score=0;
   let stageIdx=0, stageStartT=0, timeLeft=STAGE_TIME;
@@ -798,7 +791,7 @@ var RoadRage=(function(){
     askOne();
   }
 
-  // Simple MCQ sample for Road Rage inter-stage (kept small)
+  // Simple MCQ sample
   const MCQ=[{cat:"Sonnet 18",q:"'Eye of heaven' refers to the…",options:["Sun","Moon","Stars","Wind"],correct:"Sun"},
              {cat:"Balcony Scene",q:"'Wherefore art thou Romeo?' means…",options:["Why are you Romeo?","Where are you?","Who are you?","When will you come?"],correct:"Why are you Romeo?"},
              {cat:"Lord of the Flies",q:"The conch symbolises…",options:["Order","Wealth","Romance","Magic"],correct:"Order"}];
@@ -926,7 +919,7 @@ var RoadRage=(function(){
   }
 
   dprScale(); reset();
-  return {pause:()=>{ /* pause on tab change */ }};
+  return {pause:()=>{ /* paused on tab change */ }};
 })();
 
 /* -------------------- small subtabs (study) -------------------- */
