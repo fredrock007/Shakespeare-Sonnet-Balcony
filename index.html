@@ -84,7 +84,7 @@
   .hero-sub{color:#bcd1ff;font-weight:700;margin-top:2px}
   .hero-right{margin-left:auto; text-align:right}
   #zaClock{font-weight:1000;font-size:clamp(16px,3.6vw,28px)}
-  .tile-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px}
+  .tile-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px; position:relative; z-index:1;}
   @media (max-width:1000px){.tile-grid{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:560px){.tile-grid{grid-template-columns:repeat(2,1fr)}}
   .tile{
@@ -170,7 +170,7 @@
   <header>
     <div class="brand">Mr Samuels’ <span class="neon">Grade 10 English Hub</span></div>
     <span id="studentBadge" class="badge">Guest Mode</span>
-    <!-- Not a tab button anymore (prevents tab breakage) -->
+    <!-- Not a tab button (prevents tab breakage) -->
     <button id="btnStudent" class="chip">Set Student</button>
     <div class="tabs">
       <button class="tab-btn active" data-tab="dash">Dashboard</button>
@@ -345,18 +345,18 @@
   <!-- STUDY -->
   <section id="study" class="card" style="display:none">
     <div class="subtabs">
-      <button class="sub-btn active" data-sub="studyVocab">Vocabulary</button>
+      <button class="sub-btn" data-sub="studyVocab">Vocabulary</button>
       <button class="sub-btn" data-sub="lotf">Lord of the Flies</button>
-      <button class="sub-btn" data-sub="shakespeare">Shakespeare</button>
+      <button class="sub-btn active" data-sub="shakespeare">Shakespeare</button>
     </div>
-    <div id="studyVocab">
+    <div id="studyVocab" style="display:none">
       <p>Core terms used across the games (sample): metaphor, iambic pentameter, hyperbole, symbolism, tragedy, conflict, conch, glasses.</p>
     </div>
     <div id="lotf" style="display:none">
       <p><b>Themes:</b> civilization vs. savagery; leadership; fear.</p>
       <p><b>Symbols:</b> conch (order), Piggy’s glasses (reason), the beast (inner evil).</p>
     </div>
-    <div id="shakespeare" style="display:none">
+    <div id="shakespeare">
       <p><b>Sonnet 18</b>: comparisons to a summer’s day; the “eye of heaven” (sun); eternal lines give immortality.</p>
       <p><b>Balcony Scene</b>: names vs identity; “Wherefore art thou Romeo?” means “Why are you Romeo?”.</p>
       <p><b>Form:</b> iambic pentameter; rhyme scheme ABAB CDCD EFEF GG.</p>
@@ -419,7 +419,7 @@ refreshDash();
 /* ========= TABS (robust + hash + remember) ========= */
 (function(){
   var GAME_TABS = {hangman:1,seconds:1,million:1,driver:1,study:1};
-  var buttons = document.querySelectorAll('.tab-btn[data-tab]'); // FIX: only real tab buttons
+  var buttons = document.querySelectorAll('.tab-btn[data-tab]'); // only real tab buttons
   var sections = document.querySelectorAll('section');
   var LAST_KEY = "ms_eng10_lasttab";
 
@@ -463,32 +463,20 @@ refreshDash();
     })(buttons[j]);
   }
 
-  // tile shortcuts on dashboard
-  var tiles = document.querySelectorAll('#dashTiles .tile');
-  for (var t=0;t<tiles.length;t++){
-    (function(tile){
-      tile.addEventListener('click', function(){
-        var id = tile.getAttribute('data-go');
-        var btn = document.querySelector('.tab-btn[data-tab="'+id+'"]');
-        if(btn){ btn.click(); }
-      });
-    })(tiles[t]);
-  }
+  // expose
+  window.showTab = showTab;
 
-  // hash / remember
-  function initFromHash(){
-    var id = (location.hash||"").replace("#","");
-    if(!id){ try{ id = localStorage.getItem(LAST_KEY)||"dash"; }catch(e){ id="dash"; } }
-    showTab(id);
-  }
-  window.addEventListener('hashchange', function(){ var id=(location.hash||"").replace("#",""); showTab(id); });
-  // initial state
+  // initial state (hide all then show remembered/hash)
   for (var i=0;i<sections.length;i++){
     sections[i].style.display = 'none';
     sections[i].style.opacity = 0;
   }
-  initFromHash();
-  window.showTab = showTab; // optional global
+  var initial = (location.hash||"").replace("#","");
+  if(!initial){ try{ initial = localStorage.getItem(LAST_KEY)||"dash"; }catch(e){ initial="dash"; } }
+  showTab(initial);
+
+  // respond to hash changes (e.g., links)
+  window.addEventListener('hashchange', function(){ var id=(location.hash||"").replace("#",""); showTab(id); });
 })();
 
 /* ========= ZA Clock (Africa/Johannesburg) ========= */
@@ -503,14 +491,15 @@ refreshDash();
   upd(); setInterval(upd, 1000);
 })();
 
-/* ========= Dashboard hero tilt (lightweight, degrades gracefully) ========= */
+/* ========= Dashboard hero tilt (lightweight) ========= */
 (function(){
   var el = $("hero3d"); if(!el) return;
   var rect=null;
   function on(e){
     rect = el.getBoundingClientRect();
-    var x = (e.clientX|| (e.touches&&e.touches[0].clientX) || (rect.left+rect.width/2));
-    var y = (e.clientY|| (e.touches&&e.touches[0].clientY) || (rect.top+rect.height/2));
+    var cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    var x = (e.clientX || (e.touches&&e.touches[0].clientX) || cx);
+    var y = (e.clientY || (e.touches&&e.touches[0].clientY) || cy);
     var dx = ((x-rect.left)/rect.width - .5), dy = ((y-rect.top)/rect.height - .5);
     var rx = (dy * -6).toFixed(2), ry = (dx * 8).toFixed(2);
     el.style.transform = "perspective(1000px) rotateX("+rx+"deg) rotateY("+ry+"deg)";
@@ -518,6 +507,47 @@ refreshDash();
   function off(){ el.style.transform="perspective(1000px) rotateX(0deg) rotateY(0deg)"; }
   el.addEventListener("mousemove",on); el.addEventListener("mouseleave",off);
   el.addEventListener("touchmove",on,{passive:true}); el.addEventListener("touchend",off);
+})();
+
+/* ========= DASH TILES → OPEN TABS (robust for Android/WebView) ========= */
+(function(){
+  var box = document.getElementById('dashTiles'); if(!box) return;
+
+  function getTileTarget(el){
+    // manual "closest [data-go]" to avoid needing Element.closest()
+    while(el && el!==box && !(el.getAttribute && el.getAttribute('data-go'))){ el = el.parentNode; }
+    return (el && el.getAttribute && el.getAttribute('data-go')) ? el : null;
+  }
+  function openTabFromTile(id){
+    if (typeof window.showTab === 'function') { window.showTab(id); return; }
+    // Fallback (if tabs script didn’t load for some reason)
+    var sections = document.querySelectorAll('section');
+    for (var i=0;i<sections.length;i++){
+      var s = sections[i];
+      s.style.display = (s.id===id)? '' : 'none';
+      s.style.opacity = (s.id===id)? 1 : 0;
+    }
+    var btns = document.querySelectorAll('.tab-btn[data-tab]');
+    for (var j=0;j<btns.length;j++){
+      var b = btns[j];
+      if (b.getAttribute('data-tab')===id) b.classList.add('active');
+      else b.classList.remove('active');
+    }
+    try{ history.replaceState(null,"","#"+id); }catch(e){}
+  }
+
+  box.addEventListener('click', function(e){
+    var t = getTileTarget(e.target); if(!t) return;
+    e.preventDefault(); if(typeof clickBeep==="function") clickBeep();
+    openTabFromTile(t.getAttribute('data-go'));
+  });
+
+  box.addEventListener('keydown', function(e){
+    if(e.key!=='Enter' && e.key!==' ') return;
+    var t = getTileTarget(e.target); if(!t) return;
+    e.preventDefault(); if(typeof clickBeep==="function") clickBeep();
+    openTabFromTile(t.getAttribute('data-go'));
+  });
 })();
 
 /* ========= HANGMAN ========= */
@@ -721,7 +751,7 @@ var RoadRage=(function(){
   ];
   var STAGES=[
     {name:"Mountainous",road:"#11243f", dash:"#fca311", sky:"#041225"},
-    {name:"Farmland",   road:"#0e2a1c", dash:"#b7e07e", sky:"#02150b"},
+    {name:"Farmland",   road:"#0e2a1c", dash:"#b7e07e", sky:"#02150B"},
     {name:"Dirt Road",  road:"#3b2a16", dash:"#e1b382", sky:"#120a04"},
     {name:"City",       road:"#1a1f2c", dash:"#9ad0ff", sky:"#0b0d16"},
     {name:"Suburbs",    road:"#1c2631", dash:"#bcd1ff", sky:"#0c1420"},
@@ -1040,6 +1070,8 @@ var RoadRage=(function(){
   var buttons = document.querySelectorAll('.sub-btn');
   var ids = ['studyVocab','lotf','shakespeare'];
   function show(id){ for (var i=0;i<ids.length;i++){ var el=document.getElementById(ids[i]); el.style.display=(ids[i]===id)?'':'none'; } }
+  // init to Shakespeare by default
+  show('shakespeare');
   for (var i=0;i<buttons.length;i++){
     (function(b){
       b.addEventListener('click', function(){
@@ -1050,7 +1082,7 @@ var RoadRage=(function(){
   }
 })();
 
-/* ========= Student toggle (kept simple) ========= */
+/* ========= Student toggle ========= */
 (function(){
   var btn=$("btnStudent"), badge=$("studentBadge");
   if(btn){ btn.onclick=function(){ clickBeep(); if(badge.textContent==="Guest Mode"){ badge.textContent="Student Mode"; badge.classList.add("on"); toast("Student mode set"); } else { badge.textContent="Guest Mode"; badge.classList.remove("on"); toast("Guest mode set"); } }; }
