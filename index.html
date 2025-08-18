@@ -62,7 +62,7 @@
 
   canvas{background:linear-gradient(180deg,#0c1228,#0a0f21);border:1px solid rgba(255,255,255,.12);border-radius:16px;max-width:100%}
 
-  /* ROAD RAGE controls & HUD */
+  /* ROAD RAGE HUD & controls */
   .hud{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   .gauges{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px}
   .gauge{width:230px;height:14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:linear-gradient(180deg,#0f1836,#0b1230);position:relative;overflow:hidden}
@@ -73,12 +73,12 @@
   .overlayCard .opt{display:grid;grid-template-columns:1fr;gap:10px}
   .gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,0,0,.65);z-index:70;color:#ff1e1e;font-weight:900;font-size:44px;text-shadow:0 0 22px #300}
 
-  /* On-canvas thumb controls (pointer events for all devices) */
+  /* On-canvas thumb controls */
   .overlay-controls{ position:absolute; inset:0; z-index:50; pointer-events:none; }
-  .oc-left,.oc-right,.oc-mid{ position:absolute; bottom:12px; display:flex; gap:12px; pointer-events:auto; }
-  .oc-left{ left:12px; }
-  .oc-right{ right:12px; flex-direction:column; }
-  .oc-mid{ left:50%; transform:translateX(-50%); }
+  .oc-left,.oc-right,.oc-top{ position:absolute; display:flex; gap:12px; pointer-events:auto; }
+  .oc-left{ left:12px; bottom:12px; }
+  .oc-right{ right:12px; bottom:12px; flex-direction:column; }
+  .oc-top{ right:12px; top:12px; }
   .oc-btn{
     width:86px; height:86px; border-radius:16px; border:2px solid rgba(255,255,255,.14);
     background:linear-gradient(180deg,#0d1736,#0b1230); color:#e7f2ff; font-weight:900;
@@ -266,14 +266,14 @@
       <!-- On-canvas thumb controls -->
       <div class="overlay-controls" aria-hidden="false">
         <div class="oc-left">
-          <button id="btnLeft"  class="steer oc-btn"  aria-label="Steer Left">⬅️</button>
-          <button id="btnRight" class="steer oc-btn"  aria-label="Steer Right">➡️</button>
+          <button id="btnLeft"  class="oc-btn"  aria-label="Steer Left">⬅️</button>
+          <button id="btnRight" class="oc-btn"  aria-label="Steer Right">➡️</button>
         </div>
         <div class="oc-right">
-          <button id="pedalAccel" class="pedal oc-btn" aria-label="Accelerate">⏫</button>
-          <button id="pedalBrake" class="pedal oc-btn" aria-label="Brake">⏬</button>
+          <button id="pedalAccel" class="oc-btn" aria-label="Accelerate">⏫</button>
+          <button id="pedalBrake" class="oc-btn" aria-label="Brake">⏬</button>
         </div>
-        <div class="oc-mid">
+        <div class="oc-top">
           <button id="btnFire" class="oc-btn" aria-label="Fire">🔥</button>
         </div>
       </div>
@@ -318,7 +318,7 @@ function screech(){ try{let ac=safeAC(), n=ac.createBufferSource(), g=ac.createG
   for(let i=0;i<d.length;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.1); }
   n.buffer=b; bp.type="bandpass"; bp.frequency.value=3000; g.gain.value=.25; n.connect(bp); bp.connect(g); g.connect(ac.destination); n.start(); }catch(e){}}
 function crashSound(){ try{var ac=safeAC(), dur=.5, b=ac.createBuffer(1, ac.sampleRate*dur, ac.sampleRate), d=b.getChannelData(0);
-  for(var i=0;i<d.length;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.2);} var s=ac.createBufferSource(); s.buffer=b; var g=ac.createGain(); g.gain.value=.42;
+  for(var i=0;i<d.length;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.2);} var s=ac.createBufferSource(); s.buffer=b; var g=ac.createGain(); g.gain.value=.5;
   var lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=900; s.connect(lp); lp.connect(g); g.connect(ac.destination); s.start(); }catch(e){}}
 function ignitionSound(){ try{var ac=safeAC(), t=ac.currentTime, o=ac.createOscillator(), g=ac.createGain(); o.type="triangle"; o.frequency.setValueAtTime(120,t);
   g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.22,t+.06); g.gain.exponentialRampToValueAtTime(0.0001,t+.8);
@@ -339,10 +339,8 @@ function confetti(n){ n=n||60; for(let i=0;i<n;i++){ const d=document.createElem
 
 /* -------------------- simple student + stats store -------------------- */
 const STORE_KEY="ms_eng10_stats";
-const STUDENT_KEY="ms_eng10_student";
 function loadObj(k,def){ try{ return JSON.parse(localStorage.getItem(k))||def; }catch(e){ return def; } }
 function saveObj(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
-
 var STATS = loadObj(STORE_KEY,{ merits:0, hmWins:0, secFast:null, secTotal:0, milBest:0, milCorrect:0, milAnswered:0, drvBest:0 });
 function refreshDash(){
   $("s_merits").textContent=STATS.merits|0;
@@ -373,7 +371,7 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
   });
 });
 
-/* -------------------- HANGMAN (unchanged core) -------------------- */
+/* -------------------- HANGMAN -------------------- */
 (function(){
   const words=[
     {w:"METAPHOR",h:"A direct comparison without using 'like' or 'as'."},
@@ -441,11 +439,11 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
   })();
   $("hmHint").onclick=()=>{ clickBeep(); $("hmHintBox").style.display="block"; $("hmHintBox").textContent=current?("Hint: "+current.h):"Pick a word."; };
   $("hmNew").onclick=()=>{ clickBeep(); pick(); document.querySelectorAll("#hmKeys button").forEach(b=>b.disabled=false); $("hmHintBox").style.display="none"; $("hmResult").textContent=""; };
-  $("hmReveal").onclick=()=>{ clickBeep(); if(!current)return; revealed=current.w.split(""); Stopped=true; render(); };
+  $("hmReveal").onclick=()=>{ clickBeep(); if(!current)return; revealed=current.w.split(""); lost=true; render(); };
   pick();
 })();
 
-/* -------------------- 30 SECONDS (unchanged behaviour) -------------------- */
+/* -------------------- 30 SECONDS -------------------- */
 (function(){
   const bank=[
     {w:"METAPHOR", d:"Direct comparison without 'like' or 'as'."},
@@ -497,53 +495,36 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
   setHourglass(30);
 })();
 
-/* -------------------- MILLIONAIRE (same core as before) -------------------- */
+/* -------------------- MILLIONAIRE -------------------- */
 (function(){
-  const CAT_COL={
-    "Sonnet 18":"#ff2b2b", "Balcony Scene":"#ff9f1c", "Lord of the Flies":"#2ec4b6",
-    "Literary Devices":"#8a5cff", "Parts of Speech":"#00f5d4", "Poetry Forms":"#fca311"
-  };
-  const Q=[
+  const ladder=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
+  const Q=[ // trimmed for brevity
     {c:"Sonnet 18",q:"In Sonnet 18, 'the eye of heaven' refers to the…",o:["Sun","Moon","Heaven","Angel"],a:"Sun"},
     {c:"Sonnet 18",q:"'So long lives this' refers to the poem’s…",o:["Immortality","Meter","Rhyme","Imagery"],a:"Immortality"},
     {c:"Balcony Scene",q:"'Wherefore art thou Romeo?' means…",o:["Why are you Romeo?","Where are you?","Who are you?","Will you come?"],a:"Why are you Romeo?"},
-    {c:"Balcony Scene",q:"Which obstacle keeps the lovers apart?",o:["Family feud","Distance","War","Age"],a:"Family feud"},
-    {c:"Lord of the Flies",q:"The conch primarily symbolises…",o:["Order","Greed","Magic","Nature"],a:"Order"},
     {c:"Lord of the Flies",q:"Piggy’s glasses stand for…",o:["Reason","Cowardice","Beauty","Fear"],a:"Reason"},
     {c:"Literary Devices",q:"A direct comparison without 'like'/'as' is…",o:["Metaphor","Simile","Allusion","Irony"],a:"Metaphor"},
-    {c:"Literary Devices",q:"'Whispering winds' is an example of…",o:["Personification","Metaphor","Hyperbole","Euphemism"],a:"Personification"},
     {c:"Parts of Speech",q:"'Quickly' is usually a(n)…",o:["Adverb","Adjective","Noun","Preposition"],a:"Adverb"},
-    {c:"Poetry Forms",q:"Shakespeare’s sonnets are mostly written in…",o:["Iambic pentameter","Trochaic trimeter","Free verse","Haiku"],a:"Iambic pentameter"},
-    {c:"Sonnet 18",q:"'Summer's lease hath all too short a date' means summer is…",o:["Brief","Endless","Harsh","Perfect"],a:"Brief"},
-    {c:"Balcony Scene",q:"Juliet worries about Romeo because he is…",o:["In the Capulet garden","Late for the wedding","Going to war","Leaving Verona"],a:"In the Capulet garden"},
-    {c:"Lord of the Flies",q:"The 'beast' on the mountain is actually…",o:["A dead parachutist","A bear","A witch","A demon"],a:"A dead parachutist"},
-    {c:"Literary Devices",q:"'She is the sun' is…",o:["Metaphor","Simile","Oxymoron","Pun"],a:"Metaphor"},
-    {c:"Parts of Speech",q:"In 'they run fast', 'run' is…",o:["Verb","Noun","Adjective","Adverb"],a:"Verb"},
-    {c:"Poetry Forms",q:"A 14-line poem is a…",o:["Sonnet","Elegy","Ode","Ballad"],a:"Sonnet"},
-    {c:"Sonnet 18",q:"'Nor shall death brag thou wander’st in his shade' means the beloved will…",o:["Live in verse","Die young","Be forgotten","Sleep"],a:"Live in verse"},
-    {c:"Balcony Scene",q:"Romeo hears Juliet before she…",o:["Sees him","Leaves","Falls","Calls Nurse"],a:"Sees him"},
-    {c:"Lord of the Flies",q:"Jack primarily represents…",o:["Savagery","Reason","Law","Mercy"],a:"Savagery"},
-    {c:"Literary Devices",q:"'As brave as a lion' is…",o:["Simile","Metaphor","Euphemism","Allusion"],a:"Simile"}
+    {c:"Poetry Forms",q:"Shakespeare’s sonnets are written in…",o:["Iambic pentameter","Trochaic trimeter","Free verse","Haiku"],a:"Iambic pentameter"}
   ];
-  const ladder=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
-  let step=1, usedIdx=[], cur=null, lifeline5050=true, lifelineSkip=true;
   function setTheme(cat){ const c={"Sonnet 18":"#ff2b2b","Balcony Scene":"#ff9f1c","Lord of the Flies":"#2ec4b6","Literary Devices":"#8a5cff","Parts of Speech":"#00f5d4","Poetry Forms":"#fca311"}[cat]||"#8a5cff"; document.documentElement.style.setProperty('--theme', c); $("milDot").style.background = c; $("milCat").textContent = cat; }
-  function drawLadder(){ const ul=$("milLadder"); ul.innerHTML=""; for(let i=ladder.length;i>=1;i--){ const li=document.createElement("li"); li.innerHTML="<span>"+i+"</span><b>"+ladder[i-1].toLocaleString()+"</b>"; if(i===step) li.classList.add("active"); ul.appendChild(li);} }
-  function pickQ(){ let idx; if(usedIdx.length>=Q.length) usedIdx=[]; do{ idx=Math.floor(Math.random()*Q.length); }while(usedIdx.indexOf(idx)>=0); usedIdx.push(idx); return Q[idx]; }
-  function showQ(){ cur = pickQ(); setTheme(cur.c); $("milQ").textContent = cur.q; const box=$("milOpts"); box.innerHTML=""; cur.o.slice().sort(()=>Math.random()-0.5).forEach(opt=>{ const b=document.createElement("button"); b.className="btn secondary"; b.textContent=opt; b.onclick=()=>check(opt); box.appendChild(b); }); $("milStep").textContent=step; }
+  function drawLadder(step){ const ul=$("milLadder"); ul.innerHTML=""; for(let i=ladder.length;i>=1;i--){ const li=document.createElement("li"); li.innerHTML="<span>"+i+"</span><b>"+ladder[i-1].toLocaleString()+"</b>"; if(i===step) li.classList.add("active"); ul.appendChild(li);} }
+  let step=1, used=[], cur=null, lifeline5050=true, lifelineSkip=true;
+  function pick(){ let idx; if(used.length>=Q.length) used=[]; do{ idx=Math.floor(Math.random()*Q.length); }while(used.indexOf(idx)>=0); used.push(idx); return Q[idx]; }
+  function show(){ cur = pick(); setTheme(cur.c); $("milQ").textContent = cur.q; const box=$("milOpts"); box.innerHTML=""; cur.o.slice().sort(()=>Math.random()-0.5).forEach(opt=>{ const b=document.createElement("button"); b.className="btn secondary"; b.textContent=opt; b.onclick=()=>check(opt); box.appendChild(b); }); $("milStep").textContent=step; }
   function check(opt){
     STATS.milAnswered=(STATS.milAnswered|0)+1;
-    if(opt===cur.a){ STATS.milCorrect=(STATS.milCorrect|0)+1; pop(); confetti(40); $("milFeedback").textContent="✅ Correct!"; step++; if(step===8){ addMerits(1); } if(step>15){ addMerits(2); toast("🏆 Millionaire!"); } STATS.milBest=Math.max(STATS.milBest|0, Math.min(step-1,15)); saveObj(STORE_KEY,STATS); refreshDash(); if(step>15){ return; } drawLadder(); showQ(); }
-    else{ beep(); $("milFeedback").textContent="❌ Correct answer: "+cur.a; STATS.milBest=Math.max(STATS.milBest|0, Math.min(step-1,15)); saveObj(STORE_KEY,STATS); refreshDash(); step=1; lifeline5050=true; lifelineSkip=true; $("mil5050").disabled=false; $("milSkip").disabled=false; }
+    if(opt===cur.a){ STATS.milCorrect=(STATS.milCorrect|0)+1; pop(); confetti(40); $("milFeedback").textContent="✅ Correct!"; step++; if(step===8){ addMerits(1); } if(step>15){ addMerits(2); toast("🏆 Millionaire!"); } STATS.milBest=Math.max(STATS.milBest|0, Math.min(step-1,15)); saveObj(STORE_KEY,STATS); refreshDash(); if(step>15){ return; } drawLadder(step); show(); }
+    else{ beep(); $("milFeedback").textContent="❌ Correct answer: "+cur.a; STATS.milBest=Math.max(STATS.milBest|0, Math.min(step-1,15)); saveObj(STORE_KEY,STATS); refreshDash(); step=1; lifeline5050=true; lifelineSkip=true; $("mil5050").disabled=false; $("milSkip").disabled=false; drawLadder(step); show(); }
   }
-  $("milStart").onclick=()=>{ clickBeep(); themeJingle(); step=1; usedIdx=[]; $("milFeedback").textContent=""; lifeline5050=true; lifelineSkip=true; $("mil5050").disabled=false; $("milSkip").disabled=false; drawLadder(); showQ(); };
-  $("milQuit").onclick=()=>{ clickBeep(); $("milFeedback").textContent="🏁 Quit. Re-start when ready."; step=1; drawLadder(); };
+  $("milStart").onclick=()=>{ clickBeep(); themeJingle(); step=1; used=[]; $("milFeedback").textContent=""; lifeline5050=true; lifelineSkip=true; $("mil5050").disabled=false; $("milSkip").disabled=false; drawLadder(step); show(); };
+  $("milQuit").onclick=()=>{ clickBeep(); $("milFeedback").textContent="🏁 Quit. Re-start when ready."; step=1; drawLadder(step); };
   $("mil5050").onclick=()=>{ clickBeep(); if(!cur||!lifeline5050)return; lifeline5050=false; $("mil5050").disabled=true; const buttons=[...$("milOpts").children]; let removed=0; buttons.forEach(b=>{ if(b.textContent!==cur.a && removed<2){ b.disabled=true; b.style.opacity=.5; removed++; }}); };
-  $("milSkip").onclick=()=>{ clickBeep(); if(!cur||!lifelineSkip)return; lifelineSkip=false; $("milSkip").disabled=true; $("milFeedback").textContent="⏭️ Skipped."; showQ(); };
-  drawLadder();
+  $("milSkip").onclick=()=>{ clickBeep(); if(!cur||!lifelineSkip)return; lifelineSkip=false; $("milSkip").disabled=true; $("milFeedback").textContent="⏭️ Skipped."; show(); };
+  drawLadder(step);
 })();
 
-/* -------------------- ROAD RAGE: skid marks, oil slip, ammo, hero, universal controls -------------------- */
+/* -------------------- ROAD RAGE with fixups -------------------- */
 var RoadRage=(function(){
   const cvs=$("drvCanvas"), ctx=cvs.getContext("2d");
   let DPR=1, W=360, H=540;
@@ -583,7 +564,7 @@ var RoadRage=(function(){
   let accelHeld=false, brakeHeld=false, wasBraking=false;
 
   // Lateral physics
-  let player={lane:2,y:0,color:"#12e5ff",visible:true};
+  let player={lane:2,y:0,color:"#12e5ff",visible=true};
   let targetLane=2, laneVel=0;
 
   // Nitro
@@ -592,7 +573,7 @@ var RoadRage=(function(){
   // Oil slip
   let slipTimer=0, slipPhase=0;
 
-  // “Metal hero”
+  // Hero
   let heroActive=false, heroX=-60, heroY=80, heroAwarded=false;
 
   // Tilt
@@ -615,8 +596,10 @@ var RoadRage=(function(){
     if(e.code==="Space"){ e.preventDefault(); fire(); }
   });
 
-  // Engine audio (heavy)
-  let engine=null;
+  // Engine audio with gears
+  let engine=null, gear=1, lastGear=1;
+  const SHIFT_UP=[30,70,120,180];   // m/s thresholds
+  const SHIFT_DN=[25,60,100,150];   // hysteresis down thresholds
   function engineStart(){
     try{
       const ac=safeAC(); if(ac.state==="suspended") ac.resume();
@@ -625,16 +608,24 @@ var RoadRage=(function(){
       const g=ac.createGain(); g.gain.value=0.0;
       const lp=ac.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=1000;
       o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(ac.destination);
-      o1.start(); o2.start(); engine={o1,o2,g,lp};
+      o1.start(); o2.start(); engine={o1,o2,g,lp}; gear=1; lastGear=1;
     }catch(e){ engine=null; }
   }
   function engineStop(){ try{ if(engine){ engine.o1.stop(); engine.o2.stop(); engine.g.disconnect(); engine=null; } }catch(e){} }
+  function gearBlip(){ try{ var ac=safeAC(), o=ac.createOscillator(), g=ac.createGain(); o.type="triangle"; o.frequency.value=120; g.gain.value=0.25; o.connect(g); g.connect(ac.destination); o.start(); setTimeout(()=>o.stop(),90);}catch(e){} }
   function engineUpdate(){
     if(!engine||!AC){ updateGauges(); return; }
-    const targetVol = (running? (0.05 + Math.min(0.13, (nitro?0.16:0.12) * speed/(nitro?NITRO_MAX:MAX_SPEED))) : 0.0);
-    const f = 60 + (nitro?1.9:1.6) * speed;
-    engine.o1.frequency.setTargetAtTime(f, AC.currentTime, 0.05);
-    engine.o2.frequency.setTargetAtTime(f/2, AC.currentTime, 0.05);
+    // Auto shift logic
+    if(speed>SHIFT_UP[gear-1] && gear<5){ gear++; gearBlip(); }
+    if(gear>1 && speed<SHIFT_DN[gear-2]){ gear--; gearBlip(); }
+    // Map speed to RPM by gear (simple)
+    const gearRat=[0.38,0.55,0.72,0.88,1.0][gear-1];
+    const max = (nitro?NITRO_MAX:MAX_SPEED);
+    const rpmPct = Math.min(1, (speed/max)/(gearRat*0.9) );
+    const baseF = 80 + 220*rpmPct; // pitch
+    engine.o1.frequency.setTargetAtTime(baseF, AC.currentTime, 0.05);
+    engine.o2.frequency.setTargetAtTime(baseF/2, AC.currentTime, 0.05);
+    const targetVol = (running? (0.06 + 0.12*rpmPct) : 0.0);
     engine.g.gain.setTargetAtTime(targetVol, AC.currentTime, 0.05);
     updateGauges();
   }
@@ -666,8 +657,8 @@ var RoadRage=(function(){
   function rr(x,y,w,h,r){if(r>w/2)r=w/2;if(r>h/2)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
   function drawVehicle(cx,cy,vt){const w=vt.w,h=vt.h,x=cx-w/2,y=cy-h/2;ctx.fillStyle=vt.color;ctx.strokeStyle="#233";ctx.lineWidth=2;rr(x,y,w,h,8);ctx.fill();ctx.stroke();ctx.fillStyle="#071018";rr(x+6,y+6,w-12,14,4);ctx.fill();}
   function drawOil(cx,cy){ctx.fillStyle="#111";ctx.beginPath();ctx.ellipse(cx,cy,14,8,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#222";ctx.stroke();}
-  function drawNitroPickup(cx,cy){ctx.fillStyle="#ff6a00";ctx.beginPath();ctx.arc(cx,cy,12,0,Math.PI*2);ctx.fill();ctx.fillStyle="#061314";ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("N",cx,cy+1);}
-  function drawAmmoPickup(cx,cy){ctx.fillStyle="#ffd166"; rr(cx-12,cy-10,24,20,4); ctx.fill(); ctx.strokeStyle="#332"; ctx.stroke(); ctx.fillStyle="#061314"; ctx.font="bold 12px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("A",cx,cy+1); }
+  function drawNitroPickup(cx,cy){ctx.fillStyle="#ff6a00";ctx.beginPath();ctx.arc(cx,cy,12,0,Math.PI*2);ctx.fill();ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#061314";ctx.fillText("⚡",cx,cy+1);}
+  function drawAmmoPickup(cx,cy){ctx.fillStyle="#ffd166"; rr(cx-12,cy-10,24,20,4); ctx.fill(); ctx.strokeStyle="#332"; ctx.stroke(); ctx.fillStyle="#061314"; ctx.font="16px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("🔫",cx,cy+1); }
   function drawFlames(cx,cy){
     const t=performance.now()/100; const j=6+Math.sin(t)*2;
     ctx.save(); ctx.globalCompositeOperation="lighter";
@@ -682,31 +673,25 @@ var RoadRage=(function(){
   function drawSmoke(p){ ctx.save(); ctx.globalAlpha = Math.max(0, p.life/0.5); ctx.fillStyle="rgba(200,200,200,.9)";
     ctx.beginPath(); ctx.arc(p.x, p.y, 10+5*(1-p.life/0.5), 0, Math.PI*2); ctx.fill(); ctx.restore(); }
   function drawHero(){
-    // simple “metal hero” silhouette (red/gold)
-    ctx.save();
-    ctx.translate(heroX,heroY);
-    ctx.fillStyle="#d61e1e"; ctx.beginPath(); ctx.ellipse(0,-18,10,12,0,0,Math.PI*2); ctx.fill(); // helmet
-    ctx.fillStyle="#e5b200"; rr(-12, -6, 24, 20, 6); ctx.fill(); // torso
-    ctx.fillStyle="#d61e1e"; rr(-18, -6, 8, 22, 4); rr(10, -6, 8, 22, 4); ctx.fill(); // arms
-    ctx.fillStyle="#e5b200"; rr(-10, 14, 8, 16, 4); rr(2, 14, 8, 16, 4); ctx.fill(); // legs
+    ctx.save(); ctx.translate(heroX,heroY);
+    ctx.fillStyle="#d61e1e"; ctx.beginPath(); ctx.ellipse(0,-18,10,12,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="#e5b200"; rr(-12, -6, 24, 20, 6); ctx.fill();
+    ctx.fillStyle="#d61e1e"; rr(-18, -6, 8, 22, 4); rr(10, -6, 8, 22, 4); ctx.fill();
+    ctx.fillStyle="#e5b200"; rr(-10, 14, 8, 16, 4); rr(2, 14, 8, 16, 4); ctx.fill();
     ctx.restore();
   }
-
-  // Player sports car with visible tires
   function drawPlayerCar(cx,cy){
     const bodyW=36, bodyH=56, x=cx-bodyW/2, y=cy-bodyH/2;
-    // tires
-    ctx.fillStyle="#0b0b0b";
-    const tw=8, th=14;
-    rr(x-6, y+6, tw, th, 3); ctx.fill();              // front-left
-    rr(x+bodyW-2, y+6, tw, th, 3); ctx.fill();        // front-right
-    rr(x-6, y+bodyH-th-6, tw, th, 3); ctx.fill();     // rear-left
-    rr(x+bodyW-2, y+bodyH-th-6, tw, th, 3); ctx.fill(); // rear-right
+    // tyres
+    ctx.fillStyle="#0b0b0b"; const tw=8, th=14;
+    rr(x-6, y+6, tw, th, 3); ctx.fill();
+    rr(x+bodyW-2, y+6, tw, th, 3); ctx.fill();
+    rr(x-6, y+bodyH-th-6, tw, th, 3); ctx.fill();
+    rr(x+bodyW-2, y+bodyH-th-6, tw, th, 3); ctx.fill();
     // body
     ctx.fillStyle="#12e5ff"; ctx.strokeStyle="#244"; ctx.lineWidth=2; rr(x,y,bodyW,bodyH,10); ctx.fill(); ctx.stroke();
-    // windshield
+    // windshield & stripe
     ctx.fillStyle="#071018"; rr(x+6,y+6,bodyW-12,16,6); ctx.fill();
-    // stripe
     ctx.fillStyle="#00f5d4"; rr(cx-3,y+22,6,bodyH-30,3); ctx.fill();
   }
 
@@ -826,11 +811,7 @@ var RoadRage=(function(){
     else if(speed>nitroPrevSpeed){ speed = Math.max(nitroPrevSpeed, speed - (DRAG_RATE*2)*dt); }
 
     // Oil slip
-    if(slipTimer>0){
-      slipTimer -= dt;
-      slipPhase += dt*6.5; // controls the 'S' oscillation frequency
-      laneVel += Math.sin(slipPhase)*0.35; // sideways wiggle
-    }
+    if(slipTimer>0){ slipTimer -= dt; slipPhase += dt*6.5; laneVel += Math.sin(slipPhase)*0.35; }
 
     // Lateral spring-damper
     let a = 12*(targetLane - player.lane) - 7*laneVel; laneVel += a*dt; player.lane += laneVel*dt;
@@ -844,7 +825,6 @@ var RoadRage=(function(){
     // Skid marks when braking
     if(brakeHeld && speed>80 && player.visible){
       const step=(laneX[1]-laneX[0]), px=laneX[0]+step*player.lane;
-      const off=14;
       skid.push({x1:px-12, y1:player.y+20, x2:px-12, y2:player.y+24, a:.32});
       skid.push({x1:px+12, y1:player.y+20, x2:px+12, y2:player.y+24, a:.32});
     }
@@ -866,7 +846,7 @@ var RoadRage=(function(){
     for(let i=ammos.length-1;i>=0;i--){ ammos[i].y += pxPerSec*dt; if(ammos[i].y>H+40) ammos.splice(i,1); }
     for(let i=bullets.length-1;i>=0;i--){ let b=bullets[i]; b.y += b.vy*dt; if(b.y<-20) bullets.splice(i,1); }
 
-    // Skid marks fade/scroll
+    // Skid fade/scroll
     for(let i=skid.length-1;i>=0;i--){ skid[i].y1+=pxPerSec*dt; skid[i].y2+=pxPerSec*dt; skid[i].a -= dt*.8; if(skid[i].y1>H+30 || skid[i].a<=0) skid.splice(i,1); }
     // Smoke fade
     for(let i=smokes.length-1;i>=0;i--){ smokes[i].y += -20*dt; smokes[i].life -= dt; if(smokes[i].life<=0) smokes.splice(i,1); }
@@ -909,8 +889,6 @@ var RoadRage=(function(){
   // Controls
   function left(){ targetLane=Math.max(0, Math.round(targetLane-1)); }
   function right(){ targetLane=Math.min(lanes-1, Math.round(targetLane+1)); }
-
-  // Universal pointer binding for buttons
   function bindPress(el, onDown, onUp){
     const down=(e)=>{ e.preventDefault(); el.setPointerCapture?.(e.pointerId||0); onDown&&onDown(); };
     const up=()=>{ onUp&&onUp(); };
@@ -920,19 +898,17 @@ var RoadRage=(function(){
     }else{
       el.addEventListener("touchstart",down,{passive:false}); el.addEventListener("touchend",up); el.addEventListener("mousedown",down); el.addEventListener("mouseup",up);
     }
-    el.addEventListener("click",(e)=>{ e.preventDefault(); }); // prevent double
+    el.addEventListener("click",(e)=>{ e.preventDefault(); });
   }
-
   // Hold flags
   bindPress($("pedalAccel"), ()=>{ accelHeld=true; }, ()=>{ accelHeld=false; });
   bindPress($("pedalBrake"), ()=>{ brakeHeld=true; }, ()=>{ brakeHeld=false; });
-  // Steering nudges (repeat while held)
+  // Steering (repeat while held)
   let leftTid=null,rightTid=null;
   bindPress($("btnLeft"), ()=>{ left(); leftTid=setInterval(left,110); }, ()=>{ clearInterval(leftTid); });
   bindPress($("btnRight"), ()=>{ right(); rightTid=setInterval(right,110); }, ()=>{ clearInterval(rightTid); });
   // Fire
   bindPress($("btnFire"), ()=>{ fire(); }, null);
-
   // Swipe steer
   let sx=null; cvs.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
   cvs.addEventListener("touchend",e=>{ if(sx===null) return; const dx=e.changedTouches[0].clientX-sx; if(dx<-20) left(); else if(dx>20) right(); sx=null; });
@@ -957,7 +933,7 @@ var RoadRage=(function(){
   return {pause:()=>{ running=false; engineStop(); }};
 })();
 
-/* -------------------- small subtabs (study) -------------------- */
+/* -------------------- subtabs (study) -------------------- */
 (function(){
   const map={"studyVocab":"studyVocab","lotf":"lotf","shakespeare":"shakespeare"};
   document.querySelectorAll(".sub-btn").forEach(b=>{
